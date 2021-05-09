@@ -245,7 +245,39 @@ var sceneOne = {
     },
 
     uninit: function () {
-
+        gl.deleteTexture(this.texture_marble);
+    
+        if (this.vaoCube) {
+            gl.deleteVertexArray(this.vaoCube);
+            this.vaoCube = null;
+        }
+    
+        if (this.vboCube) {
+            gl.deleteBuffer(this.vboCube);
+            this.vboCube = null;
+        }
+    
+        if (this.vboElement) {
+            gl.deleteBuffer(this.vboElement);
+            this.vboElement = null;
+        }
+    
+        if (this.shaderProgramObject) {
+            if (this.fragmentShaderObject) {
+                gl.detachShader(this.shaderProgramObject, this.fragmentShaderObject);
+                gl.deleteShader(this.fragmentShaderObject);
+                this.fragmentShaderObject = null;
+            }
+    
+            if (this.vertexShaderObject) {
+                gl.detachShader(this.shaderProgramObject, this.vertexShaderObject);
+                gl.deleteShader(this.vertexShaderObject);
+                this.vertexShaderObject = null;
+            }
+    
+            gl.deleteProgram(this.shaderProgramObject);
+            this.shaderProgramObject = null;
+        }
     },
 
     resize: function () {
