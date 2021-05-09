@@ -22,12 +22,16 @@ function uninitScenes() {
 function nextScene() {
     if (Scene.idx < Scene.scenes.length - 1) {
         Scene.idx = Scene.idx + 1;
+        return true;
     }
+    return false;
 }
 
 function prevScene() {
     if (Scene.idx > 0) {
         Scene.idx = Scene.idx - 1;
+        return true;
     }
+    return false;
 }
 

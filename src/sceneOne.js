@@ -295,7 +295,10 @@ var sceneOne = {
 
     update: function () {
         this.angleCube += 1.0;
-        if (this.angleCube >= 360.0)
+        if (this.angleCube >= 360.0) {
             this.angleCube = 0.0;
+            return true;
+        }
+        return false;
     },
 }

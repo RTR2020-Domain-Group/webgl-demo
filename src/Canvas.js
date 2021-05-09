@@ -102,8 +102,6 @@ function init() {
     gl.viewportWidth = canvas.width;
     gl.viewportHeight = canvas.height;
 
-    
-
     // set clear color
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -111,10 +109,17 @@ function init() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
+    // add scenes
+    addScene(sceneOne);
+    addScene(sceneOne);
+
+    // init all scenes
+    initScenes();
+
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
 
-    sceneOne.init();
+    
 }
 
 function resize() {
@@ -141,7 +146,7 @@ function draw() {
     // code
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    sceneOne.display();
+    Scene.scenes[Scene.idx].display();
 
     // animation loop
     update();
@@ -149,38 +154,18 @@ function draw() {
 }
 
 function update() {
-    sceneOne.update();
+    if (Scene.scenes[Scene.idx].update()) {
+        if(!nextScene()) {
+            uninitialize();
+        }
+    }
 }
 
 
 function uninitialize() {
-    // code
-    if (vao) {
-        gl.deleteVertexArray(vao);
-        vao = null;
-    }
-
-    if (vbo) {
-        gl.deleteBuffer(vbo);
-        vbo = null;
-    }
-
-    if (shaderProgramObject) {
-        if (fragmentShaderObject) {
-            gl.detachShader(shaderProgramObject, fragmentShaderObject);
-            gl.deleteShader(fragmentShaderObject);
-            fragmentShaderObject = null;
-        }
-
-        if (vertexShaderObject) {
-            gl.detachShader(shaderProgramObject, vertexShaderObject);
-            gl.deleteShader(vertexShaderObject);
-            vertexShaderObject = null;
-        }
-
-        gl.deleteProgram(shaderProgramObject);
-        shaderProgramObject = null;
-    }
+    // uninit all scenes
+    uninitScenes();
+    window.close();
 }
 
 function keyDown(event) {
