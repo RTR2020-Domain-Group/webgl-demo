@@ -111,7 +111,7 @@ function init() {
 
     // add scenes
     addScene(sceneOne);
-    addScene(sceneOne);
+    addScene(sceneTwo);
 
     // init all scenes
     initScenes();
@@ -119,7 +119,6 @@ function init() {
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
 
-    
 }
 
 function resize() {
