@@ -110,8 +110,8 @@ function init() {
     gl.depthFunc(gl.LEQUAL);
 
     // add scenes
-    addScene(sceneOne);
     addScene(sceneTwo);
+    addScene(sceneOne);
 
     // init all scenes
     initScenes();
@@ -138,7 +138,7 @@ function resize() {
     // set the viewport to match
     gl.viewport(0, 0, canvas.width, canvas.height);
 
-    sceneOne.resize();
+    resizeScenes();
 }
 
 function draw() {

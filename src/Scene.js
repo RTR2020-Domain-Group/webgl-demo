@@ -19,6 +19,12 @@ function uninitScenes() {
     }
 }
 
+function resizeScenes() {
+    for (let index = 0; index < Scene.scenes.length; index++) {
+        Scene.scenes[index].resize();
+    }
+}
+
 function nextScene() {
     if (Scene.idx < Scene.scenes.length - 1) {
         Scene.idx = Scene.idx + 1;
