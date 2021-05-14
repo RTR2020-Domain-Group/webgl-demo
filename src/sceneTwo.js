@@ -182,10 +182,10 @@ var sceneTwo = {
 
         // pyramid Position
         var cubeVertices = new Float32Array([
-            -10.0, -2.0,  10.0, 0.0, 1.0, 0.0, 0.0, 1.0, 
-             10.0, -2.0,  10.0, 0.0, 1.0, 0.0, 1.0, 1.0,
-             10.0, -2.0, -10.0, 0.0, 1.0, 0.0, 1.0, 0.0,
-            -10.0, -2.0, -10.0, 0.0, 1.0, 0.0, 0.0, 0.0, 
+            -40.0, -2.0,  40.0, 0.0, 1.0, 0.0, 0.0, 1.0, 
+             40.0, -2.0,  40.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+             40.0, -2.0, -40.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            -40.0, -2.0, -40.0, 0.0, 1.0, 0.0, 0.0, 0.0, 
         ]);
 
         var cubeIndices = new Uint32Array([0, 1, 2, 0, 2, 3]);
@@ -291,6 +291,8 @@ var sceneTwo = {
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, 1.0, 0.0]);
 
+        viewMatrix = camera.getViewMatrix();
+
         gl.uniformMatrix4fv(this.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(this.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(this.pUniform, false, this.perspectiveProjectionMatrix);
@@ -326,7 +328,7 @@ var sceneTwo = {
         this.angleCube += 1.0;
         if (this.angleCube >= 360.0) {
             this.angleCube = 0.0;
-            return true;
+            // return true;
         }
         return false;
     },
