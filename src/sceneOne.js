@@ -12,7 +12,8 @@ var sceneOne = {
     vUniform: 0,
     pUniform: 0,
 
-    texture_marble: 0,
+    texDiff: 0,
+    texAnim: 0,
     samplerUniform: 0,
 
     laUniform: 0,
@@ -240,12 +241,24 @@ var sceneOne = {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tex.image);
             gl.bindTexture(gl.TEXTURE_2D, null);
         };
-        this.texture_marble = tex;
+        this.texDiff = tex;
+
+        tex = gl.createTexture();
+        let animTexSize = Math.sqrt(manModel.boneCount * manModel.frameCount * 4);
+        tex.image = new Image();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.FLOAT, manModel.animation);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        this.texAnim = tex;
 
     },
 
     uninit: function () {
-        gl.deleteTexture(this.texture_marble);
+        gl.deleteTexture(this.texDiff);
     
         if (this.vaoCube) {
             gl.deleteVertexArray(this.vaoCube);
@@ -317,7 +330,7 @@ var sceneOne = {
 
         // bind with textures
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture_marble);
+        gl.bindTexture(gl.TEXTURE_2D, this.texDiff);
         gl.uniform1i(this.samplerUniform, 0);
 
         gl.bindVertexArray(this.vao);
