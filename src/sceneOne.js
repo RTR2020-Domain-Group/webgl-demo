@@ -291,8 +291,10 @@ var sceneOne = {
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.rotateX(modelMatrix, modelMatrix, degToRad(-90.0))
-        mat4.rotateZ(modelMatrix, modelMatrix, degToRad(this.angleCube));
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0))
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
+
+        viewMatrix = camera.getViewMatrix();
 
         gl.uniformMatrix4fv(this.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(this.vUniform, false, viewMatrix);
@@ -329,7 +331,7 @@ var sceneOne = {
         this.angleCube += 1.0;
         if (this.angleCube >= 360.0) {
             this.angleCube = 0.0;
-            return true;
+            // return true;
         }
         return false;
     },

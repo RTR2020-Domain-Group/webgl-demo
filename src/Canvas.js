@@ -5,6 +5,9 @@ var bFullscreen = false;
 var canvas_original_height;
 var canvas_original_width;
 
+var prevMouseX = 0, prevMouseY = 0;
+var mouseX = 0, mouseY = 0;
+
 // all inside this are const, as this is const
 const WebGLMacros = {
     AMC_ATTRIBUTE_VERTEX: 0,
@@ -47,6 +50,7 @@ function main() {
     window.addEventListener("keydown", keyDown, false);
     window.addEventListener("click", mouseDown, false);
     window.addEventListener("resize", resize, false);
+    window.addEventListener("mousemove", mouseMove, false);
 
     // initialize WebGL
     init();
@@ -116,6 +120,11 @@ function init() {
     // init all scenes
     initScenes();
 
+    // init camera
+    camera.init(
+        vec3.fromValues(0.0, 0.0, 0.0),
+        vec3.fromValues(0.0, 1.0, 0.0));
+
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
 
@@ -154,7 +163,7 @@ function draw() {
 
 function update() {
     if (Scene.scenes[Scene.idx].update()) {
-        if(!nextScene()) {
+        if (!nextScene()) {
             uninitialize();
         }
     }
@@ -169,6 +178,7 @@ function uninitialize() {
 
 function keyDown(event) {
     // code
+    console.log('Key', event.key, event.keyCode)
     switch (event.keyCode) {
         case 27: // escape
             uninitialize();
@@ -181,7 +191,28 @@ function keyDown(event) {
             break;
 
         case 76:
-            bLight = !bLight;
+            camera.print();
+            break;
+
+        // camera movements
+        case 87:
+        case 38:
+            camera.processKeyboard(FORWARD);
+            break;
+
+        case 65:
+        case 37:
+            camera.processKeyboard(LEFT);
+            break;
+
+        case 68:
+        case 39:
+            camera.processKeyboard(RIGHT);
+            break;
+
+        case 83:
+        case 40:
+            camera.processKeyboard(BACKWARD);
             break;
     }
 }
@@ -190,6 +221,11 @@ function mouseDown() {
     // code
 }
 
-function degToRad(degrees) {
-    return (degrees * Math.PI / 180.0);
+function mouseMove(event) {
+    prevMouseX = mouseX;
+    prevMouseY = mouseY;
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    camera.processMouse(mouseX - prevMouseX, mouseY - prevMouseY);
 }
