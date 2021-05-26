@@ -182,9 +182,9 @@ var sceneOne = {
         this.lightPositionUniform = gl.getUniformLocation(this.shaderProgramObject, "u_light_position");
 
         // pyramid Position
-        var cubeVertices = new Float32Array(manModel.vertex);
-        var cubeIndices = new Uint32Array(manModel.index);
-        this.numElements = manModel.index.length;
+        var cubeVertices = new Float32Array(jwModel.vertex);
+        var cubeIndices = new Uint32Array(jwModel.index);
+        this.numElements = jwModel.index.length;
 
         this.vao = gl.createVertexArray();
         gl.bindVertexArray(this.vao);
@@ -232,7 +232,7 @@ var sceneOne = {
         // load texture
         let tex = gl.createTexture();
         tex.image = new Image();
-        tex.image.src = "res/man/man.png";
+        tex.image.src = "res/johnny/albedo.png";
         tex.image.onload = function () {
             gl.bindTexture(gl.TEXTURE_2D, tex);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -243,17 +243,17 @@ var sceneOne = {
         };
         this.texDiff = tex;
 
-        tex = gl.createTexture();
-        let animTexSize = Math.sqrt(manModel.boneCount * manModel.frameCount * 4);
-        tex.image = new Image();
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.FLOAT, manModel.animation);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        this.texAnim = tex;
+        // tex = gl.createTexture();
+        // let animTexSize = Math.sqrt(manModel.boneCount * manModel.frameCount * 4);
+        // tex.image = new Image();
+        // gl.bindTexture(gl.TEXTURE_2D, tex);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP);
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.FLOAT, manModel.animation);
+        // gl.bindTexture(gl.TEXTURE_2D, null);
+        // this.texAnim = tex;
 
     },
 
@@ -295,7 +295,7 @@ var sceneOne = {
 
     resize: function () {
         // perspective projection
-        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 100);
+        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
     },
 
     display: function () {
@@ -305,7 +305,8 @@ var sceneOne = {
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0))
-        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
+        //mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
         viewMatrix = camera.getViewMatrix();
 
@@ -329,7 +330,6 @@ var sceneOne = {
             gl.uniform1i(this.enableLightUniform, 0);
 
         // bind with textures
-        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texDiff);
         gl.uniform1i(this.samplerUniform, 0);
 

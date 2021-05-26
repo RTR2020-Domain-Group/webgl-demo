@@ -114,8 +114,8 @@ function init() {
     gl.depthFunc(gl.LEQUAL);
 
     // add scenes
-    addScene(sceneTwo);
     addScene(sceneOne);
+    addScene(sceneTwo);
 
     // init all scenes
     initScenes();
