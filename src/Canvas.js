@@ -14,6 +14,8 @@ const WebGLMacros = {
     AMC_ATTRIBUTE_COLOR: 1,
     AMC_ATTRIBUTE_NORMAL: 2,
     AMC_ATTRIBUTE_TEXCOORD0: 3,
+    AMC_ATTRIBUTE_BONEIDS: 4,
+	AMC_ATTRIBUTE_BONEWEIGHTS: 5,
 };
 
 // to start animation: to have requestAnimatiomFrame() to be called "cross-browser" compatible

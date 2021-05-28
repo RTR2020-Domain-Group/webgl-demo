@@ -16,13 +16,7 @@ var sceneOne = {
     texAnim: 0,
     samplerUniform: 0,
 
-    laUniform: 0,
-    kaUniform: 0,
-    ldUniform: 0,
-    kdUniform: 0,
-    lsUniform: 0,
-    ksUniform: 0,
-    shininessUniform: 0,
+    boneMatrixUniform: 0,
 
     enableLightUniform: 0,
     lightPositionUniform: 0,
@@ -40,43 +34,47 @@ var sceneOne = {
     perspectiveProjectionMatrix: mat4.create(),
 
     bLight: false,
-    angleCube: 0,
+    angleCube: 0.00001,
     numElements: 0,
 
     init: function () {
         // vertex shader
         var vertexShaderSourceCode =
-            "#version 300 es" +
-            "\n" +
+            "#version 300 es \n" +
             "precision highp int;" +
-            "in vec4 vPosition;" +
-            "in vec4 vColor;" +
-            "in vec3 vNormal;" +
-            "in vec2 vTexcoord;" +
-            "uniform mat4 u_m_matrix;" +
-            "uniform mat4 u_v_matrix;" +
-            "uniform mat4 u_p_matrix;" +
-            "uniform vec4 u_light_position;" +
-            "uniform int u_enable_light;" +
-            "out vec3 tnorm;" +
-            "out vec3 light_direction;" +
-            "out vec3 viewer_vector;" +
-            "out vec2 out_Texcoord;" +
-            "out vec4 out_Color;" +
-            "void main (void)" +
-            "{" +
-            "   if (u_enable_light == 1) " +
-            "   { " +
-            "       vec4 eye_coordinates = u_v_matrix * u_m_matrix * vPosition;" +
-            "       tnorm = mat3(u_v_matrix * u_m_matrix) * vNormal;" +
-            "       light_direction = vec3(u_light_position - eye_coordinates);" +
-            "       float tn_dot_ldir = max(dot(tnorm, light_direction), 0.0);" +
-            "       viewer_vector = vec3(-eye_coordinates.xyz);" +
-            "   }" +
-            "   gl_Position = u_p_matrix * u_v_matrix * u_m_matrix * vPosition;" +
-            "   out_Texcoord = vTexcoord;" +
-            "   out_Color = vec4(1.0);" +
-            "}";
+
+            "in vec4  vPosition; \n" +
+            "in vec3  vNormal; \n" +
+            "in vec2  vTexcoord; \n" +
+            "in ivec4 vBoneIDs; \n" +
+            "in vec4  vBoneWeights; \n" +
+
+            "uniform mat4 u_modelMatrix; \n" +
+            "uniform mat4 u_viewMatrix; \n" +
+            "uniform mat4 u_projectionMatrix; \n" +
+            "uniform mat4 u_boneMatrix[100]; \n" +
+
+            "out vec3 out_WorldPos; \n" +
+            "out vec3 out_Normal; \n" +
+            "out vec2 out_Texcoord; \n" +
+
+            "void main (void) \n" +
+            "{ \n" +
+            "	mat4 boneTransform; \n" +
+            "	boneTransform  = vBoneWeights.x * u_boneMatrix[vBoneIDs.x]; \n" +
+            "	boneTransform += vBoneWeights.y * u_boneMatrix[vBoneIDs.y]; \n" +
+            "	boneTransform += vBoneWeights.z * u_boneMatrix[vBoneIDs.z]; \n" +
+            "	boneTransform += vBoneWeights.w * u_boneMatrix[vBoneIDs.w]; \n" +
+
+            "	vec4 tPosition = boneTransform * vPosition; \n " +
+            "	vec3 tNormal   = (boneTransform * vec4(vNormal, 0.0)).xyz; \n " +
+
+            "	out_Texcoord = vTexcoord; \n " +
+            "	out_WorldPos = vec3(u_modelMatrix * tPosition); \n " +
+            "	out_Normal = normalize(mat3(u_modelMatrix) * tNormal); \n " +
+
+            "	gl_Position = u_projectionMatrix * u_viewMatrix * vec4(out_WorldPos, 1.0); \n" +
+            "} \n";
 
         this.vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(this.vertexShaderObject, vertexShaderSourceCode);
@@ -85,50 +83,144 @@ var sceneOne = {
         if (!gl.getShaderParameter(this.vertexShaderObject, gl.COMPILE_STATUS)) {
             var error = gl.getShaderInfoLog(this.vertexShaderObject);
             if (error.length > 0) {
-                alert(error);
+                alert("vertex " + error);
                 uninitialize();
             }
         }
 
         // fragment shader
         var fragmentShaderSourceCode =
-            "#version 300 es" +
-            "\n" +
-            "precision highp float;" +
-            "precision highp int;" +
-            "in vec2 out_Texcoord;" +
-            "in vec4 out_Color;" +
-            "in vec3 tnorm;" +
-            "in vec3 light_direction;" +
-            "in vec3 viewer_vector;" +
-            "uniform vec3 u_la;" +
-            "uniform vec3 u_ld;" +
-            "uniform vec3 u_ls;" +
-            "uniform vec3 u_ka;" +
-            "uniform vec3 u_kd;" +
-            "uniform vec3 u_ks;" +
-            "uniform float u_shininess;" +
-            "uniform int u_enable_light;" +
-            "uniform sampler2D u_sampler;" +
-            "out vec4 FragColor;" +
-            "void main (void)" +
-            "{" +
-            "   vec3 phong_ads_light = vec3(1.0);" +
-            "   if (u_enable_light == 1) " +
-            "   { " +
-            "       vec3 ntnorm = normalize(tnorm);" +
-            "       vec3 nlight_direction = normalize(light_direction);" +
-            "       vec3 nviewer_vector = normalize(viewer_vector);" +
-            "       vec3 reflection_vector = reflect(-nlight_direction, ntnorm);" +
-            "       float tn_dot_ldir = max(dot(ntnorm, nlight_direction), 0.0);" +
-            "       vec3 ambient  = u_la * u_ka;" +
-            "       vec3 diffuse  = u_ld * u_kd * tn_dot_ldir;" +
-            "       vec3 specular = u_ls * u_ks * pow(max(dot(reflection_vector, nviewer_vector), 0.0), u_shininess);" +
-            "       phong_ads_light = ambient + diffuse + specular;" +
-            "   }" +
-            "   vec4 tex = texture(u_sampler, out_Texcoord);" +
-            "   FragColor = vec4((vec3(tex) * vec3(out_Color) * phong_ads_light), 1.0);" +
-            "}";
+            "#version 300 es \n" +
+            "precision highp float; \n" +
+            "precision highp int; \n" +
+
+            "const float PI = 3.14159265359; \n" +
+
+            "out vec4 FragColor; \n" +
+
+            "in vec3 out_WorldPos; \n" +
+            "in vec3 out_Normal; \n" +
+            "in vec2 out_Texcoord; \n" +
+
+            "uniform sampler2D albedoMap; \n" +
+            "uniform sampler2D normalMap; \n" +
+            "uniform sampler2D metallicMap; \n" +
+            "uniform sampler2D roughnessMap; \n" +
+            "uniform sampler2D aoMap; \n" +
+
+            "uniform vec3 lightPosition[4]; \n" +
+            "uniform vec3 lightColor[4]; \n" +
+
+            "uniform vec3 cameraPos; \n" +
+
+            "vec3 getNormalFromMap() \n" +
+            "{ \n" +
+            "	vec3 tangentNormal = texture(normalMap, out_Texcoord).xyz * 2.0 - 1.0; \n" +
+
+            "	vec3 Q1 = dFdx(out_WorldPos); \n" +
+            "	vec3 Q2 = dFdy(out_WorldPos); \n" +
+            "	vec2 st1 = dFdx(out_Texcoord); \n" +
+            "	vec2 st2 = dFdy(out_Texcoord); \n" +
+
+            "	vec3 N = normalize(out_Normal); \n" +
+            "	vec3 T = normalize(Q1*st2.t - Q2*st1.t); \n" +
+            "	vec3 B = -normalize(cross(N, T)); \n" +
+            "	mat3 TBN = mat3(T, B, N); \n" +
+
+            "	return normalize(TBN * tangentNormal); \n" +
+            "} \n" +
+
+            "float DistributionGGX(vec3 N, vec3 H, float roughness) \n" +
+            "{ \n" +
+            "	float a = roughness * roughness; \n" +
+            "	float a2 = a * a; \n" +
+            "	float NdotH = max(dot(N, H), 0.0); \n" +
+            "	float NdotH2 = NdotH * NdotH; \n" +
+
+            "	float nom = a2; \n" +
+            "	float denom = (NdotH2 * (a2 - 1.0) + 1.0); \n" +
+            "	denom = PI * denom * denom; \n" +
+
+            "	return nom / denom; \n" +
+            "} \n" +
+
+            "float GeometrySchlickGGX(float NdotV, float roughness) \n" +
+            "{ \n" +
+            "	float r = roughness + 1.0; \n" +
+            "	float k = (r * r) / 8.0; \n" +
+
+            "	float nom = NdotV; \n" +
+            "	float denom = NdotV * (1.0 - k) + k; \n" +
+
+            "	return nom / denom; \n" +
+            "} \n" +
+
+            "float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) \n" +
+            "{ \n" +
+            "	float NdotV = max(dot(N, V), 0.0); \n" +
+            "	float NdotL = max(dot(N, L), 0.0); \n" +
+
+            "	float ggx2 = GeometrySchlickGGX(NdotV, roughness); \n" +
+            "	float ggx1 = GeometrySchlickGGX(NdotL, roughness); \n" +
+
+            "	return ggx1 * ggx2; \n" +
+            "} \n" +
+
+            "vec3 fresnelSchlick(float cosTheta, vec3 F0) \n" +
+            "{ \n" +
+            "	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0); \n" +
+            "} \n" +
+
+            "void main (void) \n" +
+            "{ \n" +
+            "	vec3 albedo     = pow(texture(albedoMap, out_Texcoord).rgb, vec3(2.2)); \n" +
+            "   FragColor = vec4(albedo, 1.0); return;" +
+            "	float metallic  = texture(metallicMap, out_Texcoord).r; \n" +
+            "	float roughness = texture(roughnessMap, out_Texcoord).r; \n" +
+            "	float ao        = texture(aoMap, out_Texcoord).r; \n" +
+
+            "	vec3 N = getNormalFromMap(); \n" +
+            "	vec3 V = normalize(cameraPos - out_WorldPos); \n" +
+
+            "	vec3 F0 = vec3(0.04); \n" +
+            "	F0 = mix(F0, albedo, metallic); \n" +
+
+            "	vec3 Lo = vec3(0.0); \n" +
+
+            "	for(int i = 0; i < 4; i++) \n" +
+            "	{ \n" +
+            "		vec3 L = normalize(lightPosition[i] - out_WorldPos); \n" +
+            "		vec3 H = normalize(V + L); \n" +
+            "		float distance = length(lightPosition[i] - out_WorldPos); \n" +
+            "		float attenuation = 1.0 / (distance * distance); \n" +
+            "		vec3 radiance = lightColor[i] * attenuation; \n" +
+
+            "		float NDF = DistributionGGX(N, H, roughness); \n" +
+            "		float G   = GeometrySmith(N, V, L, roughness); \n" +
+            "		vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0); \n" +
+
+            "		vec3 nominator   = NDF * G * F; \n" +
+            "		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; \n" +
+            "		vec3 specular = nominator / denominator; \n" +
+
+            "		vec3 kS = F; \n" +
+            "		vec3 kD = vec3(1.0) - kS; \n" +
+            "		kD *= 1.0 - metallic; \n" +
+
+            "		float NdotL = max(dot(N, L), 0.0); \n" +
+
+            "		Lo += (kD * albedo / PI + specular) * radiance * NdotL; \n" +
+            "	} \n" +
+
+            "	vec3 ambient = vec3(0.01) * albedo * ao; \n" +
+
+            "	vec3 color = ambient + Lo; \n" +
+
+            "	color = color / (color + vec3(1.0)); \n" +
+            "	color = pow(color, vec3(1.0 / 2.2)); \n" +
+
+            "	FragColor = vec4(color, 1.0); \n" +
+            "} \n";
 
         this.fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(this.fragmentShaderObject, fragmentShaderSourceCode);
@@ -137,7 +229,7 @@ var sceneOne = {
         if (!gl.getShaderParameter(this.fragmentShaderObject, gl.COMPILE_STATUS)) {
             var error = gl.getShaderInfoLog(this.fragmentShaderObject);
             if (error.length > 0) {
-                alert(error);
+                alert("fragment" + error);
                 uninitialize();
             }
         }
@@ -149,9 +241,10 @@ var sceneOne = {
 
         // pre-linking binding of shader program object with vertex shader attributes
         gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_COLOR, "vColor");
         gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_NORMAL, "vNormal");
         gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
+        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_BONEIDS, "vBoneIDs");
+        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS, "vBoneWeights");
 
         // linking
         gl.linkProgram(this.shaderProgramObject);
@@ -164,18 +257,14 @@ var sceneOne = {
         }
 
         // get unifrom locations
-        this.mUniform = gl.getUniformLocation(this.shaderProgramObject, "u_m_matrix");
-        this.vUniform = gl.getUniformLocation(this.shaderProgramObject, "u_v_matrix");
-        this.pUniform = gl.getUniformLocation(this.shaderProgramObject, "u_p_matrix");
+        this.mUniform = gl.getUniformLocation(this.shaderProgramObject, "u_modelMatrix");
+        this.vUniform = gl.getUniformLocation(this.shaderProgramObject, "u_viewMatrix");
+        this.pUniform = gl.getUniformLocation(this.shaderProgramObject, "u_projectionMatrix");
 
-        this.samplerUniform = gl.getUniformLocation(this.shaderProgramObject, "u_sampler");
+        this.boneMatrixUniform = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix");
 
-        this.laUniform = gl.getUniformLocation(this.shaderProgramObject, "u_la");
-        this.kaUniform = gl.getUniformLocation(this.shaderProgramObject, "u_ka");
-        this.ldUniform = gl.getUniformLocation(this.shaderProgramObject, "u_ld");
-        this.kdUniform = gl.getUniformLocation(this.shaderProgramObject, "u_kd");
-        this.lsUniform = gl.getUniformLocation(this.shaderProgramObject, "u_ls");
-        this.ksUniform = gl.getUniformLocation(this.shaderProgramObject, "u_ks");
+        this.samplerUniform = gl.getUniformLocation(this.shaderProgramObject, "albedoMap");
+
         this.shininessUniform = gl.getUniformLocation(this.shaderProgramObject, "u_shininess");
 
         this.enableLightUniform = gl.getUniformLocation(this.shaderProgramObject, "u_enable_light");
@@ -200,13 +289,6 @@ var sceneOne = {
             16 * 4, 0 * 4); // stride and offset
         gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_VERTEX);
 
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_COLOR,
-            3, // 3 for r,g,b axes in vertex array
-            gl.FLOAT,
-            false, // is normalized?
-            16 * 4, 3 * 4); // stride and offset
-        //gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_COLOR);
-
         gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_NORMAL,
             3, // 3 for x,y,z axes in vertex array
             gl.FLOAT,
@@ -220,6 +302,19 @@ var sceneOne = {
             false, // is normalized?
             16 * 4, 6 * 4); // stride and offset
         gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0);
+
+        gl.vertexAttribIPointer(WebGLMacros.AMC_ATTRIBUTE_BONEIDS,
+            4, //
+            gl.INT,
+            16 * 4, 8 * 4); // stride and offset
+        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_BONEIDS);
+
+        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS,
+            4, // 
+            gl.FLOAT,
+            false, // is normalized?
+            16 * 4, 12 * 4); // stride and offset
+        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
@@ -259,35 +354,35 @@ var sceneOne = {
 
     uninit: function () {
         gl.deleteTexture(this.texDiff);
-    
+
         if (this.vaoCube) {
             gl.deleteVertexArray(this.vaoCube);
             this.vaoCube = null;
         }
-    
+
         if (this.vboCube) {
             gl.deleteBuffer(this.vboCube);
             this.vboCube = null;
         }
-    
+
         if (this.vboElement) {
             gl.deleteBuffer(this.vboElement);
             this.vboElement = null;
         }
-    
+
         if (this.shaderProgramObject) {
             if (this.fragmentShaderObject) {
                 gl.detachShader(this.shaderProgramObject, this.fragmentShaderObject);
                 gl.deleteShader(this.fragmentShaderObject);
                 this.fragmentShaderObject = null;
             }
-    
+
             if (this.vertexShaderObject) {
                 gl.detachShader(this.shaderProgramObject, this.vertexShaderObject);
                 gl.deleteShader(this.vertexShaderObject);
                 this.vertexShaderObject = null;
             }
-    
+
             gl.deleteProgram(this.shaderProgramObject);
             this.shaderProgramObject = null;
         }
@@ -314,15 +409,6 @@ var sceneOne = {
         gl.uniformMatrix4fv(this.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(this.pUniform, false, this.perspectiveProjectionMatrix);
 
-        gl.uniform3fv(this.laUniform, this.lightAmbient);
-        gl.uniform3fv(this.ldUniform, this.lightDiffuse);
-        gl.uniform3fv(this.lsUniform, this.lightSpecular);
-        gl.uniform4fv(this.lightPositionUniform, this.lightPosition);
-
-        gl.uniform3fv(this.kaUniform, this.materialAmbient);
-        gl.uniform3fv(this.kdUniform, this.materialDiffuse);
-        gl.uniform3fv(this.ksUniform, this.materialSpecular);
-        gl.uniform1f(this.shininessUniform, this.materialShininess);
 
         if (this.bLight == true)
             gl.uniform1i(this.enableLightUniform, 1);
@@ -333,6 +419,13 @@ var sceneOne = {
         gl.bindTexture(gl.TEXTURE_2D, this.texDiff);
         gl.uniform1i(this.samplerUniform, 0);
 
+        var matArray = new Array(jwModel.boneCount);
+        for (var i = 0; i < matArray.length; i++) {
+            matArray[i] = mat4.create();
+        }
+        //getPose(jwModelAnim.anim, jwModel.skeleton, 0.011, mat4.create(), mat4.create(), matArray);
+
+        gl.uniformMatrix4fv(this.boneMatrixUniform, gl.FALSE, flat(matArray));
         gl.bindVertexArray(this.vao);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
         gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_INT, 0);
@@ -341,7 +434,7 @@ var sceneOne = {
     },
 
     update: function () {
-        this.angleCube += 1.0;
+        this.angleCube += 0.01;
         if (this.angleCube >= 360.0) {
             this.angleCube = 0.0;
             // return true;
