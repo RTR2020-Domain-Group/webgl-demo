@@ -7,6 +7,7 @@ var canvas_original_width;
 
 var prevMouseX = 0, prevMouseY = 0;
 var mouseX = 0, mouseY = 0;
+var firstMouse = true;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -224,10 +225,17 @@ function mouseDown() {
 }
 
 function mouseMove(event) {
-    prevMouseX = mouseX;
-    prevMouseY = mouseY;
     mouseX = event.clientX;
     mouseY = event.clientY;
 
+    if (firstMouse) {
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+        firstMouse = false;
+    }
+
     camera.processMouse(mouseX - prevMouseX, mouseY - prevMouseY);
+
+    prevMouseX = mouseX;
+    prevMouseY = mouseY;
 }

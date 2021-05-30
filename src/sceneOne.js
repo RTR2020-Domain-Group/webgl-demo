@@ -11,30 +11,28 @@ var sceneOne = {
     mUniform: 0,
     vUniform: 0,
     pUniform: 0,
-
-    texDiff: 0,
-    texAnim: 0,
-    samplerUniform: 0,
-
-    boneMatrixUniform: new Array(100),
-
-    enableLightUniform: 0,
+    albedoUniform: 0,
+    normalUniform: 0,
+    metallicUniform: 0,
+    roughnessUniform: 0,
+    aoUniform: 0,
+    boneMatrixUniform: 0,
     lightPositionUniform: 0,
+
+    albedoMap: 0,
+    normalMap: 0,
+    metallicMap: 0,
+    roughnessMap: 0,
+    aoMap: 0,
 
     lightAmbient: new Float32Array([0.5, 0.5, 0.5]),
     lightDiffuse: new Float32Array([1.0, 1.0, 1.0]),
     lightSpecular: new Float32Array([1.0, 1.0, 1.0]),
     lightPosition: new Float32Array([10.0, 10.0, 10.0, 1.0]),
-
-    materialAmbient: new Float32Array([0.5, 0.5, 0.5]),
-    materialDiffuse: new Float32Array([1.0, 1.0, 1.0]),
-    materialSpecular: new Float32Array([1.0, 1.0, 1.0]),
-    materialShininess: 128.0,
-
     perspectiveProjectionMatrix: mat4.create(),
 
     bLight: false,
-    angleCube: 0.00001,
+    t: 0,
     numElements: 0,
 
     init: function () {
@@ -174,7 +172,6 @@ var sceneOne = {
             "void main (void) \n" +
             "{ \n" +
             "	vec3 albedo     = pow(texture(albedoMap, out_Texcoord).rgb, vec3(2.2)); \n" +
-            "   FragColor = vec4(albedo, 1.0); return;" +
             "	float metallic  = texture(metallicMap, out_Texcoord).r; \n" +
             "	float roughness = texture(roughnessMap, out_Texcoord).r; \n" +
             "	float ao        = texture(aoMap, out_Texcoord).r; \n" +
@@ -187,7 +184,7 @@ var sceneOne = {
 
             "	vec3 Lo = vec3(0.0); \n" +
 
-            "	for(int i = 0; i < 4; i++) \n" +
+            "	for(int i = 0; i < 1; i++) \n" +
             "	{ \n" +
             "		vec3 L = normalize(lightPosition[i] - out_WorldPos); \n" +
             "		vec3 H = normalize(V + L); \n" +
@@ -212,7 +209,7 @@ var sceneOne = {
             "		Lo += (kD * albedo / PI + specular) * radiance * NdotL; \n" +
             "	} \n" +
 
-            "	vec3 ambient = vec3(0.01) * albedo * ao; \n" +
+            "	vec3 ambient = vec3(0.1) * albedo * ao; \n" +
 
             "	vec3 color = ambient + Lo; \n" +
 
@@ -261,16 +258,32 @@ var sceneOne = {
         this.vUniform = gl.getUniformLocation(this.shaderProgramObject, "u_viewMatrix");
         this.pUniform = gl.getUniformLocation(this.shaderProgramObject, "u_projectionMatrix");
 
-        for (var i = 0; i < 100; i++) {
-            this.boneMatrixUniform[i] = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix[" + i + "]");
-        }
+        this.boneMatrixUniform = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix");
 
-        this.samplerUniform = gl.getUniformLocation(this.shaderProgramObject, "albedoMap");
+        this.albedoUniform = gl.getUniformLocation(this.shaderProgramObject, "albedoMap");
+        this.normalUniform = gl.getUniformLocation(this.shaderProgramObject, "normalMap");
+        this.metallicUniform = gl.getUniformLocation(this.shaderProgramObject, "metallicMap");
+        this.roughnessUniform = gl.getUniformLocation(this.shaderProgramObject, "roughnessMap");
+        this.aoUniform = gl.getUniformLocation(this.shaderProgramObject, "aoMap");
 
         this.shininessUniform = gl.getUniformLocation(this.shaderProgramObject, "u_shininess");
+        this.lightPositionUniform = gl.getUniformLocation(this.shaderProgramObject, "lightPosition");
+        this.lightColorUniform = gl.getUniformLocation(this.shaderProgramObject, "lightColor");
 
-        this.enableLightUniform = gl.getUniformLocation(this.shaderProgramObject, "u_enable_light");
-        this.lightPositionUniform = gl.getUniformLocation(this.shaderProgramObject, "u_light_position");
+        gl.useProgram(this.shaderProgramObject);
+
+        // set texture uniforms
+        gl.uniform1i(this.albedoUniform, 0);
+        gl.uniform1i(this.normalUniform, 1);
+        gl.uniform1i(this.metallicUniform, 2);
+        gl.uniform1i(this.roughnessUniform, 3);
+        gl.uniform1i(this.aoUniform, 4);
+
+        // set light
+        gl.uniform3fv(this.lightPositionUniform, [7.0 * Math.cos(3.7), 0.0, 7.0 * Math.sin(3.7)]);
+        gl.uniform3fv(this.lightColorUniform, [150.0, 150.0, 150.0]);
+
+        gl.useProgram(null);
 
         // pyramid Position
         var cubeVertices = new Float32Array(jwModel.vertex);
@@ -327,36 +340,19 @@ var sceneOne = {
 
         gl.bindVertexArray(null);
 
-        // load texture
-        let tex = gl.createTexture();
-        tex.image = new Image();
-        tex.image.src = "res/johnny/albedo.png";
-        tex.image.onload = function () {
-            gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tex.image);
-            gl.bindTexture(gl.TEXTURE_2D, null);
-        };
-        this.texDiff = tex;
-
-        // tex = gl.createTexture();
-        // let animTexSize = Math.sqrt(manModel.boneCount * manModel.frameCount * 4);
-        // tex.image = new Image();
-        // gl.bindTexture(gl.TEXTURE_2D, tex);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP);
-        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.FLOAT, manModel.animation);
-        // gl.bindTexture(gl.TEXTURE_2D, null);
-        // this.texAnim = tex;
-
+        this.albedoMap = loadTexture("res/johnny/albedo.png");
+        this.normalMap = loadTexture("res/johnny/normal.png");
+        this.metallicMap = loadTexture("res/johnny/metallic.png");
+        this.roughnessMap = loadTexture("res/johnny/roughness.png");
+        this.aoMap = loadTexture("res/johnny/ao.png");
     },
 
     uninit: function () {
-        gl.deleteTexture(this.texDiff);
+        gl.deleteTexture(this.albedoMap);
+        gl.deleteTexture(this.normalMap);
+        gl.deleteTexture(this.metallicMap);
+        gl.deleteTexture(this.roughnessMap);
+        gl.deleteTexture(this.aoMap);
 
         if (this.vaoCube) {
             gl.deleteVertexArray(this.vaoCube);
@@ -402,8 +398,6 @@ var sceneOne = {
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        // mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0))
-        // mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
         viewMatrix = camera.getViewMatrix();
@@ -412,27 +406,23 @@ var sceneOne = {
         gl.uniformMatrix4fv(this.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(this.pUniform, false, this.perspectiveProjectionMatrix);
 
-
-        // if (this.bLight == true)
-        //     gl.uniform1i(this.enableLightUniform, 1);
-        // else
-        //     gl.uniform1i(this.enableLightUniform, 0);
-
         // bind with textures
-        gl.bindTexture(gl.TEXTURE_2D, this.texDiff);
-        gl.uniform1i(this.samplerUniform, 0);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.albedoMap);
 
-        var matArray = new Array(jwModel.boneCount);
-        for (var i = 0; i < matArray.length; i++) {
-            matArray[i] = mat4.create();
-        }
-        getPose(jwModelAnim.anim, jwModel.skeleton, 0.00001, mat4.create(), mat4.create(), matArray);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.normalMap);
 
-        // gl.uniformMatrix4fv(this.boneMatrixUniform, gl.FALSE, flat(matArray));
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this.metallicMap);
 
-        for (var i = 0; i < jwModel.boneCount; i++) {
-            gl.uniformMatrix4fv(this.boneMatrixUniform[i], gl.FALSE, matArray[i]);
-        }
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this.roughnessMap);
+
+        gl.activeTexture(gl.TEXTURE4);
+        gl.bindTexture(gl.TEXTURE_2D, this.aoMap);
+
+        gl.uniformMatrix4fv(this.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
 
         gl.bindVertexArray(this.vao);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
@@ -442,9 +432,9 @@ var sceneOne = {
     },
 
     update: function () {
-        this.angleCube += 0.01;
-        if (this.angleCube >= 360.0) {
-            this.angleCube = 0.0;
+        this.t += 1;
+        if (this.t >= jwAnim.length) {
+            this.t = 0.0;
             // return true;
         }
         return false;
