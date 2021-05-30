@@ -16,7 +16,7 @@ var sceneOne = {
     texAnim: 0,
     samplerUniform: 0,
 
-    boneMatrixUniform: 0,
+    boneMatrixUniform: new Array(100),
 
     enableLightUniform: 0,
     lightPositionUniform: 0,
@@ -43,11 +43,11 @@ var sceneOne = {
             "#version 300 es \n" +
             "precision highp int;" +
 
-            "in vec4  vPosition; \n" +
-            "in vec3  vNormal; \n" +
-            "in vec2  vTexcoord; \n" +
-            "in ivec4 vBoneIDs; \n" +
-            "in vec4  vBoneWeights; \n" +
+            "in vec4 vPosition; \n" +
+            "in vec3 vNormal; \n" +
+            "in vec2 vTexcoord; \n" +
+            "in vec4 vBoneIDs; \n" +
+            "in vec4 vBoneWeights; \n" +
 
             "uniform mat4 u_modelMatrix; \n" +
             "uniform mat4 u_viewMatrix; \n" +
@@ -61,10 +61,10 @@ var sceneOne = {
             "void main (void) \n" +
             "{ \n" +
             "	mat4 boneTransform; \n" +
-            "	boneTransform  = vBoneWeights.x * u_boneMatrix[vBoneIDs.x]; \n" +
-            "	boneTransform += vBoneWeights.y * u_boneMatrix[vBoneIDs.y]; \n" +
-            "	boneTransform += vBoneWeights.z * u_boneMatrix[vBoneIDs.z]; \n" +
-            "	boneTransform += vBoneWeights.w * u_boneMatrix[vBoneIDs.w]; \n" +
+            "	boneTransform  = vBoneWeights.x * u_boneMatrix[int(round(vBoneIDs.x))]; \n" +
+            "	boneTransform += vBoneWeights.y * u_boneMatrix[int(round(vBoneIDs.y))]; \n" +
+            "	boneTransform += vBoneWeights.z * u_boneMatrix[int(round(vBoneIDs.z))]; \n" +
+            "	boneTransform += vBoneWeights.w * u_boneMatrix[int(round(vBoneIDs.w))]; \n" +
 
             "	vec4 tPosition = boneTransform * vPosition; \n " +
             "	vec3 tNormal   = (boneTransform * vec4(vNormal, 0.0)).xyz; \n " +
@@ -261,7 +261,9 @@ var sceneOne = {
         this.vUniform = gl.getUniformLocation(this.shaderProgramObject, "u_viewMatrix");
         this.pUniform = gl.getUniformLocation(this.shaderProgramObject, "u_projectionMatrix");
 
-        this.boneMatrixUniform = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix");
+        for (var i = 0; i < 100; i++) {
+            this.boneMatrixUniform[i] = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix[" + i + "]");
+        }
 
         this.samplerUniform = gl.getUniformLocation(this.shaderProgramObject, "albedoMap");
 
@@ -303,9 +305,10 @@ var sceneOne = {
             16 * 4, 6 * 4); // stride and offset
         gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0);
 
-        gl.vertexAttribIPointer(WebGLMacros.AMC_ATTRIBUTE_BONEIDS,
+        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_BONEIDS,
             4, //
-            gl.INT,
+            gl.FLOAT,
+            false,
             16 * 4, 8 * 4); // stride and offset
         gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_BONEIDS);
 
@@ -399,8 +402,8 @@ var sceneOne = {
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0))
-        //mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
+        // mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0))
+        // mat4.rotateZ(modelMatrix, modelMatrix, toRadians(this.angleCube));
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
         viewMatrix = camera.getViewMatrix();
@@ -410,10 +413,10 @@ var sceneOne = {
         gl.uniformMatrix4fv(this.pUniform, false, this.perspectiveProjectionMatrix);
 
 
-        if (this.bLight == true)
-            gl.uniform1i(this.enableLightUniform, 1);
-        else
-            gl.uniform1i(this.enableLightUniform, 0);
+        // if (this.bLight == true)
+        //     gl.uniform1i(this.enableLightUniform, 1);
+        // else
+        //     gl.uniform1i(this.enableLightUniform, 0);
 
         // bind with textures
         gl.bindTexture(gl.TEXTURE_2D, this.texDiff);
@@ -423,9 +426,14 @@ var sceneOne = {
         for (var i = 0; i < matArray.length; i++) {
             matArray[i] = mat4.create();
         }
-        //getPose(jwModelAnim.anim, jwModel.skeleton, 0.011, mat4.create(), mat4.create(), matArray);
+        getPose(jwModelAnim.anim, jwModel.skeleton, 0.00001, mat4.create(), mat4.create(), matArray);
 
-        gl.uniformMatrix4fv(this.boneMatrixUniform, gl.FALSE, flat(matArray));
+        // gl.uniformMatrix4fv(this.boneMatrixUniform, gl.FALSE, flat(matArray));
+
+        for (var i = 0; i < jwModel.boneCount; i++) {
+            gl.uniformMatrix4fv(this.boneMatrixUniform[i], gl.FALSE, matArray[i]);
+        }
+
         gl.bindVertexArray(this.vao);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
         gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_INT, 0);

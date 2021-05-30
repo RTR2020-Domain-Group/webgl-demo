@@ -33,7 +33,7 @@ function getPose(animData, skeleton, time, parentTransform, globalInverseTransfo
 
     if (btt.positions.length != 0) {
         // calculate interpolated position
-        fp = getTimeFraction(btt.positionsTime, dt);
+        var fp = getTimeFraction(btt.positionsTime, dt);
         var position1 = btt.positions[fp[0] - 1];
         var position2 = btt.positions[fp[0]];
         var position = vec3.create();
@@ -67,7 +67,6 @@ function getPose(animData, skeleton, time, parentTransform, globalInverseTransfo
 
     // update value for child bones
     for (var i = 0; i < skeleton.childs.length; i++) {
-        if (skeleton.childs[i].id && skeleton.childs[i].id != 0)
-            getPose(animData, skeleton.childs[i], dt, globalTransform, globalInverseTransform, output);
+        getPose(animData, skeleton.childs[i], dt, globalTransform, globalInverseTransform, output);
     }
 }
