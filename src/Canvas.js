@@ -16,7 +16,7 @@ const WebGLMacros = {
     AMC_ATTRIBUTE_NORMAL: 2,
     AMC_ATTRIBUTE_TEXCOORD0: 3,
     AMC_ATTRIBUTE_BONEIDS: 4,
-	AMC_ATTRIBUTE_BONEWEIGHTS: 5,
+    AMC_ATTRIBUTE_BONEWEIGHTS: 5,
 };
 
 // to start animation: to have requestAnimatiomFrame() to be called "cross-browser" compatible
@@ -116,6 +116,11 @@ function init() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
+    // init all shaders
+    if (!initShaders()) {
+        console.log("initShaders() failed...");
+    }
+
     // add scenes
     addScene(sceneOne);
     addScene(sceneTwo);
@@ -176,6 +181,10 @@ function update() {
 function uninitialize() {
     // uninit all scenes
     uninitScenes();
+
+    // uninit all shaders
+    uninitShaders();
+
     window.close();
 }
 

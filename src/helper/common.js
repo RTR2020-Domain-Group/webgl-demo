@@ -8,7 +8,7 @@ function toRadians(angle) {
 function flat(arr) {
     var a = [];
     for (var i = 0; i < arr.length; i++) {
-        for (var j = 0 ; j < 16; j++)
+        for (var j = 0; j < 16; j++)
             a.push(arr[i][j]);
     }
     return a;
