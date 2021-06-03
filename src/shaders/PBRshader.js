@@ -1,8 +1,6 @@
 const PBRshader = {
     program: 0,
-    uniforms: {
-
-    },
+    uniforms: {},
 
     init: function () {
         // vertex shader
