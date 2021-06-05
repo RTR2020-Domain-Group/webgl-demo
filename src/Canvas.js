@@ -202,7 +202,7 @@ function keyDown(event) {
             toggleFullsreen();
             break;
 
-        case 76:
+        case 76: // for 'L' and 'l'
             camera.print();
             break;
 

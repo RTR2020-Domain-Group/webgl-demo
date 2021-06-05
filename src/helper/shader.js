@@ -1,5 +1,6 @@
 // init all shaders
 function initShaders() {
+    if (!TextureShader.init()) return false;
     if (!PBRshader.init()) return false;
 
     return true;
@@ -7,5 +8,6 @@ function initShaders() {
 
 // uninit all shaders
 function uninitShaders() {
+    TextureShader.uninit();
     PBRshader.uninit();
 }

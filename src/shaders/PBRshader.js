@@ -1,8 +1,6 @@
 const PBRshader = {
     program: 0,
-    uniforms: {
-
-    },
+    uniforms: {},
 
     init: function () {
         // vertex shader
@@ -201,21 +199,21 @@ const PBRshader = {
         }
 
         // shader program 
-        this.shaderProgramObject = gl.createProgram();
-        gl.attachShader(this.shaderProgramObject, vertexShaderObject);
-        gl.attachShader(this.shaderProgramObject, fragmentShaderObject);
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vertexShaderObject);
+        gl.attachShader(this.program, fragmentShaderObject);
 
         // pre-linking binding of shader program object with vertex shader attributes
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_NORMAL, "vNormal");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_BONEIDS, "vBoneIDs");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS, "vBoneWeights");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_NORMAL, "vNormal");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_BONEIDS, "vBoneIDs");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS, "vBoneWeights");
 
         // linking
-        gl.linkProgram(this.shaderProgramObject);
-        if (!gl.getProgramParameter(this.shaderProgramObject, gl.LINK_STATUS)) {
-            var error = gl.getProgramInfoLog(this.shaderProgramObject);
+        gl.linkProgram(this.program);
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+            var error = gl.getProgramInfoLog(this.program);
             if (error.length > 0) {
                 alert("PBR shader " + error);
                 return false;
@@ -223,22 +221,22 @@ const PBRshader = {
         }
 
         // get unifrom locations
-        this.uniforms.mUniform = gl.getUniformLocation(this.shaderProgramObject, "u_modelMatrix");
-        this.uniforms.vUniform = gl.getUniformLocation(this.shaderProgramObject, "u_viewMatrix");
-        this.uniforms.pUniform = gl.getUniformLocation(this.shaderProgramObject, "u_projectionMatrix");
+        this.uniforms.mUniform = gl.getUniformLocation(this.program, "u_modelMatrix");
+        this.uniforms.vUniform = gl.getUniformLocation(this.program, "u_viewMatrix");
+        this.uniforms.pUniform = gl.getUniformLocation(this.program, "u_projectionMatrix");
 
-        this.uniforms.boneMatrixUniform = gl.getUniformLocation(this.shaderProgramObject, "u_boneMatrix");
+        this.uniforms.boneMatrixUniform = gl.getUniformLocation(this.program, "u_boneMatrix");
 
-        var albedoUniform = gl.getUniformLocation(this.shaderProgramObject, "albedoMap");
-        var normalUniform = gl.getUniformLocation(this.shaderProgramObject, "normalMap");
-        var metallicUniform = gl.getUniformLocation(this.shaderProgramObject, "metallicMap");
-        var roughnessUniform = gl.getUniformLocation(this.shaderProgramObject, "roughnessMap");
-        var aoUniform = gl.getUniformLocation(this.shaderProgramObject, "aoMap");
+        var albedoUniform = gl.getUniformLocation(this.program, "albedoMap");
+        var normalUniform = gl.getUniformLocation(this.program, "normalMap");
+        var metallicUniform = gl.getUniformLocation(this.program, "metallicMap");
+        var roughnessUniform = gl.getUniformLocation(this.program, "roughnessMap");
+        var aoUniform = gl.getUniformLocation(this.program, "aoMap");
 
-        this.uniforms.lightPositionUniform = gl.getUniformLocation(this.shaderProgramObject, "lightPosition");
-        this.uniforms.lightColorUniform = gl.getUniformLocation(this.shaderProgramObject, "lightColor");
+        this.uniforms.lightPositionUniform = gl.getUniformLocation(this.program, "lightPosition");
+        this.uniforms.lightColorUniform = gl.getUniformLocation(this.program, "lightColor");
 
-        gl.useProgram(this.shaderProgramObject);
+        gl.useProgram(this.program);
 
         // set material related texture uniforms
         gl.uniform1i(albedoUniform, 0);
@@ -252,11 +250,15 @@ const PBRshader = {
     },
 
     uninit: function () {
-        gl.deleteProgram(this.shaderProgramObject);
+        var shaders = gl.getAttachedShaders(this.program);
+        for (var i = 0; i < shaders.size(); i += 1) {
+            gl.deleteShader(shaders[i]);
+        }
+        gl.deleteProgram(this.program);
     },
 
     use: function () {
-        gl.useProgram(this.shaderProgramObject);
+        gl.useProgram(this.program);
         return this.uniforms;
     }
 };
