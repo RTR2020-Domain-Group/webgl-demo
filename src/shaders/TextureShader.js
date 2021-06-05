@@ -60,18 +60,18 @@ const TextureShader = {
         }
 
         // shader program 
-        this.shaderProgramObject = gl.createProgram();
-        gl.attachShader(this.shaderProgramObject, vertexShaderObject);
-        gl.attachShader(this.shaderProgramObject, fragmentShaderObject);
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vertexShaderObject);
+        gl.attachShader(this.program, fragmentShaderObject);
 
         // pre-linking binding of shader program object with vertex shader attributes
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
-        gl.bindAttribLocation(this.shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
 
         // linking
-        gl.linkProgram(this.shaderProgramObject);
-        if (!gl.getProgramParameter(this.shaderProgramObject, gl.LINK_STATUS)) {
-            var error = gl.getProgramInfoLog(this.shaderProgramObject);
+        gl.linkProgram(this.program);
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+            var error = gl.getProgramInfoLog(this.program);
             if (error.length > 0) {
                 alert("Texture shader " + error);
                 return false;
@@ -79,17 +79,17 @@ const TextureShader = {
         }
 
         // post-linking get uniform location
-        this.uniforms.sampler = gl.getUniformLocation(this.shaderProgramObject, "uSampler");
+        this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
 
         return true;
     },
 
     uninit: function () {
-        gl.deleteProgram(this.shaderProgramObject);
+        gl.deleteProgram(this.program);
     },
 
     use: function () {
-        gl.useProgram(this.shaderProgramObject);
+        gl.useProgram(this.program);
         return this.uniforms;
     }
 };
