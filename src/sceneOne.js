@@ -1,6 +1,6 @@
 var sceneOne = {
-    vaoCube: 0,
-    vboCube: 0,
+    vao: 0,
+    vbo: 0,
     vboElement: 0,
 
     albedoMap: 0,
@@ -8,6 +8,9 @@ var sceneOne = {
     metallicMap: 0,
     roughnessMap: 0,
     aoMap: 0,
+
+    johnny: 0,
+    bottles: 0,
 
     perspectiveProjectionMatrix: mat4.create(),
 
@@ -25,66 +28,8 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        // pyramid Position
-        var cubeVertices = new Float32Array(jwModel.vertex);
-        var cubeIndices = new Uint32Array(jwModel.index);
-        this.numElements = jwModel.index.length;
-
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
-
-        this.vbo = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
-        gl.bufferData(gl.ARRAY_BUFFER, cubeVertices, gl.STATIC_DRAW);
-
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_VERTEX,
-            3, // 3 for x,y,z axes in vertex array
-            gl.FLOAT,
-            false, // is normalized?
-            16 * 4, 0 * 4); // stride and offset
-        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_VERTEX);
-
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_NORMAL,
-            3, // 3 for x,y,z axes in vertex array
-            gl.FLOAT,
-            false, // is normalized?
-            16 * 4, 3 * 4); // stride and offset
-        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_NORMAL);
-
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0,
-            2, // 2 for s,t axes in vertex array
-            gl.FLOAT,
-            false, // is normalized?
-            16 * 4, 6 * 4); // stride and offset
-        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0);
-
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_BONEIDS,
-            4, //
-            gl.FLOAT,
-            false,
-            16 * 4, 8 * 4); // stride and offset
-        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_BONEIDS);
-
-        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS,
-            4, // 
-            gl.FLOAT,
-            false, // is normalized?
-            16 * 4, 12 * 4); // stride and offset
-        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_BONEWEIGHTS);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-        this.vboElement = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeIndices, gl.STATIC_DRAW);
-
-        gl.bindVertexArray(null);
-
-        this.albedoMap = loadTexture("res/johnny/albedo.png");
-        this.normalMap = loadTexture("res/johnny/normal.png");
-        this.metallicMap = loadTexture("res/johnny/metallic.png");
-        this.roughnessMap = loadTexture("res/johnny/roughness.png");
-        this.aoMap = loadTexture("res/johnny/ao.png");
+        johnny = loadModel(jwModel, "res/johnny");
+        bottles = loadModel(bottlesModel, "res/bottles");
     },
 
     uninit: function () {
@@ -141,33 +86,32 @@ var sceneOne = {
 
         viewMatrix = camera.getViewMatrix();
 
+        // var u = PBRStaticShader.use();
         var u = PBRshader.use();
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-
-        // bind with textures
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.albedoMap);
-
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.normalMap);
-
-        gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(gl.TEXTURE_2D, this.metallicMap);
-
-        gl.activeTexture(gl.TEXTURE3);
-        gl.bindTexture(gl.TEXTURE_2D, this.roughnessMap);
-
-        gl.activeTexture(gl.TEXTURE4);
-        gl.bindTexture(gl.TEXTURE_2D, this.aoMap);
-
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
 
-        gl.bindVertexArray(this.vao);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
-        gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_INT, 0);
-        gl.bindVertexArray(null);
+        johnny.draw();
+        gl.useProgram(null);
+
+        u = PBRStaticShader.use();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [4.0, 4.0, 4.0]);
+        // mat4.multiply(modelMatrix, modelMatrix, jwAnim[this.t].slice((45*16),(46*16)));
+
+        var m = mat4.create();
+        mat4.scale(m, m, [10.0, 10.0, 10.0]);
+
+        gl.uniformMatrix4fv(u.boneUniform, false, m);
+        // gl.uniformMatrix4fv(u.boneUniform, false, jwAnim[this.t].slice((23 * 16), (24 * 16)));
+        //gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+        bottles.draw();
         gl.useProgram(null);
     },
 
@@ -180,3 +124,6 @@ var sceneOne = {
         return false;
     },
 }
+
+// 45 bone id for right hand bottles tracking
+//
