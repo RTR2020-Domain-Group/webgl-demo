@@ -7,7 +7,7 @@ const RIGHT = 3;
 // camera default values
 const CAMERA_YAW = -90.0;
 const CAMERA_PITCH = 0.0;
-const CAMERA_SPEED = 1.5;
+const CAMERA_SPEED = 1.0;
 const CAMERA_SENSITIVITY = 0.25;
 const CAMERA_ZOOM = 10.0;
 
@@ -59,6 +59,12 @@ const camera = {
         vec3.add(v, this.Position, this.Front)
 
         return mat4.lookAt(m, this.Position, v, this.Up);
+    },
+
+    getViewMatrixNoTranslate: function () {
+        var vMat = this.getViewMatrix();
+        vMat[12] = vMat[13] = vMat[14] = 0.0;
+        return vMat;
     },
 
     processKeyboard: function (dir) {

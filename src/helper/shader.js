@@ -3,6 +3,7 @@ function initShaders() {
     if (!TextureShader.init()) return false;
     if (!PBRshader.init()) return false;
     if (!PBRStaticShader.init()) return false;
+    if (!SkyboxShader.init()) return false;
     if (!CreditsShader.init()) return false;
 
     return true;
@@ -10,6 +11,7 @@ function initShaders() {
 
 // uninit all shaders
 function uninitShaders() {
+    SkyboxShader.uninit();
     TextureShader.uninit();
     PBRshader.uninit();
     PBRStaticShader.uninit();

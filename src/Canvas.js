@@ -5,8 +5,10 @@ var bFullscreen = false;
 var canvas_original_height;
 var canvas_original_width;
 
-var prevMouseX = 0, prevMouseY = 0;
-var mouseX = 0, mouseY = 0;
+var prevMouseX = 0,
+    prevMouseY = 0;
+var mouseX = 0,
+    mouseY = 0;
 var firstMouse = true;
 
 // all inside this are const, as this is const
@@ -31,20 +33,22 @@ var requestAnimationFrame =
 // to stop animation: to have cancelAnimationFrame() to be called "cross-browser" compatible
 var cancelAnimationFrame =
     window.cancelAnimationFrame ||
-    window.webkitCancelAnimationFrame || window.webkitCancelAnimationFrame ||
-    window.mozCancelRequestAnimationFrame || window.mozCancelAnimationFrame ||
-    window.oCancelRequestAnimationFrame || window.oCancelAnimationFrame ||
-    window.msCancelRequestAnimationFrame || window.msCancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelRequestAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelRequestAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.msCancelRequestAnimationFrame ||
+    window.msCancelAnimationFrame ||
     null;
 
 // onload function
 function main() {
     // get canvas element
     canvas = document.getElementById("AMC");
-    if (!canvas)
-        console.log("Obtaining canvas failed..");
-    else
-        console.log("Obtaining canvas successful..");
+    if (!canvas) console.log("Obtaining canvas failed..");
+    else console.log("Obtaining canvas successful..");
 
     canvas_original_width = canvas.width;
     canvas_original_height = canvas.height;
@@ -74,25 +78,17 @@ function toggleFullsreen() {
 
     // if not fullscreen
     if (fullscreen_element == null) {
-        if (canvas.requestFullscreen)
-            canvas.requestFullscreen();
-        else if (canvas.mozRequestFullScreen)
-            canvas.mozRequestFullScreen();
-        else if (canvas.webkitRequestFullscreen)
-            canvas.webkitRequestFullscreen();
-        else if (canvas.msRequestFullscreen)
-            canvas.msRequestFullscreen();
+        if (canvas.requestFullscreen) canvas.requestFullscreen();
+        else if (canvas.mozRequestFullScreen) canvas.mozRequestFullScreen();
+        else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+        else if (canvas.msRequestFullscreen) canvas.msRequestFullscreen();
         bFullscreen = true;
-    }
-    else { // if already fullscreen
-        if (document.exitFullscreen)
-            document.exitFullscreen();
-        else if (document.mozCancelFullScreen)
-            document.mozCancelFullScreen();
-        else if (document.webkitExitFullscreen)
-            document.webkitExitFullscreen();
-        else if (document.msExitFullscreen)
-            document.msExitFullscreen();
+    } else {
+        // if already fullscreen
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
         bFullscreen = false;
     }
 }
@@ -115,8 +111,8 @@ function init() {
     // enable depth
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-    gl.enable(gl.BLEND);   
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // init all shaders
     if (!initShaders()) {
@@ -129,7 +125,7 @@ function init() {
     audioWAV.play();
 
     // add scenes
-    addScene(sceneIntro);
+    // addScene(sceneIntro);
     addScene(sceneOne);
     addScene(sceneCredits);
 
@@ -137,23 +133,19 @@ function init() {
     initScenes();
 
     // init camera
-    camera.init(
-        vec3.fromValues(0.0, 0.0, 0.0),
-        vec3.fromValues(0.0, 1.0, 0.0));
+    camera.init(vec3.fromValues(0.0, 0.0, 0.0), vec3.fromValues(0.0, 1.0, 0.0));
 
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
-
 }
 
 function resize() {
-    // code 
+    // code
     if (bFullscreen == true) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         console.log("full with " + canvas.width + " " + canvas.height);
-    }
-    else {
+    } else {
         canvas.width = canvas_original_width;
         canvas.height = canvas_original_height;
     }
@@ -185,7 +177,6 @@ function update() {
     }
 }
 
-
 function uninitialize() {
     // uninit all scenes
     uninitScenes();
@@ -198,7 +189,7 @@ function uninitialize() {
 
 function keyDown(event) {
     // code
-    console.log('Key', event.key, event.keyCode)
+    console.log("Key", event.key, event.keyCode);
     switch (event.keyCode) {
         case 27: // escape
             uninitialize();

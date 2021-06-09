@@ -15,6 +15,7 @@ var sceneOne = {
     perspectiveProjectionMatrix: mat4.create(),
 
     bLight: false,
+    bLoadSkybox: false,
     t: 0,
     numElements: 0,
 
@@ -79,6 +80,44 @@ var sceneOne = {
 
     display: function () {
 
+        gl.useProgram(SkyboxShader.shaderProgramObject);
+
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
+
+        var skyboxModelViewMatrix = mat4.create();
+        var skyboxModelViewProjectionMatrix = mat4.create();
+
+        mat4.translate(modelMatrix, modelMatrix, [0.0, 1.0, 0.0]);
+        mat4.translate(skyboxModelViewMatrix, skyboxModelViewMatrix, [0.0, 0.0, -3.5]);
+
+        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, camera.getViewMatrixNoTranslate());
+        gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
+
+        //TODO: (RRB) This is hack and confusing code change, we need to use something else if we get bandwidth
+        if (SkyboxShader.gct == 6 && !this.bLoadSkybox) {
+            this.bLoadSkybox = true;
+            SkyboxShader.generateSkybox();
+        }
+
+        if (SkyboxShader.skybox_texture && this.bLoadSkybox) {
+            gl.depthMask(false);
+            gl.bindVertexArray(SkyboxShader.gVao);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+            gl.bindVertexArray(null);
+
+            gl.depthMask(true);
+        }
+
+
+        gl.useProgram(null);
+
+
+
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
@@ -111,21 +150,23 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        bottles.draw();
+        //bottles.draw();
         gl.useProgram(null);
+
+
+
     },
 
     update: function () {
         this.t += 1;
         if (this.t >= jwAnim.length) {
             this.t = 0.0;
-           // return true;
+            // return true;
         }
 
-        if(this.t >= 100)
-        {
-            return true;
-		}
+        if (this.t >= 100) {
+            // return true;
+        }
         return false;
     },
 }
