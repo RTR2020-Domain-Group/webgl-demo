@@ -115,15 +115,23 @@ function init() {
     // enable depth
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
+    gl.enable(gl.BLEND);   
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // init all shaders
     if (!initShaders()) {
         console.log("initShaders() failed...");
     }
 
+    //audio
+    var audioWAV = document.createElement("audio");
+    audioWAV.src = "res/audio/SarJoTeraChakraye.wav";
+    audioWAV.play();
+
     // add scenes
+    addScene(sceneIntro);
     addScene(sceneOne);
-    addScene(sceneTwo);
+    addScene(sceneCredits);
 
     // init all scenes
     initScenes();
