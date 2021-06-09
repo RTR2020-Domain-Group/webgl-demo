@@ -7,7 +7,7 @@ const RIGHT = 3;
 // camera default values
 const CAMERA_YAW = -90.0;
 const CAMERA_PITCH = 0.0;
-const CAMERA_SPEED = 1.5;
+const CAMERA_SPEED = 1.0;
 const CAMERA_SENSITIVITY = 0.25;
 const CAMERA_ZOOM = 10.0;
 

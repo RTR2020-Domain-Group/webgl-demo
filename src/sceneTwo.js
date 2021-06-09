@@ -285,14 +285,33 @@ var sceneTwo = {
     },
 
     display: function () {
-        gl.useProgram(this.shaderProgramObject);
+        gl.useProgram(SkyboxShader.shaderProgramObject);
 
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
+        
+        var skyboxModelViewMatrix = mat4.create();
+        var skyboxModelViewProjectionMatrix = mat4.create();
+
         mat4.translate(modelMatrix, modelMatrix, [0.0, 1.0, 0.0]);
+        mat4.translate(skyboxModelViewMatrix, skyboxModelViewMatrix, [0.0, 0.0, -3.5]);
 
-        viewMatrix = camera.getViewMatrix();
+        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, skyboxModelViewMatrix);
+        gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
 
+        gl.depthMask(gl.FALSE);
+        gl.bindVertexArray(SkyboxShader.gVao);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
+
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 36);
+        
+        gl.bindVertexArray(null);
+
+        gl.depthMask(gl.TRUE);
+
+        /*viewMatrix = camera.getViewMatrix();
+        
         gl.uniformMatrix4fv(this.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(this.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(this.pUniform, false, this.perspectiveProjectionMatrix);
@@ -320,8 +339,14 @@ var sceneTwo = {
         gl.bindVertexArray(this.vao);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboElement);
         gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_INT, 0);
-        gl.bindVertexArray(null);
+        gl.bindVertexArray(null);*/
+
+
+
         gl.useProgram(null);
+
+
+
     },
 
     update: function () {

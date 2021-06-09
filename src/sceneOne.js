@@ -29,7 +29,7 @@ var sceneOne = {
         gl.useProgram(null);
 
         johnny = loadModel(jwModel, "res/johnny");
-        bottles = loadModel(bottlesModel, "res/bottles");
+        //bottles = loadModel(bottlesModel, "res/bottles");
     },
 
     uninit: function () {
@@ -79,7 +79,39 @@ var sceneOne = {
 
     display: function () {
 
+        gl.useProgram(SkyboxShader.shaderProgramObject);
+
         var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
+        
+        var skyboxModelViewMatrix = mat4.create();
+        var skyboxModelViewProjectionMatrix = mat4.create();
+
+        mat4.translate(modelMatrix, modelMatrix, [0.0, 1.0, 0.0]);
+        mat4.translate(skyboxModelViewMatrix, skyboxModelViewMatrix, [0.0, 0.0, -3.5]);
+
+        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, skyboxModelViewMatrix);
+        gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
+
+        if(SkyboxShader.skybox_texture) {
+            gl.depthMask(gl.FALSE);
+            gl.bindVertexArray(SkyboxShader.gVao);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            
+            gl.bindVertexArray(null);
+
+            gl.depthMask(gl.TRUE);
+        }
+        
+
+        gl.useProgram(null);
+
+
+
+       /* var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
@@ -111,8 +143,11 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        bottles.draw();
-        gl.useProgram(null);
+        //bottles.draw();
+        gl.useProgram(null);*/
+
+
+
     },
 
     update: function () {
