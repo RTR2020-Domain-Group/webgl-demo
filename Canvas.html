@@ -1,40 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!--head-->
-    <head>
-        <meta charset="UTF-8"/>
-        <title>Sar jo te chakraye</title>
-    </head>
+<!--head-->
 
-    <!--body-->
-    <body onload="main()">
-        <canvas id="AMC" width="1920" height="1080">
-            Your browser does not support HTML5 Canvas Element..
-        </canvas>
+<head>
+    <meta charset="UTF-8" />
+    <title>Sar Jo Tera Chakraye</title>
+</head>
 
-        <!--scripts-->
-        <script src="lib/gl-matrix-min.js"></script>
-        <script src="src/helper/common.js"></script>
-        <script src="src/helper/camera.js"></script>
-        <script src="src/helper/model.js"></script>
-        <script src="src/helper/shader.js"></script>
-        <script src="src/helper/Scene.js"></script>
+<!--body-->
 
-        <!-- shaders -->
-        <script src="src/shaders/TextureShader.js"></script>
-        <script src="src/shaders/PBRshader.js"></script>
-        <script src="src/shaders/PBRStaticShader.js"></script>
-        <script src="src/shaders/SkyboxShader.js"></script>
+<body onload="main()">
+    <canvas id="AMC" width="1920" height="1080">
+        Your browser does not support HTML5 Canvas Element..
+    </canvas>
 
-        <!--models-->
-        <script src="res/johnny/jwModel.js"></script>
-        <script src="res/johnny/jwAnim.js"></script>
-        <script src="res/bottles/bottlesModel.js"></script>
-        
-        <!--scenes-->
-        <script src="src/sceneOne.js"></script>
-        <script src="src/sceneTwo.js"></script>
+    <!--scripts-->
+    <script src="lib/gl-matrix-min.js"></script>
+    <script src="src/helper/common.js"></script>
+    <script src="src/helper/camera.js"></script>
+    <script src="src/helper/model.js"></script>
+    <script src="src/helper/shader.js"></script>
+    <script src="src/helper/Scene.js"></script>
 
-        <script src="src/Canvas.js"></script>
-    </body>
+    <!-- shaders -->
+    <script src="src/shaders/TextureShader.js"></script>
+    <script src="src/shaders/PBRshader.js"></script>
+    <script src="src/shaders/PBRStaticShader.js"></script>
+    <script src="src/shaders/SkyboxShader.js"></script>
+    <script src="src/shaders/CreditsShader.js"></script>
+
+    <!--models-->
+    <script src="res/models/johnny/jwModel.js"></script>
+    <script src="res/models/johnny/jwAnim.js"></script>
+    <script src="res/models/bottles/bottlesModel.js"></script>
+
+    <!--scenes-->
+    <script src="src/sceneIntro.js"></script>
+    <script src="src/sceneOne.js"></script>
+    <script src="src/sceneCredits.js"></script>
+
+    <script src="src/Canvas.js"></script>
+</body>
+
 </html>

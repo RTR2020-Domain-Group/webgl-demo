@@ -61,6 +61,12 @@ const camera = {
         return mat4.lookAt(m, this.Position, v, this.Up);
     },
 
+    getViewMatrixNoTranslate: function () {
+        var vMat = this.getViewMatrix();
+        vMat[12] = vMat[13] = vMat[14] = 0.0;
+        return vMat;
+    },
+
     processKeyboard: function (dir) {
         if (dir == FORWARD) {
             vec3.add(this.Position, this.Position, this.Front);

@@ -29,8 +29,8 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        johnny = loadModel(jwModel, "res/johnny");
-        bottles = loadModel(bottlesModel, "res/bottles");
+        johnny = loadModel(jwModel, "res/models/johnny");
+        bottles = loadModel(bottlesModel, "res/models/bottles");
     },
 
     uninit: function () {
@@ -84,41 +84,41 @@ var sceneOne = {
 
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
-        
+
         var skyboxModelViewMatrix = mat4.create();
         var skyboxModelViewProjectionMatrix = mat4.create();
 
         mat4.translate(modelMatrix, modelMatrix, [0.0, 1.0, 0.0]);
         mat4.translate(skyboxModelViewMatrix, skyboxModelViewMatrix, [0.0, 0.0, -3.5]);
 
-        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, skyboxModelViewMatrix);
+        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, camera.getViewMatrixNoTranslate());
         gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
-        
+
         //TODO: (RRB) This is hack and confusing code change, we need to use something else if we get bandwidth
-        if(SkyboxShader.gct == 6 && !this.bLoadSkybox) {
+        if (SkyboxShader.gct == 6 && !this.bLoadSkybox) {
             this.bLoadSkybox = true;
             SkyboxShader.generateSkybox();
         }
 
-        if(SkyboxShader.skybox_texture && this.bLoadSkybox) {
+        if (SkyboxShader.skybox_texture && this.bLoadSkybox) {
             gl.depthMask(false);
             gl.bindVertexArray(SkyboxShader.gVao);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
 
             gl.drawArrays(gl.TRIANGLES, 0, 36);
-            
+
             gl.bindVertexArray(null);
 
             gl.depthMask(true);
         }
-        
+
 
         gl.useProgram(null);
 
 
 
-       var modelMatrix = mat4.create();
+        var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
@@ -138,7 +138,7 @@ var sceneOne = {
         u = PBRStaticShader.use();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.scale(modelMatrix, modelMatrix, [4.0, 4.0, 4.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         // mat4.multiply(modelMatrix, modelMatrix, jwAnim[this.t].slice((45*16),(46*16)));
 
         var m = mat4.create();
@@ -161,6 +161,10 @@ var sceneOne = {
         this.t += 1;
         if (this.t >= jwAnim.length) {
             this.t = 0.0;
+            // return true;
+        }
+
+        if (this.t >= 100) {
             // return true;
         }
         return false;
