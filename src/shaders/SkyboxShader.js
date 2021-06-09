@@ -20,6 +20,9 @@ const SkyboxShader = {
     skybox_top_texture:0,
     skybox_bottom_texture:0,
 
+    gct:0,
+    img:0,
+
     init : function() {
 
         /**
@@ -152,15 +155,14 @@ const SkyboxShader = {
         gl.bindVertexArray(this.gVao);
 
         this.gVboPositon = gl.createBuffer();
-        gl.bindBuffer(this.shaderProgramObject, this.gVboPositon);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.gVboPositon);
         gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
         gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_VERTEX, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_VERTEX);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindVertexArray(null);
         
-        //Texture code        
-
+        //Texture code
         this.loadTextureCube();
         /*var textures = new Array(6);
         
@@ -207,47 +209,46 @@ const SkyboxShader = {
     use: function () {
         gl.useProgram(this.shaderProgramObject);
         return this.uniforms;
-    },
-    
+    },    
 
-    loadTextureCube : function() {
-        var ct = 0;
-        var img = new Array(6);
-        this.skybox_texture = gl.createTexture();
+    loadTextureCube : function () {                
+        this.gct = 0;
+        this.img = new Array(6);
+        //this.skybox_texture = gl.createTexture();
         var urls = [
             "res/skybox/right.png", "res/skybox/left.png", 
             "res/skybox/top.png", "res/skybox/bottom.png", 
             "res/skybox/front.png", "res/skybox/back.png"
         ];
         for (var i = 0; i < 6; i++) {
-            img[i] = new Image();
-            img[i].onload = function() {
-                ct++;
-                if (ct == 6) {
-                    this.skybox_texture = gl.createTexture();
-                    gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.skybox_texture);
-                    var targets = [
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 
-                        gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z 
-                        ];
-                    for (var j = 0; j < 6; j++) {
-                        gl.texImage2D(targets[i], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img[j]);
-                        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-                        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-                        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-                        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
-
-                        
-                        
-                    }
-                    //gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-                    //draw();
-                }
-            }
-            img[i].src = urls[i];
+            this.img[i] = new Image();
+            this.img[i].src = urls[i];
+            this.img[i].onload = function() {
+                if(!SkyboxShader.gct)
+                    SkyboxShader.gct = 0;  
+                SkyboxShader.gct++;                
+            }            
         }
+    },
+
+    generateSkybox : function() {
+        this.skybox_texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.skybox_texture);
+        var targets = [
+            gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 
+            gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 
+            gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z 
+        ];
+        for (var j = 0; j < 6; j++) {
+            gl.texImage2D(targets[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.img[j]);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);                   
+            
+        }
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
     }
 }
 

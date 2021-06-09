@@ -15,6 +15,7 @@ var sceneOne = {
     perspectiveProjectionMatrix: mat4.create(),
 
     bLight: false,
+    bLoadSkybox: false,
     t: 0,
     numElements: 0,
 
@@ -29,7 +30,7 @@ var sceneOne = {
         gl.useProgram(null);
 
         johnny = loadModel(jwModel, "res/johnny");
-        //bottles = loadModel(bottlesModel, "res/bottles");
+        bottles = loadModel(bottlesModel, "res/bottles");
     },
 
     uninit: function () {
@@ -92,9 +93,15 @@ var sceneOne = {
 
         mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, skyboxModelViewMatrix);
         gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
+        
+        //TODO: (RRB) This is hack and confusing code change, we need to use something else if we get bandwidth
+        if(SkyboxShader.gct == 6 && !this.bLoadSkybox) {
+            this.bLoadSkybox = true;
+            SkyboxShader.generateSkybox();
+        }
 
-        if(SkyboxShader.skybox_texture) {
-            gl.depthMask(gl.FALSE);
+        if(SkyboxShader.skybox_texture && this.bLoadSkybox) {
+            gl.depthMask(false);
             gl.bindVertexArray(SkyboxShader.gVao);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
@@ -103,7 +110,7 @@ var sceneOne = {
             
             gl.bindVertexArray(null);
 
-            gl.depthMask(gl.TRUE);
+            gl.depthMask(true);
         }
         
 
@@ -111,7 +118,7 @@ var sceneOne = {
 
 
 
-       /* var modelMatrix = mat4.create();
+       var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
@@ -144,7 +151,7 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         //bottles.draw();
-        gl.useProgram(null);*/
+        gl.useProgram(null);
 
 
 
