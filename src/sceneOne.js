@@ -28,8 +28,8 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        johnny = loadModel(jwModel, "res/johnny");
-        bottles = loadModel(bottlesModel, "res/bottles");
+        johnny = loadModel(jwModel, "res/models/johnny");
+        bottles = loadModel(bottlesModel, "res/models/bottles");
     },
 
     uninit: function () {
@@ -99,7 +99,7 @@ var sceneOne = {
         u = PBRStaticShader.use();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.scale(modelMatrix, modelMatrix, [4.0, 4.0, 4.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         // mat4.multiply(modelMatrix, modelMatrix, jwAnim[this.t].slice((45*16),(46*16)));
 
         var m = mat4.create();
@@ -119,8 +119,13 @@ var sceneOne = {
         this.t += 1;
         if (this.t >= jwAnim.length) {
             this.t = 0.0;
-            // return true;
+           // return true;
         }
+
+        if(this.t >= 100)
+        {
+            return true;
+		}
         return false;
     },
 }
