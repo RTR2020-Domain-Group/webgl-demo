@@ -10,6 +10,7 @@ var sceneOne = {
     numElements: 0,
 
     fbo: 0,
+    noise: 0,
 
     init: function () {
 
@@ -25,6 +26,7 @@ var sceneOne = {
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
 
         this.fbo = createFramebuffer(1920, 1080);
+        this.noise = createNoiseTexture();
     },
 
     uninit: function () {
@@ -113,7 +115,11 @@ var sceneOne = {
         gl.depthMask(false);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
-        GrainShader.use();
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.noise);
+
+        var u = GrainShader.use();
+        gl.uniform2f(u.delta, Math.random(), Math.random())
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);

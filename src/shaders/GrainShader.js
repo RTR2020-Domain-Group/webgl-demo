@@ -50,14 +50,16 @@ const GrainShader = {
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uSampler; \n" +
+            "uniform sampler2D noise; \n" +
+            "uniform vec2 delta; \n" +
 
             "void main (void) \n" +
             "{ \n" +
             "	vec3 color = texture(uSampler, out_Texcoord).rgb; \n" +
-            "	float tr = min(color.r*0.393 + color.g*0.769 + color.b*0.189, 1.0); \n" +
-            "	float tg = min(color.r*0.349 + color.g*0.686 + color.b*0.168, 1.0); \n" +
-            "	float tb = min(color.r*0.272 + color.g*0.534 + color.b*0.131, 1.0); \n" +
-            "	FragColor = vec4(tr, tg, tb, 1.0); \n" +
+            "	float tr = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
+            "	float tg = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
+            "	float tb = min(color.r*0.303 + color.g*0.303 + color.b*0.303, 1.0); \n" +
+            "	FragColor =  vec4(tr, tg, tb, 1.0) * texture(noise, out_Texcoord+delta); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -89,6 +91,13 @@ const GrainShader = {
 
         // post-linking get uniform location
         this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
+        this.uniforms.noise = gl.getUniformLocation(this.program, "noise");
+        this.uniforms.delta = gl.getUniformLocation(this.program, "delta");
+
+        gl.useProgram(this.program);
+        gl.uniform1i(this.uniforms.sampler, 0);
+        gl.uniform1i(this.uniforms.noise, 1);
+        gl.useProgram(null);
 
         return true;
     },
