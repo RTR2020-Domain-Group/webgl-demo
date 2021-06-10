@@ -243,7 +243,7 @@ const PBRStaticShader = {
 
     uninit: function () {
         var shaders = gl.getAttachedShaders(this.program);
-        for (var i = 0; i < shaders.size(); i += 1) {
+        for (var i = 0; i < shaders.length; i += 1) {
             gl.deleteShader(shaders[i]);
         }
         gl.deleteProgram(this.program);

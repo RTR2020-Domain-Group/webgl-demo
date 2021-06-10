@@ -1,14 +1,4 @@
 var sceneOne = {
-    vao: 0,
-    vbo: 0,
-    vboElement: 0,
-
-    albedoMap: 0,
-    normalMap: 0,
-    metallicMap: 0,
-    roughnessMap: 0,
-    aoMap: 0,
-
     johnny: 0,
     bottles: 0,
 
@@ -18,6 +8,8 @@ var sceneOne = {
     bLoadSkybox: false,
     t: 0,
     numElements: 0,
+
+    fbo: 0,
 
     init: function () {
 
@@ -29,48 +21,14 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        johnny = loadModel(jwModel, "res/models/johnny");
-        bottles = loadModel(bottlesModel, "res/models/bottles");
+        this.johnny = loadModel(jwModel, "res/models/johnny");
+        this.bottles = loadModel(bottlesModel, "res/models/bottles");
+
+        this.fbo = createFramebuffer(1920, 1080);
     },
 
     uninit: function () {
-        gl.deleteTexture(this.albedoMap);
-        gl.deleteTexture(this.normalMap);
-        gl.deleteTexture(this.metallicMap);
-        gl.deleteTexture(this.roughnessMap);
-        gl.deleteTexture(this.aoMap);
-
-        if (this.vaoCube) {
-            gl.deleteVertexArray(this.vaoCube);
-            this.vaoCube = null;
-        }
-
-        if (this.vboCube) {
-            gl.deleteBuffer(this.vboCube);
-            this.vboCube = null;
-        }
-
-        if (this.vboElement) {
-            gl.deleteBuffer(this.vboElement);
-            this.vboElement = null;
-        }
-
-        if (this.shaderProgramObject) {
-            if (this.fragmentShaderObject) {
-                gl.detachShader(this.shaderProgramObject, this.fragmentShaderObject);
-                gl.deleteShader(this.fragmentShaderObject);
-                this.fragmentShaderObject = null;
-            }
-
-            if (this.vertexShaderObject) {
-                gl.detachShader(this.shaderProgramObject, this.vertexShaderObject);
-                gl.deleteShader(this.vertexShaderObject);
-                this.vertexShaderObject = null;
-            }
-
-            gl.deleteProgram(this.shaderProgramObject);
-            this.shaderProgramObject = null;
-        }
+        gl.deleteFramebuffer(this.fbo.FBO);
     },
 
     resize: function () {
@@ -79,6 +37,9 @@ var sceneOne = {
     },
 
     display: function () {
+        // bind FBO for post processing
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         gl.useProgram(SkyboxShader.shaderProgramObject);
 
@@ -105,18 +66,12 @@ var sceneOne = {
             gl.bindVertexArray(SkyboxShader.gVao);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
-
             gl.drawArrays(gl.TRIANGLES, 0, 36);
-
             gl.bindVertexArray(null);
-
             gl.depthMask(true);
         }
 
-
         gl.useProgram(null);
-
-
 
         var modelMatrix = mat4.create();
         var viewMatrix = mat4.create();
@@ -132,7 +87,7 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
 
-        johnny.draw();
+        this.johnny.draw();
         gl.useProgram(null);
 
         u = PBRStaticShader.use();
@@ -150,11 +105,18 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        //bottles.draw();
+        this.bottles.draw();
         gl.useProgram(null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-
-
+        // post processing
+        gl.depthMask(false);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
+        GrainShader.use();
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.useProgram(null);
+        gl.depthMask(true);
     },
 
     update: function () {

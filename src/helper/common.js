@@ -29,3 +29,35 @@ function loadTexture(img) {
     };
     return tex;
 }
+
+// create framebuffer with one color and one depth attachment
+function createFramebuffer(width, height) {
+    var fb = {};
+
+    fb.FBO = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb.FBO);
+
+    fb.texColor = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, fb.texColor);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fb.texColor, 0);
+
+    fb.texDepth = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, fb.texDepth);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, fb.texDepth);
+    var attachments = [gl.COLOR_ATTACHMENT0];
+    gl.drawBuffers(attachments);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        alert('Framebuffer failed' + gl.checkFramebufferStatus(gl.FRAMEBUFFER));
+        return null;
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    return fb;
+}

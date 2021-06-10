@@ -20,22 +20,28 @@ var sceneIntro = {
 
         //ARRAYS
 
-        var quadVertices = new Float32Array([0.85, 0.5, 0.0,        //front
+        var quadVertices = new Float32Array([
+            0.85, 0.5, 0.0,
             -0.85, 0.5, 0.0,
             -0.85, -0.5, 0.0,
-            0.85, -0.5, 0.0]);
+            0.85, -0.5, 0.0
+        ]);
 
 
-        var quadTexcoords = new Float32Array([1.0, 1.0,        //front
+        var quadTexcoords = new Float32Array([
+            1.0, 1.0,
             0.0, 1.0,
             0.0, 0.0,
-            1.0, 0.0]);
+            1.0, 0.0
+        ]);
 
 
-        var quadNormals = new Float32Array([0.0, 0.0, 1.0,
+        var quadNormals = new Float32Array([
             0.0, 0.0, 1.0,
             0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0]);
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0
+        ]);
 
 
         this.vaoQuad = gl.createVertexArray();
