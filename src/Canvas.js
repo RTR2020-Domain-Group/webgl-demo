@@ -10,6 +10,7 @@ var prevMouseX = 0,
 var mouseX = 0,
     mouseY = 0;
 var firstMouse = true;
+var mouseClicked = false;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -55,9 +56,10 @@ function main() {
 
     // register keyboard's keydown event handler
     window.addEventListener("keydown", keyDown, false);
-    window.addEventListener("click", mouseDown, false);
     window.addEventListener("resize", resize, false);
     window.addEventListener("mousemove", mouseMove, false);
+    window.addEventListener("mousedown", mouseDown, false);
+    window.addEventListener("mouseup", mouseUp, false);
 
     // initialize WebGL
     init();
@@ -228,22 +230,33 @@ function keyDown(event) {
     }
 }
 
-function mouseDown() {
+function mouseDown(event) {
     // code
+    mouseClicked = true;
+    prevMouseX = event.clientX;
+    prevMouseY = event.clientY;
+    console.log("mouse down");
+}
+
+function mouseUp() {
+    // code
+    console.log("mouse up");
+    mouseClicked = false;
 }
 
 function mouseMove(event) {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+    if (mouseClicked == true) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
 
-    if (firstMouse) {
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
-        firstMouse = false;
+        if (firstMouse) {
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+            firstMouse = false;
+        }
+
+        camera.processMouse(mouseX - prevMouseX, mouseY - prevMouseY);
+        prevMouseX = event.clientX;
+        prevMouseY = event.clientY;
     }
-
-    camera.processMouse(mouseX - prevMouseX, mouseY - prevMouseY);
-
-    prevMouseX = mouseX;
-    prevMouseY = mouseY;
 }
