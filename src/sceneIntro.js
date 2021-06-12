@@ -206,5 +206,3 @@ var sceneIntro = {
     },
 }
 
-// 45 bone id for right hand bottles tracking
-//

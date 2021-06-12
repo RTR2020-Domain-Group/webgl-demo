@@ -150,7 +150,7 @@ const PBRStaticShader = {
             "		vec3 L = normalize(lightPosition[i] - out_WorldPos); \n" +
             "		vec3 H = normalize(V + L); \n" +
             "		float distance = length(lightPosition[i] - out_WorldPos); \n" +
-            "		float attenuation = 1.0 / (distance * distance); \n" +
+            "		float attenuation = 1.0 / (distance); \n" +
             "		vec3 radiance = lightColor[i] * attenuation; \n" +
 
             "		float NDF = DistributionGGX(N, H, roughness); \n" +
@@ -178,7 +178,6 @@ const PBRStaticShader = {
             "	color = pow(color, vec3(1.0 / 2.2)); \n" +
 
             "	FragColor = vec4(color, 1.0); \n" +
-            "	FragColor = vec4(1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
