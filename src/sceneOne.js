@@ -3,6 +3,8 @@ var sceneOne = {
     bottles: 0,
     boy: 0,
     father: 0,
+    bench: 0,
+    bench1: 0,
 
     perspectiveProjectionMatrix: mat4.create(),
 
@@ -37,6 +39,8 @@ var sceneOne = {
         this.boy = loadModel(boyModel, "res/models/boy");
         this.father = loadModel(fatherModel, "res/models/father");
         this.lightPole = loadModel(lightPoleModel, "res/models/lightPole");
+        this.bench = loadModel(benchModel, "res/models/bench");
+        this.bench1 = loadModel(benchModel1, "res/models/bench");
 
         this.fbo = createFramebuffer(1920, 1080);
         this.noise = createNoiseTexture();
@@ -128,6 +132,15 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         this.lightPole.draw();
+
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
 
         modelMatrix = mat4.create();
         mat4.multiply(modelMatrix, modelMatrix, bottlesModel.invTransform);
