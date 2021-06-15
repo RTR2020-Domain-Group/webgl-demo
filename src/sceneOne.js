@@ -1,4 +1,5 @@
 var sceneOne = {
+    terrain: 0,
     johnny: 0,
     bottles: 0,
     boy: 0,
@@ -34,6 +35,8 @@ var sceneOne = {
 
         gl.useProgram(null);
 
+        this.terrain = generateTerrain(256, 256, 100);
+
         this.johnny = loadModel(jwModel, "res/models/johnny");
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
         this.boy = loadModel(boyModel, "res/models/boy");
@@ -46,6 +49,8 @@ var sceneOne = {
 
         this.fbo = createFramebuffer(1920, 1080);
         this.noise = createNoiseTexture();
+
+        this.grassTex = loadTexture("res/textures/grass.png");
     },
 
     uninit: function () {
@@ -146,8 +151,9 @@ var sceneOne = {
 
         bMat = mat4.create();
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
+        mat4.translate(modelMatrix, modelMatrix, [10.0, -2.0, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.008, 0.008, 0.008]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(-90.0));
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         this.bman0.draw();
@@ -192,6 +198,20 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         this.bottles.draw();
         gl.useProgram(null);
+
+        u = TerrainShader.use();
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [10.0, -2.0, -15.0]);
+        // mat4.scale(modelMatrix, modelMatrix, [100.0, 100.0, 100.0]);
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.grassTex);
+        gl.uniform1i(u.sampler, 1);
+        this.terrain.draw();
+
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
         // post processing
@@ -218,6 +238,7 @@ var sceneOne = {
         if (this.t >= 100) {
             // return true;
         }
+        camera.moveDir(FORWARD, 0.5);
         return false;
     },
 }

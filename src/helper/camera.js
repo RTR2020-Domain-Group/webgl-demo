@@ -68,18 +68,27 @@ const camera = {
     },
 
     processKeyboard: function (dir) {
+        this.moveDir(dir, 1.0);
+    },
+
+    moveDir: function (dir, step) {
         if (dir == FORWARD) {
-            vec3.add(this.Position, this.Position, this.Front);
+            vec3.add(this.Position, this.Position,
+                vec3.multiply(this.Front, this.Front, vec3.fromValues(step, step, step)));
         }
         if (dir == BACKWARD) {
-            vec3.sub(this.Position, this.Position, this.Front);
+            vec3.sub(this.Position, this.Position,
+                vec3.multiply(this.Front, this.Front, vec3.fromValues(step, step, step)));
         }
         if (dir == LEFT) {
-            vec3.sub(this.Position, this.Position, this.Right);
+            vec3.sub(this.Position, this.Position,
+                vec3.multiply(this.Right, this.Right, vec3.fromValues(step, step, step)));
         }
         if (dir == RIGHT) {
-            vec3.add(this.Position, this.Position, this.Right);
+            vec3.add(this.Position, this.Position,
+                vec3.multiply(this.Right, this.Right, vec3.fromValues(step, step, step)));
         }
+        this.updateCameraVectors();
     },
 
     processMouse: function (xoff, yoff) {

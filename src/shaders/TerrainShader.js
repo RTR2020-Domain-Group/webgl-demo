@@ -1,4 +1,4 @@
-const GrainShader = {
+const TerrainShader = {
     program: 0,
     uniforms: {},
 
@@ -6,26 +6,25 @@ const GrainShader = {
         // vertex shader
         var vertexShaderSourceCode =
             "#version 300 es \n" +
-            "precision highp int;" +
+            "precision highp float; \n" +
+            "precision highp int; \n" +
 
+            "in vec4 vPosition; \n" +
+            "in vec2 vTexcoord; \n" +
             "out vec2 out_Texcoord; \n" +
 
-            "const vec2 pos[] = vec2[]( \n" +
-            "    vec2(-1.0, -1.0), \n" +
-            "    vec2(1.0, -1.0), \n" +
-            "    vec2(1.0, 1.0), \n" +
-            "    vec2(-1.0, 1.0)); \n" +
-
-            "const vec2 tex[] = vec2[]( \n" +
-            "    vec2(0.0, 0.0), \n" +
-            "    vec2(1.0, 0.0), \n" +
-            "    vec2(1.0, 1.0), \n" +
-            "    vec2(0.0, 1.0)); \n" +
+            "uniform mat4 u_modelMatrix; \n" +
+            "uniform mat4 u_viewMatrix; \n" +
+            "uniform mat4 u_projectionMatrix; \n" +
+            "uniform sampler2D uHMap; \n" +
 
             "void main (void) \n" +
             "{ \n" +
-            "	out_Texcoord = tex[gl_VertexID]; \n" +
-            "	gl_Position = vec4(pos[gl_VertexID], 0.0, 1.0); \n" +
+            "	out_Texcoord = vTexcoord; \n" +
+            "	vec4 pos = u_modelMatrix * vPosition; \n" +
+            "	pos.y += texture(uHMap, vTexcoord).r; \n" +
+            "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
+            "	gl_Position = pos; \n" +
             "} \n";
 
         var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -35,7 +34,7 @@ const GrainShader = {
         if (!gl.getShaderParameter(vertexShaderObject, gl.COMPILE_STATUS)) {
             var error = gl.getShaderInfoLog(vertexShaderObject);
             if (error.length > 0) {
-                alert("Grain vertex " + error);
+                alert("Texture vertex " + error);
                 return false;
             }
         }
@@ -50,16 +49,10 @@ const GrainShader = {
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uSampler; \n" +
-            "uniform sampler2D noise; \n" +
-            "uniform vec2 delta; \n" +
 
             "void main (void) \n" +
             "{ \n" +
-            "	vec3 color = texture(uSampler, out_Texcoord).rgb; \n" +
-            "	float tr = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
-            "	float tg = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
-            "	float tb = min(color.r*0.323 + color.g*0.323 + color.b*0.323, 1.0); \n" +
-            "	FragColor =  vec4(tr, tg, tb, 1.0) * texture(noise, out_Texcoord+delta); \n" +
+            "	FragColor = texture(uSampler, out_Texcoord); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -69,7 +62,7 @@ const GrainShader = {
         if (!gl.getShaderParameter(fragmentShaderObject, gl.COMPILE_STATUS)) {
             var error = gl.getShaderInfoLog(fragmentShaderObject);
             if (error.length > 0) {
-                alert("Grain fragment" + error);
+                alert("Texture fragment" + error);
                 return false;
             }
         }
@@ -79,25 +72,28 @@ const GrainShader = {
         gl.attachShader(this.program, vertexShaderObject);
         gl.attachShader(this.program, fragmentShaderObject);
 
+        // pre-linking binding of shader program object with vertex shader attributes
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_VERTEX, "vPosition");
+        gl.bindAttribLocation(this.program, WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, "vTexcoord");
+
         // linking
         gl.linkProgram(this.program);
         if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
             var error = gl.getProgramInfoLog(this.program);
             if (error.length > 0) {
-                alert("Grain shader " + error);
+                alert("Texture shader " + error);
                 return false;
             }
         }
 
         // post-linking get uniform location
-        this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
-        this.uniforms.noise = gl.getUniformLocation(this.program, "noise");
-        this.uniforms.delta = gl.getUniformLocation(this.program, "delta");
+        this.uniforms.mUniform = gl.getUniformLocation(this.program, "u_modelMatrix");
+        this.uniforms.vUniform = gl.getUniformLocation(this.program, "u_viewMatrix");
+        this.uniforms.pUniform = gl.getUniformLocation(this.program, "u_projectionMatrix");
 
-        gl.useProgram(this.program);
-        gl.uniform1i(this.uniforms.sampler, 0);
-        gl.uniform1i(this.uniforms.noise, 1);
-        gl.useProgram(null);
+        this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
+        this.uniforms.hMap = gl.getUniformLocation(this.program, "uHMap");
+
 
         return true;
     },

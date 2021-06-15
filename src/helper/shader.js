@@ -6,6 +6,7 @@ function initShaders() {
     if (!PBRshader.init()) return false;
     if (!PBRStaticShader.init()) return false;
     if (!CreditsShader.init()) return false;
+    if (!TerrainShader.init()) return false;
 
     return true;
 }
@@ -18,4 +19,5 @@ function uninitShaders() {
     PBRshader.uninit();
     PBRStaticShader.uninit();
     CreditsShader.uninit();
+    TerrainShader.uninit();
 }
