@@ -22,7 +22,7 @@ const TerrainShader = {
             "{ \n" +
             "	out_Texcoord = vTexcoord; \n" +
             "	vec4 pos = u_modelMatrix * vPosition; \n" +
-            "	pos.y += texture(uHMap, vTexcoord).r; \n" +
+            "	pos.y += texture(uHMap, vTexcoord).r * 5.0; \n" +
             "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
             "} \n";
@@ -49,6 +49,7 @@ const TerrainShader = {
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uSampler; \n" +
+            "uniform float uTiling; \n" +
 
             "void main (void) \n" +
             "{ \n" +
@@ -93,6 +94,7 @@ const TerrainShader = {
 
         this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
         this.uniforms.hMap = gl.getUniformLocation(this.program, "uHMap");
+        this.uniforms.uTiling = gl.getUniformLocation(this.program, "uTiling");
 
 
         return true;

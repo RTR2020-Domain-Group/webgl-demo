@@ -1,4 +1,4 @@
-function generateTerrain(width, height, tiling) {
+function generateTerrain(width, height) {
     var i, j;
     var vao;
     var vbo;
@@ -12,7 +12,7 @@ function generateTerrain(width, height, tiling) {
 
             vertex.push((fi - 0.5) * width, 0.0, (fj - 0.5) * height,
                 0.0, 1.0, 0.0,
-                fi * tiling, fj * tiling);
+                fi, fj);
         }
     }
     vertex = new Float32Array(vertex);
@@ -24,7 +24,7 @@ function generateTerrain(width, height, tiling) {
             index.push(j * width + i);
             index.push((1 + j) * width + i);
         }
-        index.push((1 + j) * width + (i-1));
+        index.push((1 + j) * width + (i - 1));
         index.push((2 + j) * width);
     }
     console.log(index.length);

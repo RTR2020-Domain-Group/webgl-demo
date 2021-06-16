@@ -59,7 +59,8 @@ const GrainShader = {
             "	float tr = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
             "	float tg = min(color.r*0.333 + color.g*0.333 + color.b*0.333, 1.0); \n" +
             "	float tb = min(color.r*0.323 + color.g*0.323 + color.b*0.323, 1.0); \n" +
-            "	FragColor =  vec4(tr, tg, tb, 1.0) * texture(noise, out_Texcoord+delta); \n" +
+            "	FragColor =  1.1*vec4(tr, tg, tb, 1.0) * texture(noise, out_Texcoord+delta); \n" +
+            "	FragColor =  vec4(color, 1.0) * texture(noise, out_Texcoord+delta); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

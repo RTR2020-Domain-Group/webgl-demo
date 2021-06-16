@@ -124,10 +124,10 @@ function init() {
     //audio
     var audioWAV = document.createElement("audio");
     audioWAV.src = "res/audio/SarJoTeraChakraye.wav";
-    //audioWAV.play();
+    audioWAV.play();
 
     // add scenes
-    // addScene(sceneIntro);
+    addScene(sceneIntro);
     addScene(sceneOne);
     addScene(sceneCredits);
 
