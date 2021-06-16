@@ -267,7 +267,7 @@ var sceneOne = {
     },
 
     update: function () {
-        if (play) { this.t += 1; }
+        this.t += 1;
         if (this.t >= jwAnim.length) {
             this.t = 0.0;
             // return true;
