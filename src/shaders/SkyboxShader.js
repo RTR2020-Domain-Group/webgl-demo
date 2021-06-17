@@ -181,9 +181,9 @@ const SkyboxShader = {
         this.img = new Array(6);
         //this.skybox_texture = gl.createTexture();
         var urls = [
-            "res/textures/cubemap/right.png", "res/textures/cubemap/left.png",
-            "res/textures/cubemap/top.png", "res/textures/cubemap/bottom.png",
-            "res/textures/cubemap/front.png", "res/textures/cubemap/back.png"
+            "res/textures/cubemap3/right.png", "res/textures/cubemap3/left.png",
+            "res/textures/cubemap3/top.png", "res/textures/cubemap3/bottom.png",
+            "res/textures/cubemap3/front.png", "res/textures/cubemap3/back.png"
         ];
         for (var i = 0; i < 6; i++) {
             this.img[i] = new Image();

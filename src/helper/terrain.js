@@ -25,7 +25,7 @@ function generateTerrain(width, height) {
             index.push((1 + j) * width + i);
         }
         index.push((1 + j) * width + (i - 1));
-        index.push((2 + j) * width);
+        //index.push((2 + j) * width);
     }
     console.log(index.length);
     index = new Uint32Array(index);

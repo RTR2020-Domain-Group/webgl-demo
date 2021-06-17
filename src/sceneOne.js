@@ -194,7 +194,7 @@ var sceneOne = {
 
 
         modelMatrix = mat4.create();
-        mat4.multiply(modelMatrix, modelMatrix, bottlesModel.invTransform);
+        //mat4.multiply(modelMatrix, modelMatrix, bottlesModel.invTransform);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
         mat4.translate(modelMatrix, modelMatrix, [-2.0, 4.0, -4.0]);
         //mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
