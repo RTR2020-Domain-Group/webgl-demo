@@ -223,20 +223,20 @@ var sceneOne = {
 
         var m = mat4.create();
         var rightHand = jwAnim[this.t].slice((45 * 16), (46 * 16));
-        rightHand[0] = 1.0;
-        rightHand[1] = 0.0;
-        rightHand[2] = 0.0;
-        rightHand[3] = 0.0;
+        // rightHand[0] = 1.0;
+        // rightHand[1] = 0.0;
+        // rightHand[2] = 0.0;
+        // rightHand[3] = 0.0;
 
-        rightHand[0 + 4] = 0.0;
-        rightHand[1 + 4] = 1.0;
-        rightHand[2 + 4] = 0.0;
-        rightHand[3 + 4] = 0.0;
+        // rightHand[0 + 4] = 0.0;
+        // rightHand[1 + 4] = 1.0;
+        // rightHand[2 + 4] = 0.0;
+        // rightHand[3 + 4] = 0.0;
 
-        rightHand[0 + 8] = 0.0;
-        rightHand[1 + 8] = 0.0;
-        rightHand[2 + 8] = 1.0;
-        rightHand[3 + 8] = 0.0;
+        // rightHand[0 + 8] = 0.0;
+        // rightHand[1 + 8] = 0.0;
+        // rightHand[2 + 8] = 1.0;
+        // rightHand[3 + 8] = 0.0;
 
         // rightHand[0+12] *= 0.1;
         // rightHand[1+12] *= 0.1;
@@ -244,7 +244,10 @@ var sceneOne = {
         // rightHand[3+12] = 0.0;
 
         //mat4.scale(m, rightHand, [-50.0, 50.0, -50.0]);
-
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+        mat4.translate(modelMatrix, modelMatrix, [1.0, 1.0, 150.0]);
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         //gl.uniformMatrix4fv(u.boneUniform, false, jwAnim[this.t].slice((23 * 16), (24 * 16)));
         //gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());

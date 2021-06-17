@@ -20,11 +20,17 @@ function generateTerrain(width, height) {
 
     var index = [];
     for (j = 0; j < height - 1; j++) {
-        for (i = 0; i < width; i++) {
+        for (i = 0; i < width-1; i++) {
             index.push(j * width + i);
             index.push((1 + j) * width + i);
+            index.push(j * width + (i+1));
+            
+            index.push(j * width + (i+1));
+            index.push((1 + j) * width + i);
+            index.push((1 + j) * width + (i+1));
+
         }
-        index.push((1 + j) * width + (i - 1));
+        // index.push((1 + j) * width + (i - 1));
         //index.push((2 + j) * width);
     }
     console.log(index.length);
@@ -74,7 +80,7 @@ function generateTerrain(width, height) {
         draw: function () {
             gl.bindVertexArray(this.vao);
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vboIndex);
-            gl.drawElements(gl.TRIANGLE_STRIP, this.numElements, gl.UNSIGNED_INT, 0);
+            gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_INT, 0);
             gl.bindVertexArray(null);
         },
 
