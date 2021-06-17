@@ -43,17 +43,27 @@ var sceneOne = {
         this.boy = loadModel(boyModel, "res/models/boy");
         this.father = loadModel(fatherModel, "res/models/father");
         this.lightPole = loadModel(lightPoleModel, "res/models/lightPole");
+
         this.bench = loadModel(benchModel, "res/models/bench/0");
         this.bench1 = loadModel(benchModel1, "res/models/bench/1");
+
         this.bman0 = loadModel(businessmanModel0, "res/models/businessman/0");
         this.bman1 = loadModel(businessmanModel1, "res/models/businessman/1");
+
         this.extraMan1 = loadModel(extraMan1Model0, "res/models/extraMan1");
+
         this.extraMan20 = loadModel(extraMan2Model0, "res/models/extraMan2/0");
         this.extraMan21 = loadModel(extraMan2Model1, "res/models/extraMan2/1");
         this.extraMan22 = loadModel(extraMan2Model2, "res/models/extraMan2/2");
         this.extraMan23 = loadModel(extraMan2Model3, "res/models/extraMan2/3");
         this.extraMan24 = loadModel(extraMan2Model4, "res/models/extraMan2/4");
         this.extraMan25 = loadModel(extraMan2Model5, "res/models/extraMan2/5");
+
+        this.sadMan0 = loadModel(sadManModel0, "res/models/sadMan/0");
+        this.sadMan1 = loadModel(sadManModel1, "res/models/sadMan/1");
+        this.sadMan2 = loadModel(sadManModel2, "res/models/sadMan/2");
+        this.sadMan3 = loadModel(sadManModel3, "res/models/sadMan/3");
+        this.sadMan4 = loadModel(sadManModel4, "res/models/sadMan/4");
 
         this.fbo = createFramebuffer(1920, 1080);
         this.noise = createNoiseTexture();
@@ -170,6 +180,17 @@ var sceneOne = {
         this.extraMan24.draw();
         this.extraMan25.draw();
 
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(this.t, sadManAnim0.length - 1)]);
+        this.sadMan0.draw();
+        this.sadMan1.draw();
+        this.sadMan2.draw();
+        this.sadMan3.draw();
+        this.sadMan4.draw();
+
         gl.useProgram(null);
 
         u = PBRStaticShader.use();
@@ -236,7 +257,7 @@ var sceneOne = {
         u = TerrainShader.use();
         bMat = mat4.create();
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [10.0, -2.0, -15.0]);
+        mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
         // mat4.scale(modelMatrix, modelMatrix, [100.0, 100.0, 100.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
