@@ -10,7 +10,7 @@ var sceneIntro = {
     domain_t2: 0,
     sarjotera_t3: 0,
 
-    alphaBlending: 1.0,
+    alphaBlending: 0.0,
     currentTexture: 0,
     timer: 0.0,
 
@@ -72,9 +72,9 @@ var sceneIntro = {
 
         //load textures
 
-        this.astromedicomp_t1 = loadTexture("res/textures/credits/Astromedicomp.png");
-        this.domain_t2 = loadTexture("res/textures/credits/DomainGroup.png");
-        this.sarjotera_t3 = loadTexture("res/textures/credits/SarJoTeraChakraye.png");
+        this.astromedicomp_t1 = loadTexture("res/textures/credits/1.Astromedicomp.png");
+        this.domain_t2 = loadTexture("res/textures/credits/2.DomainGroup.png");
+        this.sarjotera_t3 = loadTexture("res/textures/credits/3.SarJoTeraChakraye.png");
 
         gl.useProgram(null);
 
@@ -182,25 +182,34 @@ var sceneIntro = {
     },
 
     update: function () {
+        
+       this.timer += 0.01;
 
-        this.timer += 0.01;
+       if (this.timer >= 0.0){
+           this.currentTexture = 1;
+           this.alphaBlending += 0.01;
+           if (this.alphaBlending >= 1.0) {
+               this.alphaBlending = 1.0;
+           }  
+	   }
 
-        if (this.timer >= 0.0)
-            this.currentTexture = 1;
+	   if (this.timer >= 2.0)
+		   this.currentTexture = 2;
 
-        if (this.timer >= 2.0)
-            this.currentTexture = 2;
 
-        if (this.timer >= 4.0)
-            this.currentTexture = 3;
+       if (this.timer >= 4.0){
+           this.currentTexture = 3;
+            
+	   }
 
-        if (this.timer >= 6.0) {
-            this.alphaBlending -= 0.01;
-            if (this.alphaBlending <= 0.0) {
-                this.alphaBlending = 0.0;
-                return true;
-            }
-        }
+       if(this.timer >= 5.0){
+           /*this.alphaBlending -= 0.005;
+           if (this.alphaBlending <= 0.0) {
+               this.alphaBlending = 0.0;
+           }*/
+           return true;
+	   }
+
 
         return false;
     },

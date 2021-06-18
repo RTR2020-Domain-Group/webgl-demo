@@ -11,6 +11,8 @@ var mouseX = 0,
     mouseY = 0;
 var firstMouse = true;
 var mouseClicked = false;
+var spaceKeyPressed = false;
+var audioWAV;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -122,9 +124,9 @@ function init() {
     }
 
     //audio
-    var audioWAV = document.createElement("audio");
+    audioWAV = document.createElement("audio");
     audioWAV.src = "res/audio/SarJoTeraChakraye.wav";
-    audioWAV.play();
+    //audioWAV.play();
 
     // add scenes
     addScene(sceneIntro);
@@ -164,10 +166,11 @@ function draw() {
     // code
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    Scene.scenes[Scene.idx].display();
-
-    // animation loop
-    update();
+    if(spaceKeyPressed == true){
+        Scene.scenes[Scene.idx].display();
+        // animation loop
+        update();
+	}
     requestAnimationFrame(draw, canvas);
 }
 
@@ -205,6 +208,17 @@ function keyDown(event) {
 
         case 76: // for 'L' and 'l'
             camera.print();
+            break;
+
+        case 32:  //for space (demo begin)
+            if(spaceKeyPressed == false){
+                spaceKeyPressed = true;
+                audioWAV.play();
+			}
+            else{
+                spaceKeyPressed = false;
+                audioWAV.pause();
+			}
             break;
 
         // camera movements
