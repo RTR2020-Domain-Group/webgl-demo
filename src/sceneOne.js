@@ -18,7 +18,84 @@ var sceneOne = {
     fbo: 0,
     noise: 0,
 
+    vaoQuad: 0,
+    vboQuadPosition: 0,
+    vboQuadTexcoord: 0,
+    vboQuadNormal: 0,
+
+    sarjotera_t3: 0,
+    songCredits_t4: 0,
+
+    alphaBlending: 1.0,
+    currentTexture: 3,
+    timer: 0.0,
+
     init: function () {
+
+        //credits   
+        /***************************************************************************************/
+        var credits = CreditsShader.use();
+
+        //ARRAYS
+
+        var quadVertices = new Float32Array([
+            0.85, 0.5, 0.0,
+            -0.85, 0.5, 0.0,
+            -0.85, -0.5, 0.0,
+            0.85, -0.5, 0.0
+        ]);
+
+
+        var quadTexcoords = new Float32Array([
+            1.0, 1.0,
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0
+        ]);
+
+
+        var quadNormals = new Float32Array([
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0
+        ]);
+
+
+        this.vaoQuad = gl.createVertexArray();
+        gl.bindVertexArray(this.vaoQuad);
+
+        this.vboQuadPosition = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vboQuadPosition);
+        gl.bufferData(gl.ARRAY_BUFFER, quadVertices, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_VERTEX, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_VERTEX);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        this.vboQuadTexcoord = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vboQuadTexcoord);
+        gl.bufferData(gl.ARRAY_BUFFER, quadTexcoords, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        this.vboQuadNormal = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vboQuadNormal);
+        gl.bufferData(gl.ARRAY_BUFFER, quadNormals, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_NORMAL, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_NORMAL);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        gl.bindVertexArray(null);
+
+        //load textures
+        this.sarjotera_t3 = loadTexture("res/textures/credits/3.SarJoTeraChakraye.png");
+        this.songCredits_t4 = loadTexture("res/textures/credits/4.SongCredits.png");
+
+        gl.useProgram(null);
+
+        /***************************************************************************************/
+
 
         var u = PBRshader.use();
 
@@ -76,6 +153,24 @@ var sceneOne = {
 
     uninit: function () {
         gl.deleteFramebuffer(this.fbo.FBO);
+
+        gl.deleteTexture(this.sarjotera_t3);
+        gl.deleteTexture(this.songCredits_t4);
+
+        if (this.vaoQuad) {
+            gl.deleteVertexArray(this.vaoQuad);
+            this.vaoQuad = null;
+        }
+
+        if (this.vboQuadPosition) {
+            gl.deleteBuffer(this.vboQuadPosition);
+            this.vboQuadPosition = null;
+        }
+
+        if (this.vboQuadTexcoord) {
+            gl.deleteBuffer(this.vboQuadTexcoord);
+            this.vboQuadTexcoord = null;
+        }
     },
 
     resize: function () {
@@ -288,18 +383,97 @@ var sceneOne = {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);
+
+
+        //credits 
+        /***********************************************************************************************/
+       
+        var credits = CreditsShader.use();
+
+        gl.uniform3f(credits.lAUniform, 0.2, 0.2, 0.2);
+        gl.uniform3f(credits.lDUniform, 1.0, 1.0, 1.0);
+        gl.uniform3f(credits.lSUniform, 1.0, 1.0, 1.0);
+        gl.uniform4f(credits.lightPositionUniform, 0.0, 0.0, 4.0, 1.0);
+        gl.uniform3f(credits.lightTargetUniform, 0.0, 0.0, -1.0);
+        gl.uniform1f(credits.lightCutoffUniform, 10.0);
+        gl.uniform1f(credits.lightOuterCutoffUniform, 11.0);
+        gl.uniform1f(credits.lightConstantUniform, 1.0);
+        gl.uniform1f(credits.lightLinearUniform, 0.09);
+        gl.uniform1f(credits.lightQuadraticUniform, 0.032);
+
+        gl.uniform1f(credits.alphaUniform, this.alphaBlending);
+        gl.uniform1f(credits.kShininessUniform, 50.0);
+
+
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
+
+        mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
+        mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
+
+        gl.uniformMatrix4fv(credits.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(credits.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(credits.pUniform, false, this.perspectiveProjectionMatrix);
+
+        //textures
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(credits.textureSamplerUniform, 0);
+
+        if (this.currentTexture == 3)
+            gl.bindTexture(gl.TEXTURE_2D, this.sarjotera_t3);
+
+        else if (this.currentTexture == 4)
+            gl.bindTexture(gl.TEXTURE_2D, this.songCredits_t4);
+
+
+        //bind quad vao
+        gl.bindVertexArray(this.vaoQuad);
+
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+        //unbind quad vao
+        gl.bindVertexArray(null);
+
+        gl.useProgram(null);
+
+        /***********************************************************************************************/
+
+
     },
 
     update: function () {
+
+        this.timer += 0.01;
+         //credits fade out
+        if (this.timer >= 0.0){
+            this.currentTexture = 3;
+            this.alphaBlending -= 0.025;
+            if (this.alphaBlending <= 0.0) {
+                this.alphaBlending = 0.0;
+            }
+		}
+
+
+        //main scene
         this.t += 1;
-        if (this.t >= jwAnim.length) {
+        /*if (this.t >= jwAnim.length) {
             this.t = 0.0;
             // return true;
-        }
+        }*/
 
-        if (this.t >= 100) {
-            // return true;
-        }
+
+        //credits fade in
+        if (this.t >= 100){
+            this.currentTexture = 4;
+            this.alphaBlending += 0.04;
+            if (this.alphaBlending >= 1.0) {
+                this.alphaBlending = 1.0;
+                return true;
+            }              
+		}
+
+
         // camera.moveDir(FORWARD, 0.5);
         return false;
     },
