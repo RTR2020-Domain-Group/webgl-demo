@@ -16,14 +16,14 @@ const TerrainShader = {
             "uniform mat4 u_modelMatrix; \n" +
             "uniform mat4 u_viewMatrix; \n" +
             "uniform mat4 u_projectionMatrix; \n" +
-            "uniform sampler2D uHMap; \n" +
+            "uniform sampler2D uMask; \n" +
             "uniform float uTiling; \n" +
 
             "void main (void) \n" +
             "{ \n" +
             "	out_Texcoord = vTexcoord; \n" +
             "	vec4 pos = u_modelMatrix * vPosition; \n" +
-            "	pos.y += texture(uHMap, vTexcoord*uTiling).r * 5.0; \n" +
+            "	/*pos.y += texture(uMask, vTexcoord*uTiling).r * 5.0; */\n" +
             "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
             "} \n";
@@ -49,12 +49,17 @@ const TerrainShader = {
             "in vec2 out_Texcoord; \n" +
             "out vec4 FragColor; \n" +
 
-            "uniform sampler2D uSampler; \n" +
+            "uniform sampler2D uGrass; \n" +
+            "uniform sampler2D uRoad; \n" +
+            "uniform sampler2D uMask; \n" +
             "uniform float uTiling; \n" +
 
             "void main (void) \n" +
             "{ \n" +
-            "	FragColor = texture(uSampler, out_Texcoord*uTiling); \n" +
+            "	float mask = texture(uMask, out_Texcoord).r; \n" +
+            "	vec4 grass = texture(uGrass, out_Texcoord*uTiling); \n" +
+            "	vec4 road = texture(uRoad, out_Texcoord*uTiling); \n" +
+            "	FragColor = mix(road, grass, mask); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -93,8 +98,9 @@ const TerrainShader = {
         this.uniforms.vUniform = gl.getUniformLocation(this.program, "u_viewMatrix");
         this.uniforms.pUniform = gl.getUniformLocation(this.program, "u_projectionMatrix");
 
-        this.uniforms.sampler = gl.getUniformLocation(this.program, "uSampler");
-        this.uniforms.hMap = gl.getUniformLocation(this.program, "uHMap");
+        this.uniforms.uGrass = gl.getUniformLocation(this.program, "uGrass");
+        this.uniforms.uRoad = gl.getUniformLocation(this.program, "uRoad");
+        this.uniforms.uMask = gl.getUniformLocation(this.program, "uMask");
         this.uniforms.uTiling = gl.getUniformLocation(this.program, "uTiling");
 
 

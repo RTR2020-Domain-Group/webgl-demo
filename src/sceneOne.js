@@ -184,8 +184,10 @@ var sceneOne = {
         this.noise = createNoiseTexture();
 
         //this.grassTex = loadTexture("res/textures/grass.png");
-        this.grassTex = loadTexture("res/textures/GroundDiffuse.png");
-        this.grassHeight = loadTexture("res/textures/GroundBump.png");
+        this.texMask = loadTexture("res/textures/terrain/mask1.png");
+        this.texGrass = loadTexture("res/textures/terrain/GrassDiffuse.png");
+        this.texRoad = loadTexture("res/textures/terrain/BricksDiffuse.png");
+        // this.grassHeight = loadTexture("res/textures/GroundBump.png");
 
         this.dx = 0;
 
@@ -353,7 +355,7 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
         //this.bman0.draw();
         //this.bman1.draw();
-        
+
 
         gl.useProgram(null);
 
@@ -364,7 +366,7 @@ var sceneOne = {
         /************************************************************************************************************************************/
 
         u = PBRStaticShader.use();
-         modelMatrix = mat4.create();
+        modelMatrix = mat4.create();
         bMat = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [35.0, 0.0, 0.0]);
@@ -455,13 +457,16 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        gl.uniform1f(u.uTiling, 10.0);
+        gl.uniform1f(u.uTiling, 100.0);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.grassHeight);
-        gl.uniform1i(u.hMap, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texMask);
+        gl.uniform1i(u.uMask, 0);
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.grassTex);
-        gl.uniform1i(u.sampler, 1);
+        gl.bindTexture(gl.TEXTURE_2D, this.texGrass);
+        gl.uniform1i(u.uGrass, 1);
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this.texRoad);
+        gl.uniform1i(u.uRoad, 2);
         this.terrain.draw();
 
         /************************************************************************************************************************************/
@@ -484,7 +489,7 @@ var sceneOne = {
 
         //credits 
         /************************************************************************************************************************************/
-       
+
         var credits = CreditsShader.use();
 
         gl.uniform3f(credits.lAUniform, 0.2, 0.2, 0.2);
@@ -542,6 +547,8 @@ var sceneOne = {
     update: function () {
 
         this.timer += 0.01;
+        this.t++;
+
         //credits fade out
         if (this.timer >= 0.0) {
             this.currentTexture = 3;
@@ -551,164 +558,166 @@ var sceneOne = {
             }
         }
 
+        // console.log("B-Man & Sad Man ", this.johnny_posZ);
+
         //johnny
 
-        if(this.johnny_walk == true){
+        if (this.johnny_walk == true) {
             this.johnny_posZ += this.johnny_walk_speed;
         }
 
-        if(this.t >= 1132){
+        if (this.t >= 1132) {
             this.johnny_walk = true;
-		}
-             
-        if(this.t >= 2012){
+        }
+
+        if (this.t >= 2012) {
             this.johnny_walk = false;
             //console.log("Extra man 1 " + this.johnny_posZ);
-		}
-            
-        if(this.t >= 2720){
-            this.johnny_walk = true;  
-		}
-            
-        if(this.t >= 3208){
+        }
+
+        if (this.t >= 2720) {
+            this.johnny_walk = true;
+        }
+
+        if (this.t >= 3208) {
             this.johnny_walk = false;
             //console.log("Boy & Father " + this.johnny_posZ);
-		}
+        }
 
-        if(this.t >= 4784){
+        if (this.t >= 4784) {
             this.johnny_walk = true;
-		}
+        }
 
-        if(this.t >= 5476){
+        if (this.t >= 5476) {
             this.johnny_walk = false;
             //console.log("Halt " + this.johnny_posZ);
-		}
+        }
 
-        if(this.t >= 5862){
+        if (this.t >= 5862) {
             this.johnny_walk = true;
-		}
+        }
 
-        if(this.t >= 6102){
+        if (this.t >= 6102) {
             this.johnny_walk = false;
             //console.log("Extra man 2 " + this.johnny_posZ);
-		}
-        
-        if(this.t >= 6622){
-            this.johnny_walk = true;
-		}
+        }
 
-        if(this.t >= 7380){
+        if (this.t >= 6622) {
+            this.johnny_walk = true;
+        }
+
+        if (this.t >= 7380) {
             this.johnny_walk = false;
             //console.log("B-Man & Sad Man " + this.johnny_posZ);
-		}
+        }
 
         /////////johnny around bench
         /*if(this.t >= 9308){
             this.johnny_posZ -= this.johnny_walk_speed;
-		}
+        }
 
         if(this.t >= 9346){
             this.johnny_posX -+ this.johnny_walk_speed;
-		}
+        }
 
         if(this.t >= 9386){
             this.johnny_walk = true;  
-		}
+        }
 
         if(this.t >= 9514){
             this.johnny_walk = false;  
-		}*/
+        }*/
 
         //extra man1
 
-        if(this.man1_walk == true){
+        if (this.man1_walk == true) {
             this.man1_posZ -= this.man1_walk_speed;
         }
 
-        if(this.t >= 1888){
+        if (this.t >= 1888) {
             this.man1_walk = true;
-		}
-             
-        if(this.t >= 2058){
-            this.man1_walk = false;
-		}
+        }
 
-        if(this.t >= 2310){
-            this.man1_walk = true;
-		}
-             
-        if(this.t >= 3288){
+        if (this.t >= 2058) {
             this.man1_walk = false;
-		}
-        
+        }
+
+        if (this.t >= 2310) {
+            this.man1_walk = true;
+        }
+
+        if (this.t >= 3288) {
+            this.man1_walk = false;
+        }
+
 
         //boy
 
-        if(this.boy_walk == true){
+        if (this.boy_walk == true) {
             this.boy_posZ += this.boy_walk_speed;
         }
 
-        if(this.t >= 4638){
+        if (this.t >= 4638) {
             this.boy_walk = true;
-		}
-             
-        if(this.t >= 5624){
+        }
+
+        if (this.t >= 5624) {
             this.boy_walk = false;
-		}
+        }
 
         //father
 
-        if(this.father_walk == true){
+        if (this.father_walk == true) {
             this.father_posZ += this.father_walk_speed;
         }
 
-        if(this.t >= 4620){
+        if (this.t >= 4620) {
             this.father_walk = true;
-		}
-             
-        if(this.t >= 5622){
+        }
+
+        if (this.t >= 5622) {
             this.father_walk = false;
-		}
+        }
 
         //man2
 
-        if(this.man2_walk == true){
+        if (this.man2_walk == true) {
             this.man2_posZ -= this.man2_walk_speed;
         }
 
-        if(this.t >= 5854){
+        if (this.t >= 5854) {
             this.man2_walk = true;
-		}
-             
-        if(this.t >= 6222){
-            this.man2_walk = false;
-		}
+        }
 
-        if(this.t >= 6562){
-            this.man2_walk = true;
-		}
-             
-        if(this.t >= 7566){
+        if (this.t >= 6222) {
             this.man2_walk = false;
-		}
+        }
+
+        if (this.t >= 6562) {
+            this.man2_walk = true;
+        }
+
+        if (this.t >= 7566) {
+            this.man2_walk = false;
+        }
 
 
         //bman
 
-        if(this.bman_walk == true){
+        if (this.bman_walk == true) {
             this.bman_posZ -= this.bman_walk_speed;
         }
 
-        if(this.t >= 11192){
+        if (this.t >= 11192) {
             this.bman_walk = true;
-		}
-             
-        if(this.t >= 11742){
+        }
+
+        if (this.t >= 11742) {
             this.bman_walk = false;
-		}
+        }
 
         //credits fade in
-        if (this.t >= 11628){
+        if (this.t >= 11628) {
             this.currentTexture = 4;
             this.alphaBlending += 0.04;
             if (this.alphaBlending >= 1.0) {
