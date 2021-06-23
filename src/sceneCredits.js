@@ -140,11 +140,11 @@ var sceneCredits = {
         gl.uniform3f(credits.lSUniform, 1.0, 1.0, 1.0);
         gl.uniform4f(credits.lightPositionUniform, 0.0, 0.0, 4.0, 1.0);
         gl.uniform3f(credits.lightTargetUniform, 0.0, 0.0, -1.0);
-        gl.uniform1f(credits.lightCutoffUniform, 10.0);
-        gl.uniform1f(credits.lightOuterCutoffUniform, 11.0);
+        gl.uniform1f(credits.lightCutoffUniform, 30.0);
+        gl.uniform1f(credits.lightOuterCutoffUniform, 50.0);
         gl.uniform1f(credits.lightConstantUniform, 1.0);
-        gl.uniform1f(credits.lightLinearUniform, 0.09);
-        gl.uniform1f(credits.lightQuadraticUniform, 0.032);
+        gl.uniform1f(credits.lightLinearUniform, 0.03);
+        gl.uniform1f(credits.lightQuadraticUniform, 0.0182);
 
         gl.uniform1f(credits.alphaUniform, this.alphaBlending);
         gl.uniform1f(credits.kShininessUniform, 50.0);
@@ -220,8 +220,8 @@ var sceneCredits = {
                 this.alphaBlending = 1.0;
             }
         }
-        
-        if (this.timer >= 8.5){
+
+        if (this.timer >= 8.5) {
             this.alphaBlending -= 0.09;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -276,7 +276,7 @@ var sceneCredits = {
             }
         }
 
-        
+
         return false;
     },
 }

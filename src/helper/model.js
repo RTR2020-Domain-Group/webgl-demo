@@ -129,6 +129,11 @@ function loadModel(mdl, path) {
 
     gl.bindVertexArray(null);
 
+    vertices.length = [];
+    indices.length = [];
+    mdl.vertex.length = [];
+    mdl.index.length = [];
+
     model.albedoMap = loadTexture(path + "/albedo.png");
     model.normalMap = loadTexture(path + "/normal.png");
     model.metallicMap = loadTexture(path + "/metallic.png");

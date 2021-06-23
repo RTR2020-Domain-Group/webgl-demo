@@ -113,7 +113,7 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        this.terrain = generateTerrain(256, 256, 100);
+        this.terrain = generateTerrain(512, 512, 100);
 
         this.johnny = loadModel(jwModel, "res/models/johnny");
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
@@ -148,6 +148,8 @@ var sceneOne = {
         //this.grassTex = loadTexture("res/textures/grass.png");
         this.grassTex = loadTexture("res/textures/GroundDiffuse.png");
         this.grassHeight = loadTexture("res/textures/GroundBump.png");
+
+        this.dx = 0;
 
     },
 
@@ -226,7 +228,9 @@ var sceneOne = {
 
         // var u = PBRStaticShader.use();
         var u = PBRshader.use();
-        mat4.translate(modelMatrix, modelMatrix, [1.0, 1.0, 150.0]);
+
+        this.dx += 2.45;
+        //mat4.translate(modelMatrix, modelMatrix, [1.0, 1.0, 1.0+this.dx]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
@@ -238,7 +242,7 @@ var sceneOne = {
         mat4.translate(bMat, modelMatrix, [-10.0, 0.0, 0.0]);
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(this.t, boyAnim.length - 1)]);
-        this.boy.draw();
+        // this.boy.draw();
 
         bMat = mat4.create();
         //mat4.multiply(modelMatrix, modelMatrix, fatherModel.invTransform);
@@ -246,49 +250,51 @@ var sceneOne = {
         mat4.translate(bMat, modelMatrix, [25.0, 0.0, 0.0]);
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
-        this.father.draw();
+        // this.father.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
-        this.bman0.draw();
-        this.bman1.draw();
+        // this.bman0.draw();
+        // this.bman1.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan1Anim0[Math.min(this.t, extraMan1Anim0.length - 1)]);
-        this.extraMan1.draw();
+        // this.extraMan1.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan2Anim0[Math.min(this.t, extraMan2Anim0.length - 1)]);
-        this.extraMan20.draw();
-        this.extraMan21.draw();
-        this.extraMan22.draw();
-        this.extraMan23.draw();
-        this.extraMan24.draw();
-        this.extraMan25.draw();
+        // this.extraMan20.draw();
+        // this.extraMan21.draw();
+        // this.extraMan22.draw();
+        // this.extraMan23.draw();
+        // this.extraMan24.draw();
+        // this.extraMan25.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(this.t, sadManAnim0.length - 1)]);
-        this.sadMan0.draw();
-        this.sadMan1.draw();
-        this.sadMan2.draw();
-        this.sadMan3.draw();
-        this.sadMan4.draw();
+        // this.sadMan0.draw();
+        // this.sadMan1.draw();
+        // this.sadMan2.draw();
+        // this.sadMan3.draw();
+        // this.sadMan4.draw();
 
         gl.useProgram(null);
 
         u = PBRStaticShader.use();
+        gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
 
         bMat = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
@@ -296,7 +302,7 @@ var sceneOne = {
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
-        this.lightPole.draw();
+        // this.lightPole.draw();
 
         bMat = mat4.create();
         modelMatrix = mat4.create();
@@ -304,20 +310,36 @@ var sceneOne = {
         mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
-        this.bench.draw();
-        this.bench1.draw();
+        // this.bench.draw();
+        // this.bench1.draw();
 
 
 
         modelMatrix = mat4.create();
-        //mat4.multiply(modelMatrix, modelMatrix, bottlesModel.invTransform);
-        mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
-        mat4.translate(modelMatrix, modelMatrix, [-2.0, 4.0, -4.0]);
+
+        // mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
+        // mat4.translate(modelMatrix, modelMatrix, [-2.0, 4.0, -4.0]);
         //mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
         // mat4.multiply(modelMatrix, modelMatrix, jwAnim[this.t].slice((45*16),(46*16)));
-
+        var q = quat.create();
         var m = mat4.create();
-        var rightHand = jwAnim[this.t].slice((45 * 16), (46 * 16));
+        var r = mat4.create();
+        var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
+        var tVec = vec3.create();
+        var sVec = vec3.create();
+
+        // mat4.getTranslation(tVec, rightHand);
+        // mat4.getScaling(sVec, rightHand);
+
+        // mat4.translate(m, m, tVec);
+        // mat4.scale(m, m, sVec);
+
+        // mat4.getRotation(q, rightHand);
+        // mat4.fromQuat(r, q);
+        // mat4.transpose(r, r);
+        // mat4.multiply(m, m, r);
+
+
         // rightHand[0] = 1.0;
         // rightHand[1] = 0.0;
         // rightHand[2] = 0.0;
@@ -333,21 +355,23 @@ var sceneOne = {
         // rightHand[2 + 8] = 1.0;
         // rightHand[3 + 8] = 0.0;
 
-        // rightHand[0+12] *= 0.1;
-        // rightHand[1+12] *= 0.1;
-        // rightHand[2+12] *= 0.1;
+        // rightHand[0+12] -= 10.1;
+        // rightHand[1+12] -= 70.0;
+        // rightHand[2+12] += 10.0;
         // rightHand[3+12] = 0.0;
 
-        //mat4.scale(m, rightHand, [-50.0, 50.0, -50.0]);
+        // mat4.rotateX(m, rightHand, toRadians(90.0));
+        // mat4.rotateX(m, m, toRadians(rX));
+        // mat4.rotateY(m, m, toRadians(rY));
+        // mat4.rotateZ(m, m, toRadians(rZ));
+
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
-        mat4.translate(modelMatrix, modelMatrix, [1.0, 1.0, 150.0]);
+        //mat4.fromRotation(m, toRadians(90.0), [1.0, 1.0, 1.0]);
+
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
-        //gl.uniformMatrix4fv(u.boneUniform, false, jwAnim[this.t].slice((23 * 16), (24 * 16)));
-        //gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         this.bottles.draw();
         gl.useProgram(null);
@@ -355,8 +379,8 @@ var sceneOne = {
         u = TerrainShader.use();
         bMat = mat4.create();
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
-        // mat4.scale(modelMatrix, modelMatrix, [100.0, 100.0, 100.0]);
+        mat4.translate(modelMatrix, modelMatrix, [10.0, -11.1, -15.0]);
+        mat4.scale(modelMatrix, modelMatrix, [10.0, 1.0, 10.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
@@ -387,7 +411,7 @@ var sceneOne = {
 
         //credits 
         /***********************************************************************************************/
-       
+
         var credits = CreditsShader.use();
 
         gl.uniform3f(credits.lAUniform, 0.2, 0.2, 0.2);
@@ -445,36 +469,38 @@ var sceneOne = {
     update: function () {
 
         this.timer += 0.01;
-         //credits fade out
-        if (this.timer >= 0.0){
+        //credits fade out
+        if (this.timer >= 0.0) {
             this.currentTexture = 3;
             this.alphaBlending -= 0.025;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
             }
-		}
+        }
 
 
         //main scene
         this.t += 1;
-        /*if (this.t >= jwAnim.length) {
+        if (this.t >= jwAnim.length) {
             this.t = 0.0;
-            // return true;
-        }*/
+        }
 
 
         //credits fade in
-        if (this.t >= 100){
-            this.currentTexture = 4;
-            this.alphaBlending += 0.04;
-            if (this.alphaBlending >= 1.0) {
-                this.alphaBlending = 1.0;
-                return true;
-            }              
-		}
+        // if (this.t >= 100){
+        //     this.currentTexture = 4;
+        //     this.alphaBlending += 0.04;
+        //     if (this.alphaBlending >= 1.0) {
+        //         this.alphaBlending = 1.0;
+        //         return true;
+        //     }              
+        // }
 
 
         // camera.moveDir(FORWARD, 0.5);
         return false;
     },
 }
+
+var x = 0.0, y = 40.0, z = 1.0;
+var rX = 0, rY = 0, rZ = 0;

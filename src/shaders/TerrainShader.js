@@ -17,12 +17,13 @@ const TerrainShader = {
             "uniform mat4 u_viewMatrix; \n" +
             "uniform mat4 u_projectionMatrix; \n" +
             "uniform sampler2D uHMap; \n" +
+            "uniform float uTiling; \n" +
 
             "void main (void) \n" +
             "{ \n" +
             "	out_Texcoord = vTexcoord; \n" +
             "	vec4 pos = u_modelMatrix * vPosition; \n" +
-            "	pos.y += texture(uHMap, vTexcoord).r * 5.0; \n" +
+            "	pos.y += texture(uHMap, vTexcoord*uTiling).r * 5.0; \n" +
             "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
             "} \n";
@@ -53,7 +54,7 @@ const TerrainShader = {
 
             "void main (void) \n" +
             "{ \n" +
-            "	FragColor = texture(uSampler, out_Texcoord); \n" +
+            "	FragColor = texture(uSampler, out_Texcoord*uTiling); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

@@ -129,9 +129,9 @@ function init() {
     //audioWAV.play();
 
     // add scenes
-    addScene(sceneIntro);
+    //addScene(sceneIntro);
     addScene(sceneOne);
-    addScene(sceneCredits);
+    //addScene(sceneCredits);
 
     // init all scenes
     initScenes();
@@ -166,11 +166,11 @@ function draw() {
     // code
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if(spaceKeyPressed == true){
+    if (spaceKeyPressed == true) {
         Scene.scenes[Scene.idx].display();
         // animation loop
         update();
-	}
+    }
     requestAnimationFrame(draw, canvas);
 }
 
@@ -211,14 +211,14 @@ function keyDown(event) {
             break;
 
         case 32:  //for space (demo begin)
-            if(spaceKeyPressed == false){
+            if (spaceKeyPressed == false) {
                 spaceKeyPressed = true;
                 audioWAV.play();
-			}
-            else{
+            }
+            else {
                 spaceKeyPressed = false;
                 audioWAV.pause();
-			}
+            }
             break;
 
         // camera movements
