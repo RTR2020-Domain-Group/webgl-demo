@@ -234,14 +234,14 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[Math.min(frameCount, jwAnim.length - 1)]);
 
         this.johnny.draw();
 
         var bMat = mat4.create();
         mat4.translate(bMat, modelMatrix, [-10.0, 0.0, 0.0]);
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(this.t, boyAnim.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(frameCount, boyAnim.length - 1)]);
         // this.boy.draw();
 
         bMat = mat4.create();
@@ -249,14 +249,14 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [25.0, 0.0, 0.0]);
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(frameCount, fatherAnim.length - 1)]);
         // this.father.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(frameCount, businessmanAnim0.length - 1)]);
         // this.bman0.draw();
         // this.bman1.draw();
 
@@ -264,14 +264,14 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [10.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan1Anim0[Math.min(this.t, extraMan1Anim0.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan1Anim0[Math.min(frameCount, extraMan1Anim0.length - 1)]);
         // this.extraMan1.draw();
 
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan2Anim0[Math.min(this.t, extraMan2Anim0.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan2Anim0[Math.min(frameCount, extraMan2Anim0.length - 1)]);
         // this.extraMan20.draw();
         // this.extraMan21.draw();
         // this.extraMan22.draw();
@@ -283,7 +283,7 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(this.t, sadManAnim0.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(frameCount, sadManAnim0.length - 1)]);
         // this.sadMan0.draw();
         // this.sadMan1.draw();
         // this.sadMan2.draw();
@@ -320,11 +320,11 @@ var sceneOne = {
         // mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
         // mat4.translate(modelMatrix, modelMatrix, [-2.0, 4.0, -4.0]);
         //mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
-        // mat4.multiply(modelMatrix, modelMatrix, jwAnim[this.t].slice((45*16),(46*16)));
+        // mat4.multiply(modelMatrix, modelMatrix, jwAnim[frameCount].slice((45*16),(46*16)));
         var q = quat.create();
         var m = mat4.create();
         var r = mat4.create();
-        var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
+        var rightHand = jwAnim[frameCount].slice((23 * 16), (24 * 16));
         var tVec = vec3.create();
         var sVec = vec3.create();
 
@@ -479,22 +479,15 @@ var sceneOne = {
         }
 
 
-        //main scene
-        this.t += 1;
-        if (this.t >= jwAnim.length) {
-            this.t = 0.0;
-        }
-
-
         //credits fade in
-        // if (this.t >= 100){
-        //     this.currentTexture = 4;
-        //     this.alphaBlending += 0.04;
-        //     if (this.alphaBlending >= 1.0) {
-        //         this.alphaBlending = 1.0;
-        //         return true;
-        //     }              
-        // }
+        if (frameCount >= jwAnim.length) {
+            this.currentTexture = 4;
+            this.alphaBlending += 0.04;
+            if (this.alphaBlending >= 1.0) {
+                this.alphaBlending = 1.0;
+                return true;
+            }
+        }
 
 
         // camera.moveDir(FORWARD, 0.5);

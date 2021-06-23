@@ -5,7 +5,7 @@ const LEFT = 2;
 const RIGHT = 3;
 
 // camera default values
-const CAMERA_YAW = -90.0;
+const CAMERA_YAW = 90.0;
 const CAMERA_PITCH = 0.0;
 const CAMERA_SPEED = 1.0;
 const CAMERA_SENSITIVITY = 0.25;
@@ -43,12 +43,12 @@ const camera = {
         vec3.normalize(this.Up, v);
     },
 
-    init: function (pos, up) {
+    init: function (pos, up, front) {
         this.Position = pos;
         this.WorldUp = up;
         this.Yaw = CAMERA_YAW;
         this.Pitch = CAMERA_PITCH;
-        this.Front = vec3.fromValues(0.0, 0.0, -1.0);
+        this.Front = front;
 
         this.updateCameraVectors();
     },
@@ -107,7 +107,11 @@ const camera = {
     },
 
     print: function () {
-        console.log(camera);
+        console.log('Position',camera.Position);
+        console.log('Front',camera.Front);
+        console.log('Right',camera.Right);
+        console.log('Yaw',camera.Yaw);
+        console.log('Pitch',camera.Pitch);
     }
 };
 
