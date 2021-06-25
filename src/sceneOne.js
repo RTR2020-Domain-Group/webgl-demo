@@ -30,6 +30,8 @@ var sceneOne = {
     currentTexture: 3,
     timer: 0.0,
 
+    trees: [],
+
     init: function () {
 
         //credits   
@@ -95,8 +97,6 @@ var sceneOne = {
         gl.useProgram(null);
 
         /***************************************************************************************/
-
-
         var u = PBRshader.use();
 
         // set light
@@ -110,6 +110,18 @@ var sceneOne = {
         // set light
         gl.uniform3fv(u.lightPositionUniform, [7.0 * Math.cos(3.7), 0.0, 7.0 * Math.sin(3.7)]);
         gl.uniform3fv(u.lightColorUniform, [150.0, 150.0, 150.0]);
+
+        gl.useProgram(null);
+
+        /**
+         * TREE 
+         */
+        var treeShader = TreeShader.use();
+        var n = new Tree(null, null, gl)
+        this.trees.push(n);
+
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
 
         gl.useProgram(null);
 
@@ -385,6 +397,18 @@ var sceneOne = {
         gl.depthMask(true);
 
 
+        var treeShader = TreeShader.use();
+       
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
+        
+        //drawTree(this.trees[0]);
+
+        this.trees.map(i => drawTree(i));
+
+        gl.useProgram(null);
+
+
         //credits 
         /***********************************************************************************************/
        
@@ -444,7 +468,7 @@ var sceneOne = {
 
     update: function () {
 
-        this.timer += 0.01;
+        //this.timer += 0.01;
          //credits fade out
         if (this.timer >= 0.0){
             this.currentTexture = 3;
@@ -456,7 +480,7 @@ var sceneOne = {
 
 
         //main scene
-        this.t += 1;
+        //this.t += 1;
         /*if (this.t >= jwAnim.length) {
             this.t = 0.0;
             // return true;
