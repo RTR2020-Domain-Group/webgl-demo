@@ -13,6 +13,7 @@ var firstMouse = true;
 var mouseClicked = false;
 var spaceKeyPressed = false;
 var audioWAV;
+var frameCount = 0;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -113,6 +114,7 @@ function init() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // enable depth
+    gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.enable(gl.BLEND);
@@ -137,7 +139,10 @@ function init() {
     initScenes();
 
     // init camera
-    camera.init(vec3.fromValues(0.0, 0.0, 0.0), vec3.fromValues(0.0, 1.0, 0.0));
+    camera.init(
+        vec3.fromValues(-2.86, 9.03, -25.45),
+        vec3.fromValues(0.0, 1.0, 0.0),
+        vec3.fromValues(0.19, -0.06, 0.97));
 
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
@@ -166,11 +171,12 @@ function draw() {
     // code
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if(spaceKeyPressed == true){
+    if (spaceKeyPressed == true) {
         Scene.scenes[Scene.idx].display();
         // animation loop
         update();
-	}
+        frameCount++;
+    }
     requestAnimationFrame(draw, canvas);
 }
 
@@ -211,14 +217,14 @@ function keyDown(event) {
             break;
 
         case 32:  //for space (demo begin)
-            if(spaceKeyPressed == false){
+            if (spaceKeyPressed == false) {
                 spaceKeyPressed = true;
                 audioWAV.play();
-			}
-            else{
+            }
+            else {
                 spaceKeyPressed = false;
                 audioWAV.pause();
-			}
+            }
             break;
 
         // camera movements

@@ -1,3 +1,4 @@
+const { vec2, vec3, mat3, mat4, quat } = glMatrix;
 const PI_180 = Math.PI / 180.0;
 
 function toRadians(angle) {
@@ -22,8 +23,10 @@ function loadTexture(img) {
     tex.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tex.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
     };
@@ -62,15 +65,49 @@ function createFramebuffer(width, height) {
     return fb;
 }
 
+function createShadowFramebuffer() {
+    var fb = {};
+
+    fb.FBO = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb.FBO);
+
+    fb.texDepth = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, fb.texDepth);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, 2048, 2048, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE, gl.COMPARE_REF_TO_TEXTURE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC, gl.LEQUAL);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, fb.texDepth, 0);
+    gl.drawBuffers([gl.NONE]);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        alert('Shadow Framebuffer failed ' + gl.checkFramebufferStatus(gl.FRAMEBUFFER));
+        return null;
+    }
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    return fb;
+}
+
 function createNoiseTexture() {
-    var noiseTex = new Uint8Array(1024 * 1024 * 4);
-    for (var i = 0; i < 1024; i++) {
-        for (var j = 0; j < 1024; j++) {
+    var w = 1024;
+    var noiseTex = new Uint8Array(w * w * 4);
+    for (var i = 0; i < w; i++) {
+        for (var j = 0; j < w; j++) {
             var c = Math.random() * 255;
-            noiseTex[((i * 1024) + j) * 4 + 0] = Math.max(200, c);
-            noiseTex[((i * 1024) + j) * 4 + 1] = Math.max(200, c);
-            noiseTex[((i * 1024) + j) * 4 + 2] = Math.max(200, c);
-            noiseTex[((i * 1024) + j) * 4 + 3] = 255;
+            noiseTex[((i * w) + j) * 4 + 0] = Math.max(180, c);
+            noiseTex[((i * w) + j) * 4 + 1] = Math.max(180, c);
+            noiseTex[((i * w) + j) * 4 + 2] = Math.max(180, c);
+            noiseTex[((i * w) + j) * 4 + 3] = 255;
         }
     }
 
@@ -79,9 +116,9 @@ function createNoiseTexture() {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1024, 1024, 0, gl.RGBA, gl.UNSIGNED_BYTE, noiseTex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, w, 0, gl.RGBA, gl.UNSIGNED_BYTE, noiseTex);
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     return tex;

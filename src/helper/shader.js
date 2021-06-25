@@ -4,6 +4,7 @@ function initShaders() {
     if (!TextureShader.init()) return false;
     if (!GrainShader.init()) return false;
     if (!PBRshader.init()) return false;
+    if (!PBRshaderWhite.init()) return false;
     if (!PBRStaticShader.init()) return false;
     if (!CreditsShader.init()) return false;
     if (!TerrainShader.init()) return false;
@@ -17,6 +18,7 @@ function uninitShaders() {
     TextureShader.uninit();
     GrainShader.uninit();
     PBRshader.uninit();
+    PBRshaderWhite.uninit();
     PBRStaticShader.uninit();
     CreditsShader.uninit();
     TerrainShader.uninit();
