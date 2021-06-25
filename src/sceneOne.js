@@ -35,13 +35,9 @@ var sceneOne = {
     //johnny
     johnny_posX: -35.0,
     johnny_posZ: 0.0,
-    johnny_rot_speed: 0.001,
     johnny_rot: 10.0,
+    //johnny_rot_speed: 0.001,    
     johnny_walk_speed: 2.0,
-    johnny_translate_left: false,
-    johnny_translate_right: false,
-    johnny_rot_left: false,
-    johnny_rot_right: false,
     johnny_walk: false,
 
     //extra man 1
@@ -190,7 +186,7 @@ var sceneOne = {
         this.noise = createNoiseTexture();
 
         //this.grassTex = loadTexture("res/textures/grass.png");
-        this.grassTex = loadTexture("res/textures/terrain/mask2.png");
+        this.grassTex = loadTexture("res/textures/terrain/mask.png");
         this.grassHeight = loadTexture("res/textures/GroundBump.png");
 
     },
@@ -556,116 +552,72 @@ var sceneOne = {
 
 
         //main scene
-        this.t += 1;
-        /*if (this.t >= jwAnim.length) {
-            this.t = 0.0;
-            // return true;
-        }*/
+        this.t += 1; 
 
         //johnny
-
-        if(this.johnny_walk == true){
-            this.johnny_posZ += this.johnny_walk_speed;
-        }
-
-        if(this.johnny_translate_left == true){
-            this.johnny_posX += 0.2;  
-		}
-
-        if(this.johnny_translate_right == true){
-            this.johnny_posX -+ 0.3;  
-		}
-
-        if(this.johnny_rot_left == true){
-            this.johnny_rot += this.johnny_rot_speed;  
-		}
-
-        if(this.johnny_rot_right == true){
-            this.johnny_rot -= this.johnny_rot_speed;  
-		} 
-
-
-        if(this.t >= 1132){
-            this.johnny_walk = true;
-            //this.johnny_rot_left = true;
-            
+        if(this.t >= 1132 && this.t <= 2011){
+            this.johnny_posZ += this.johnny_walk_speed;      
 		}
              
-        if(this.t >= 2012){
-            this.johnny_walk = false;
-            this.johnny_rot_left = false;
-            this.johnny_rot_right = false;
-            //console.log("Extra man 1 ", (this.johnny_posZ);
+        else if(this.t >= 2012 && this.t <= 2719){            
+            //console.log("Extra man 1 ", this.johnny_posZ);
 		}
             
-        if(this.t >= 2720){
-            this.johnny_walk = true;
-            this.johnny_translate_left = true;
-            this.johnny_rot_left = true;
-            
+        else if(this.t >= 2720 && this.t <= 3207){
+            this.johnny_posZ += this.johnny_walk_speed; 
+            this.johnny_posX += 0.2;
+            this.johnny_rot += 0.001;
 		}
             
-        if(this.t >= 3208){
-            this.johnny_walk = false;
-            this.johnny_translate_left = false;
-            this.johnny_rot_left = false;
-            this.johnny_rot_right = false;
+        else if(this.t >= 3208 && this.t <= 4783){            
             //console.log("Boy & Father ", this.johnny_posZ);
 		}
 
-        if(this.t >= 4784){
-            this.johnny_walk = true;
-            this.johnny_translate_right = true;
-            this.johnny_rot_right = true;
-            this.johnny_rot -= this.johnny_rot_speed * 4;
+        else if(this.t >= 4784 && this.t <= 5475){
+            this.johnny_posZ += this.johnny_walk_speed;
+            //this.johnny_posX -= 0.005;
+            this.johnny_rot -= 0.005;
 		}
 
-        if(this.t >= 5476){
-            this.johnny_walk = false;
-            this.johnny_translate_right = false;
-            this.johnny_rot_left = false;
-            this.johnny_rot_right = false;
+        else if(this.t >= 5476 && this.t <= 5861){            
             //console.log("Halt ", this.johnny_posZ);
 		}
 
-        if(this.t >= 5862){
-            this.johnny_walk = true;
+        else if(this.t >= 5862 && this.t <= 6101){
+            this.johnny_posZ += this.johnny_walk_speed;
+            this.johnny_posX -= 0.05;
+            this.johnny_rot -= 0.003;
 		}
 
-        if(this.t >= 6102){
-            this.johnny_walk = false;
-            this.johnny_rot_left = false;
-            this.johnny_rot_right = false;
+        else if(this.t >= 6102 && this.t <= 6621){            
             //console.log("Extra man 2 ", this.johnny_posZ);
 		}
         
-        if(this.t >= 6622){
-            this.johnny_walk = true;
+        else if(this.t >= 6622 && this.t <= 7351){
+            this.johnny_posZ += this.johnny_walk_speed;
+            this.johnny_rot -= 0.0029;
 		}
 
-        if(this.t >= 7380){
-            this.johnny_walk = false;
-            this.johnny_rot_left = false;
-            this.johnny_rot_right = false;
+        else if(this.t >= 7352 && this.t <= 9307){            
             //console.log("B-Man & Sad Man ", this.johnny_posZ);
 		}
 
         /////////johnny around bench
-        /*if(this.t >= 9308){
+        else if(this.t >= 9308 && this.t <= 9345){
             this.johnny_posZ -= this.johnny_walk_speed;
 		}
 
-        if(this.t >= 9346){
-            this.johnny_posX -+ this.johnny_walk_speed;
+        else if(this.t >= 9346 && this.t <= 9385){
+            this.johnny_posX -= this.johnny_walk_speed;
 		}
 
-        if(this.t >= 9386){
-            this.johnny_walk = true;  
+        else if(this.t >= 9386 && this.t <= 9513){
+            this.johnny_posZ += this.johnny_walk_speed;           
 		}
 
-        if(this.t >= 9514){
-            this.johnny_walk = false;  
-		}*/
+        else if(this.t >= 9514){
+            
+		}
 
         //extra man1
 
