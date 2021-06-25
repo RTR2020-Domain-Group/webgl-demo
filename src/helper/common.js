@@ -65,6 +65,39 @@ function createFramebuffer(width, height) {
     return fb;
 }
 
+function createShadowFramebuffer() {
+    var fb = {};
+
+    fb.FBO = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb.FBO);
+
+    fb.texDepth = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, fb.texDepth);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, 2048, 2048, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE, gl.COMPARE_REF_TO_TEXTURE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC, gl.LEQUAL);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, fb.texDepth, 0);
+    gl.drawBuffers([gl.NONE]);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        alert('Shadow Framebuffer failed ' + gl.checkFramebufferStatus(gl.FRAMEBUFFER));
+        return null;
+    }
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    return fb;
+}
+
 function createNoiseTexture() {
     var w = 1024;
     var noiseTex = new Uint8Array(w * w * 4);

@@ -36,7 +36,7 @@ const TerrainShader = {
             "	float mask = texture(uMask, out_Texcoord).r; \n" +
             "	float grass = 25.0*texture(uGrassBump, out_Texcoord*uTiling*0.4).r; \n" +
             "	float road = 5.0*texture(uRoadBump, out_Texcoord*uTiling).r; \n" +
-            "	pos.y += mix(road, grass, mask); \n" +
+            "	pos.y += max(0.1, mix(road, grass, mask)); \n" +
             "	out_WorldPos = pos.xyz; \n " +
 
             "	pos = u_viewMatrix * pos; \n" +
@@ -109,13 +109,13 @@ const TerrainShader = {
             "   vec3 diffuse_white  = vec3(1.0)*tn_dot_ldir_white;" +
             "   vec3 specular_white = vec3(1.0)*pow(max(dot(reflection_vector_white, nviewer_vector), 0.0), 128.0);" +
 
-            "   vec3 phong_ads_light = diffuse_white;" +
+            "   vec3 phong_ads_light = diffuse_white + specular_white;" +
             "   return vec4(phong_ads_light, 1.0);" +
             "} \n" +
 
             "void main (void) \n" +
             "{ \n" +
-            "   vec3 norm; \n" +
+            "   vec3 norm1, norm2; \n" +
             "	float mask = texture(uMask, out_Texcoord).r; \n" +
             "	vec4 grass = texture(uGrass, out_Texcoord*uTiling*0.4); \n" +
             "	vec4 road = texture(uRoad, out_Texcoord*uTiling); \n" +
@@ -123,12 +123,10 @@ const TerrainShader = {
             "	vec4 grassNorm = texture(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
             "	vec4 roadNorm = texture(uRoadNorm, out_Texcoord*uTiling); \n" +
 
-            "   if (mask < 0.1) \n" +
-            "       norm = getNormalFromMap(uRoadNorm, out_Texcoord*uTiling); \n" +
-            "   else \n" +
-            "       norm = getNormalFromMap(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
+            "   norm1 = getNormalFromMap(uRoadNorm, out_Texcoord*uTiling); \n" +
+            "   norm2 = getNormalFromMap(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
 
-            "	FragColor = mix(road, grass, mask) * light(norm); \n" +
+            "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask)); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
