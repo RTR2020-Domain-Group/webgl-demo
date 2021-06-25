@@ -192,7 +192,7 @@ var sceneOne = {
 
         this.shadowFB = createShadowFramebuffer();
 
-        this.texMask = loadTexture("res/textures/terrain/mask2.png");
+        this.texMask = loadTexture("res/textures/terrain/mask.png");
         this.texGrass = loadTexture("res/textures/terrain/gDiff.png");
         this.texRoad = loadTexture("res/textures/terrain/BricksDiffuse.png");
         this.texGrassBump = loadTexture("res/textures/terrain/gDisp.png");
