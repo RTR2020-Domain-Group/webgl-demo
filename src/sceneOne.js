@@ -33,9 +33,15 @@ var sceneOne = {
     //animation/update variables
 
     //johnny
-    johnny_posX: 30.0,
+    johnny_posX: -35.0,
     johnny_posZ: 0.0,
+    johnny_rot_speed: 0.001,
+    johnny_rot: 10.0,
     johnny_walk_speed: 2.0,
+    johnny_translate_left: false,
+    johnny_translate_right: false,
+    johnny_rot_left: false,
+    johnny_rot_right: false,
     johnny_walk: false,
 
     //extra man 1
@@ -184,7 +190,7 @@ var sceneOne = {
         this.noise = createNoiseTexture();
 
         //this.grassTex = loadTexture("res/textures/grass.png");
-        this.grassTex = loadTexture("res/textures/GroundDiffuse.png");
+        this.grassTex = loadTexture("res/textures/terrain/mask2.png");
         this.grassHeight = loadTexture("res/textures/GroundBump.png");
 
     },
@@ -275,6 +281,7 @@ var sceneOne = {
         // var u = PBRStaticShader.use();
         var u = PBRshader.use();
         //mat4.translate(modelMatrix, modelMatrix, [1.0, 1.0, 150.0]);
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, 0.0, this.johnny_posZ]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
@@ -362,11 +369,11 @@ var sceneOne = {
         /************************************************************************************************************************************/
 
         u = PBRStaticShader.use();
-         modelMatrix = mat4.create();
+        modelMatrix = mat4.create();
         bMat = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [35.0, 0.0, 0.0]);
-        mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
+        mat4.scale(modelMatrix, modelMatrix, [0.05, 0.05, 0.05]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
@@ -561,31 +568,64 @@ var sceneOne = {
             this.johnny_posZ += this.johnny_walk_speed;
         }
 
+        if(this.johnny_translate_left == true){
+            this.johnny_posX += 0.2;  
+		}
+
+        if(this.johnny_translate_right == true){
+            this.johnny_posX -+ 0.3;  
+		}
+
+        if(this.johnny_rot_left == true){
+            this.johnny_rot += this.johnny_rot_speed;  
+		}
+
+        if(this.johnny_rot_right == true){
+            this.johnny_rot -= this.johnny_rot_speed;  
+		} 
+
+
         if(this.t >= 1132){
             this.johnny_walk = true;
+            //this.johnny_rot_left = true;
+            
 		}
              
         if(this.t >= 2012){
             this.johnny_walk = false;
-            //console.log("Extra man 1 " + this.johnny_posZ);
+            this.johnny_rot_left = false;
+            this.johnny_rot_right = false;
+            //console.log("Extra man 1 ", (this.johnny_posZ);
 		}
             
         if(this.t >= 2720){
-            this.johnny_walk = true;  
+            this.johnny_walk = true;
+            this.johnny_translate_left = true;
+            this.johnny_rot_left = true;
+            
 		}
             
         if(this.t >= 3208){
             this.johnny_walk = false;
-            //console.log("Boy & Father " + this.johnny_posZ);
+            this.johnny_translate_left = false;
+            this.johnny_rot_left = false;
+            this.johnny_rot_right = false;
+            //console.log("Boy & Father ", this.johnny_posZ);
 		}
 
         if(this.t >= 4784){
             this.johnny_walk = true;
+            this.johnny_translate_right = true;
+            this.johnny_rot_right = true;
+            this.johnny_rot -= this.johnny_rot_speed * 4;
 		}
 
         if(this.t >= 5476){
             this.johnny_walk = false;
-            //console.log("Halt " + this.johnny_posZ);
+            this.johnny_translate_right = false;
+            this.johnny_rot_left = false;
+            this.johnny_rot_right = false;
+            //console.log("Halt ", this.johnny_posZ);
 		}
 
         if(this.t >= 5862){
@@ -594,7 +634,9 @@ var sceneOne = {
 
         if(this.t >= 6102){
             this.johnny_walk = false;
-            //console.log("Extra man 2 " + this.johnny_posZ);
+            this.johnny_rot_left = false;
+            this.johnny_rot_right = false;
+            //console.log("Extra man 2 ", this.johnny_posZ);
 		}
         
         if(this.t >= 6622){
@@ -603,7 +645,9 @@ var sceneOne = {
 
         if(this.t >= 7380){
             this.johnny_walk = false;
-            //console.log("B-Man & Sad Man " + this.johnny_posZ);
+            this.johnny_rot_left = false;
+            this.johnny_rot_right = false;
+            //console.log("B-Man & Sad Man ", this.johnny_posZ);
 		}
 
         /////////johnny around bench
