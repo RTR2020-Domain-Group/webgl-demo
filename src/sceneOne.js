@@ -371,7 +371,6 @@ var sceneOne = {
     update: function () {
 
         this.timer += 0.01;
-        this.t++;
 
         //credits fade out
         if (this.timer >= 0.0) {
