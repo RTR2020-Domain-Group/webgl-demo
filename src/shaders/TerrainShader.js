@@ -12,10 +12,14 @@ const TerrainShader = {
             "in vec4 vPosition; \n" +
             "in vec2 vTexcoord; \n" +
             "out vec2 out_Texcoord; \n" +
+            "out vec3 out_WorldPos; \n" +
 
             "uniform mat4 u_modelMatrix; \n" +
             "uniform mat4 u_viewMatrix; \n" +
             "uniform mat4 u_projectionMatrix; \n" +
+
+            "uniform sampler2D uGrassBump; \n" +
+            "uniform sampler2D uRoadBump; \n" +
             "uniform sampler2D uMask; \n" +
             "uniform float uTiling; \n" +
 
@@ -23,7 +27,10 @@ const TerrainShader = {
             "{ \n" +
             "	out_Texcoord = vTexcoord; \n" +
             "	vec4 pos = u_modelMatrix * vPosition; \n" +
-            "	/*pos.y += texture(uMask, vTexcoord*uTiling).r * 5.0; */\n" +
+            "	float mask = texture(uMask, out_Texcoord).r; \n" +
+            "	float grass = texture(uGrassBump, out_Texcoord*uTiling*0.4).r; \n" +
+            "	pos.y += mix(0.0, grass, mask); \n" +
+            "	out_WorldPos = pos; \n " +
             "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
             "} \n";
@@ -46,18 +53,38 @@ const TerrainShader = {
             "precision highp float; \n" +
             "precision highp int; \n" +
 
+            "in vec3 out_WorldPos; \n" +
             "in vec2 out_Texcoord; \n" +
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uGrass; \n" +
             "uniform sampler2D uRoad; \n" +
+            "uniform sampler2D uGrassNorm; \n" +
+            "uniform sampler2D uRoadNorm; \n" +
             "uniform sampler2D uMask; \n" +
             "uniform float uTiling; \n" +
+
+            "vec3 getNormalFromMap(sampler2D map, vec2 tc) \n" +
+            "{ \n" +
+            "	vec3 tangentNormal = texture(map, tc).xyz * 2.0 - 1.0; \n" +
+
+            "	vec3 Q1 = dFdx(out_WorldPos); \n" +
+            "	vec3 Q2 = dFdy(out_WorldPos); \n" +
+            "	vec2 st1 = dFdx(tc); \n" +
+            "	vec2 st2 = dFdy(tc); \n" +
+
+            "	vec3 N = normalize(vec3(0.0, 1.0, 0.0)); \n" +
+            "	vec3 T = normalize(Q1*st2.t - Q2*st1.t); \n" +
+            "	vec3 B = -normalize(cross(N, T)); \n" +
+            "	mat3 TBN = mat3(T, B, N); \n" +
+
+            "	return normalize(TBN * tangentNormal); \n" +
+            "} \n" +
 
             "void main (void) \n" +
             "{ \n" +
             "	float mask = texture(uMask, out_Texcoord).r; \n" +
-            "	vec4 grass = texture(uGrass, out_Texcoord*uTiling); \n" +
+            "	vec4 grass = texture(uGrass, out_Texcoord*uTiling*0.4); \n" +
             "	vec4 road = texture(uRoad, out_Texcoord*uTiling); \n" +
             "	FragColor = mix(road, grass, mask); \n" +
             "} \n";
@@ -98,6 +125,8 @@ const TerrainShader = {
         this.uniforms.vUniform = gl.getUniformLocation(this.program, "u_viewMatrix");
         this.uniforms.pUniform = gl.getUniformLocation(this.program, "u_projectionMatrix");
 
+        this.uniforms.uGrassBump = gl.getUniformLocation(this.program, "uGrassBump");
+        this.uniforms.uRoadBump = gl.getUniformLocation(this.program, "uRoadBump");
         this.uniforms.uGrass = gl.getUniformLocation(this.program, "uGrass");
         this.uniforms.uRoad = gl.getUniformLocation(this.program, "uRoad");
         this.uniforms.uMask = gl.getUniformLocation(this.program, "uMask");

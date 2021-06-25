@@ -151,7 +151,7 @@ var sceneOne = {
 
         gl.useProgram(null);
 
-        this.terrain = generateTerrain(512, 512, 100);
+        this.terrain = generateTerrain(1024, 1024, 100);
 
         this.johnny = loadModel(jwModel, "res/models/johnny");
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
@@ -183,11 +183,11 @@ var sceneOne = {
         this.fbo = createFramebuffer(1920, 1080);
         this.noise = createNoiseTexture();
 
-        //this.grassTex = loadTexture("res/textures/grass.png");
         this.texMask = loadTexture("res/textures/terrain/mask1.png");
-        this.texGrass = loadTexture("res/textures/terrain/GrassDiffuse.png");
+        this.texGrass = loadTexture("res/textures/terrain/gDiff.png");
         this.texRoad = loadTexture("res/textures/terrain/BricksDiffuse.png");
-        // this.grassHeight = loadTexture("res/textures/GroundBump.png");
+        this.texGrassBump = loadTexture("res/textures/terrain/gDisp.png");
+        this.texRoadBump = loadTexture("res/textures/terrain/BricksBump.png");
 
         this.dx = 0;
 
@@ -453,11 +453,11 @@ var sceneOne = {
         bMat = mat4.create();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
-        mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
+        mat4.scale(modelMatrix, modelMatrix, [5.0, 5.0, 5.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
-        gl.uniform1f(u.uTiling, 100.0);
+        gl.uniform1f(u.uTiling, 200.0);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texMask);
         gl.uniform1i(u.uMask, 0);
@@ -467,6 +467,13 @@ var sceneOne = {
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.texRoad);
         gl.uniform1i(u.uRoad, 2);
+
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this.texGrassBump);
+        gl.uniform1i(u.uGrass, 3);
+        gl.activeTexture(gl.TEXTURE4);
+        gl.bindTexture(gl.TEXTURE_2D, this.texRoadBump);
+        gl.uniform1i(u.uRoad, 4);
         this.terrain.draw();
 
         /************************************************************************************************************************************/
