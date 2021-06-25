@@ -11,9 +11,10 @@ const TerrainShader = {
 
             "in vec4 vPosition; \n" +
             "in vec2 vTexcoord; \n" +
+
+            "out vec4 out_ShadowPos; \n" +
             "out vec2 out_Texcoord; \n" +
             "out vec3 out_WorldPos; \n" +
-
             "out vec3 light_direction;" +
             "out vec3 viewer_vector;" +
             "out vec3 tnorm;" +
@@ -23,6 +24,8 @@ const TerrainShader = {
             "uniform mat4 u_projectionMatrix; \n" +
 
             "uniform vec4 light_position; \n" +
+
+            "uniform mat4 uShadowMatrix; \n" +
 
             "uniform sampler2D uGrassBump; \n" +
             "uniform sampler2D uRoadBump; \n" +
@@ -46,6 +49,7 @@ const TerrainShader = {
 
             "	pos = u_projectionMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
+            "	out_ShadowPos = uShadowMatrix * vec4(out_WorldPos, 1.0); \n" +
             "} \n";
 
         var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -68,6 +72,7 @@ const TerrainShader = {
 
             "in vec3 out_WorldPos; \n" +
             "in vec2 out_Texcoord; \n" +
+            "in vec4 out_ShadowPos; \n" +
 
             "in vec3 light_direction;" +
             "in vec3 viewer_vector;" +
@@ -81,6 +86,8 @@ const TerrainShader = {
             "uniform sampler2D uRoadNorm; \n" +
             "uniform sampler2D uMask; \n" +
             "uniform float uTiling; \n" +
+
+            "uniform highp sampler2DShadow uShadowMap; \n" +
 
             "vec3 getNormalFromMap(sampler2D map, vec2 tc) \n" +
             "{ \n" +
@@ -99,17 +106,18 @@ const TerrainShader = {
             "	return normalize(TBN * tangentNormal); \n" +
             "} \n" +
 
-            "vec4 light(vec3 normal) \n" +
+            "vec4 light(vec3 normal, float shadow) \n" +
             "{ \n" +
             "	vec3 nviewer_vector = normalize(viewer_vector); \n" +
 
             "   vec3 nlight_direction = normalize(light_direction);" +
             "   vec3 reflection_vector_white = reflect(-nlight_direction, normal);" +
             "   float tn_dot_ldir_white = max(dot(normal, nlight_direction), 0.0);" +
+            "   vec3 ambient_white  = vec3(0.1);" +
             "   vec3 diffuse_white  = vec3(1.0)*tn_dot_ldir_white;" +
             "   vec3 specular_white = vec3(1.0)*pow(max(dot(reflection_vector_white, nviewer_vector), 0.0), 128.0);" +
 
-            "   vec3 phong_ads_light = diffuse_white + specular_white;" +
+            "   vec3 phong_ads_light = ambient_white + (shadow*(diffuse_white + specular_white));" +
             "   return vec4(phong_ads_light, 1.0);" +
             "} \n" +
 
@@ -126,7 +134,8 @@ const TerrainShader = {
             "   norm1 = getNormalFromMap(uRoadNorm, out_Texcoord*uTiling); \n" +
             "   norm2 = getNormalFromMap(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
 
-            "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask)); \n" +
+            "   float shadow = textureProj(uShadowMap, out_ShadowPos);" +
+            "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask), shadow); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -174,7 +183,8 @@ const TerrainShader = {
         this.uniforms.uMask = gl.getUniformLocation(this.program, "uMask");
         this.uniforms.uTiling = gl.getUniformLocation(this.program, "uTiling");
         this.uniforms.light_position = gl.getUniformLocation(this.program, "light_position");
-
+        this.uniforms.uShadowMap = gl.getUniformLocation(this.program, "uShadowMap");
+        this.uniforms.uShadowMatrix = gl.getUniformLocation(this.program, "uShadowMatrix");
 
         return true;
     },

@@ -20,7 +20,6 @@ const PBRshader = {
             "uniform mat4 u_boneMatrix[100]; \n" +
 
             "uniform mat4 uShadowMatrix; \n" +
-            "uniform int uShadow; \n" +
 
             "out vec4 out_ShadowPos; \n" +
             "out vec3 out_WorldPos; \n" +

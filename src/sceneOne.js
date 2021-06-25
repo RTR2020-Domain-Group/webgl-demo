@@ -721,6 +721,12 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniform1f(u.uTiling, 200.0);
+
+        m = mat4.create();
+        mat4.multiply(m, this.lightProjectionMatrix, viewMatrix);
+        mat4.multiply(m, this.lightBiasMatrix, m);
+        gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
+
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texMask);
         gl.uniform1i(u.uMask, 0);
@@ -744,6 +750,10 @@ var sceneOne = {
         gl.activeTexture(gl.TEXTURE6);
         gl.bindTexture(gl.TEXTURE_2D, this.texRoadNorm);
         gl.uniform1i(u.uRoadNorm, 6);
+
+        gl.activeTexture(gl.TEXTURE7);
+        gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+        gl.uniform1i(u.uRoadNorm, 7);
 
         this.terrain.draw();
     }
