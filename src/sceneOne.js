@@ -33,8 +33,10 @@ var sceneOne = {
     //animation/update variables
 
     //johnny
-    johnny_posX: 30.0,
+    johnny_posX: -35.0,
     johnny_posZ: 0.0,
+    johnny_rot: 10.0,
+    //johnny_rot_speed: 0.001,    
     johnny_walk_speed: 2.0,
     johnny_walk: false,
 
@@ -253,118 +255,116 @@ var sceneOne = {
         gl.disable(gl.POLYGON_OFFSET_FILL);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-        if (true) {
-            /// 2nd pass for actual drawing /////////////////////////
-            // bind FBO for post processing
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
+        /// 2nd pass for actual drawing /////////////////////////
+        // bind FBO for post processing
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
 
-            //skybox
-            /************************************************************************************************************************************/
+        //skybox
+        /************************************************************************************************************************************/
 
-            gl.useProgram(SkyboxShader.shaderProgramObject);
+        gl.useProgram(SkyboxShader.shaderProgramObject);
 
-            var skyboxModelViewProjectionMatrix = mat4.create();
+        var skyboxModelViewProjectionMatrix = mat4.create();
 
-            mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, camera.getViewMatrixNoTranslate());
-            gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
+        mat4.multiply(skyboxModelViewProjectionMatrix, this.perspectiveProjectionMatrix, camera.getViewMatrixNoTranslate());
+        gl.uniformMatrix4fv(SkyboxShader.gMVPMatrixUniform, false, skyboxModelViewProjectionMatrix);
 
-            //TODO: (RRB) This is hack and confusing code change, we need to use something else if we get bandwidth
-            if (SkyboxShader.gct == 6 && !this.bLoadSkybox) {
-                this.bLoadSkybox = true;
-                SkyboxShader.generateSkybox();
-            }
-
-            if (SkyboxShader.skybox_texture && this.bLoadSkybox) {
-                gl.depthMask(false);
-                gl.bindVertexArray(SkyboxShader.gVao);
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
-                gl.drawArrays(gl.TRIANGLES, 0, 36);
-                gl.bindVertexArray(null);
-                gl.depthMask(true);
-            }
-
-            gl.useProgram(null);
-
-            /************************************************************************************************************************************/
-
-
-            this.drawModels(false);
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-            /************************************************************************************************************************************/
-
-
-            // post processing
-            gl.depthMask(false);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
-            gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.noise);
-
-            var u = GrainShader.use();
-            gl.uniform2f(u.delta, Math.random(), Math.random())
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-            gl.useProgram(null);
-            gl.depthMask(true);
-
-
-            //credits 
-            /************************************************************************************************************************************/
-
-            var credits = CreditsShader.use();
-
-            gl.uniform3f(credits.lAUniform, 0.2, 0.2, 0.2);
-            gl.uniform3f(credits.lDUniform, 1.0, 1.0, 1.0);
-            gl.uniform3f(credits.lSUniform, 1.0, 1.0, 1.0);
-            gl.uniform4f(credits.lightPositionUniform, 0.0, 0.0, 4.0, 1.0);
-            gl.uniform3f(credits.lightTargetUniform, 0.0, 0.0, -1.0);
-            gl.uniform1f(credits.lightCutoffUniform, 10.0);
-            gl.uniform1f(credits.lightOuterCutoffUniform, 11.0);
-            gl.uniform1f(credits.lightConstantUniform, 1.0);
-            gl.uniform1f(credits.lightLinearUniform, 0.09);
-            gl.uniform1f(credits.lightQuadraticUniform, 0.032);
-
-            gl.uniform1f(credits.alphaUniform, this.alphaBlending);
-            gl.uniform1f(credits.kShininessUniform, 50.0);
-
-
-            var modelMatrix = mat4.create();
-            var viewMatrix = mat4.create();
-
-            mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
-            mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
-
-            gl.uniformMatrix4fv(credits.mUniform, false, modelMatrix);
-            gl.uniformMatrix4fv(credits.vUniform, false, viewMatrix);
-            gl.uniformMatrix4fv(credits.pUniform, false, this.perspectiveProjectionMatrix);
-
-            //textures
-
-            gl.activeTexture(gl.TEXTURE0);
-            gl.uniform1i(credits.textureSamplerUniform, 0);
-
-            if (this.currentTexture == 3)
-                gl.bindTexture(gl.TEXTURE_2D, this.sarjotera_t3);
-
-            else if (this.currentTexture == 4)
-                gl.bindTexture(gl.TEXTURE_2D, this.songCredits_t4);
-
-
-            //bind quad vao
-            gl.bindVertexArray(this.vaoQuad);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-
-            //unbind quad vao
-            gl.bindVertexArray(null);
-
-            gl.useProgram(null);
-
-            /************************************************************************************************************************************/
+        //TODO: (RRB) This is hack and confusing code change, we need to use something else if we get bandwidth
+        if (SkyboxShader.gct == 6 && !this.bLoadSkybox) {
+            this.bLoadSkybox = true;
+            SkyboxShader.generateSkybox();
         }
+
+        if (SkyboxShader.skybox_texture && this.bLoadSkybox) {
+            gl.depthMask(false);
+            gl.bindVertexArray(SkyboxShader.gVao);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, SkyboxShader.skybox_texture);
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            gl.bindVertexArray(null);
+            gl.depthMask(true);
+        }
+
+        gl.useProgram(null);
+
+        /************************************************************************************************************************************/
+
+
+        this.drawModels(false);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        /************************************************************************************************************************************/
+
+
+        // post processing
+        gl.depthMask(false);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.noise);
+
+        var u = GrainShader.use();
+        gl.uniform2f(u.delta, Math.random(), Math.random())
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.useProgram(null);
+        gl.depthMask(true);
+
+
+        //credits 
+        /************************************************************************************************************************************/
+
+        var credits = CreditsShader.use();
+
+        gl.uniform3f(credits.lAUniform, 0.2, 0.2, 0.2);
+        gl.uniform3f(credits.lDUniform, 1.0, 1.0, 1.0);
+        gl.uniform3f(credits.lSUniform, 1.0, 1.0, 1.0);
+        gl.uniform4f(credits.lightPositionUniform, 0.0, 0.0, 4.0, 1.0);
+        gl.uniform3f(credits.lightTargetUniform, 0.0, 0.0, -1.0);
+        gl.uniform1f(credits.lightCutoffUniform, 10.0);
+        gl.uniform1f(credits.lightOuterCutoffUniform, 11.0);
+        gl.uniform1f(credits.lightConstantUniform, 1.0);
+        gl.uniform1f(credits.lightLinearUniform, 0.09);
+        gl.uniform1f(credits.lightQuadraticUniform, 0.032);
+
+        gl.uniform1f(credits.alphaUniform, this.alphaBlending);
+        gl.uniform1f(credits.kShininessUniform, 50.0);
+
+
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
+
+        mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
+        mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
+
+        gl.uniformMatrix4fv(credits.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(credits.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(credits.pUniform, false, this.perspectiveProjectionMatrix);
+
+        //textures
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(credits.textureSamplerUniform, 0);
+
+        if (this.currentTexture == 3)
+            gl.bindTexture(gl.TEXTURE_2D, this.sarjotera_t3);
+
+        else if (this.currentTexture == 4)
+            gl.bindTexture(gl.TEXTURE_2D, this.songCredits_t4);
+
+
+        //bind quad vao
+        gl.bindVertexArray(this.vaoQuad);
+
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+        //unbind quad vao
+        gl.bindVertexArray(null);
+
+        gl.useProgram(null);
+
+        /************************************************************************************************************************************/
 
     },
 
@@ -382,75 +382,73 @@ var sceneOne = {
             }
         }
 
-        // console.log("B-Man & Sad Man ", this.johnny_posZ);
+        //main scene
+        this.t += 1;
 
         //johnny
-
-        if (this.johnny_walk == true) {
+        if (this.t >= 1132 && this.t <= 2011) {
             this.johnny_posZ += this.johnny_walk_speed;
         }
 
-        if (this.t >= 1132) {
-            this.johnny_walk = true;
+        else if (this.t >= 2012 && this.t <= 2719) {
+            //console.log("Extra man 1 ", this.johnny_posZ);
         }
 
-        if (this.t >= 2012) {
-            this.johnny_walk = false;
-            //console.log("Extra man 1 " + this.johnny_posZ);
+        else if (this.t >= 2720 && this.t <= 3207) {
+            this.johnny_posZ += this.johnny_walk_speed;
+            this.johnny_posX += 0.2;
+            this.johnny_rot += 0.001;
         }
 
-        if (this.t >= 2720) {
-            this.johnny_walk = true;
+        else if (this.t >= 3208 && this.t <= 4783) {
+            //console.log("Boy & Father ", this.johnny_posZ);
         }
 
-        if (this.t >= 3208) {
-            this.johnny_walk = false;
-            //console.log("Boy & Father " + this.johnny_posZ);
+        else if (this.t >= 4784 && this.t <= 5475) {
+            this.johnny_posZ += this.johnny_walk_speed;
+            //this.johnny_posX -= 0.005;
+            this.johnny_rot -= 0.005;
         }
 
-        if (this.t >= 4784) {
-            this.johnny_walk = true;
+        else if (this.t >= 5476 && this.t <= 5861) {
+            //console.log("Halt ", this.johnny_posZ);
         }
 
-        if (this.t >= 5476) {
-            this.johnny_walk = false;
-            //console.log("Halt " + this.johnny_posZ);
+        else if (this.t >= 5862 && this.t <= 6101) {
+            this.johnny_posZ += this.johnny_walk_speed;
+            this.johnny_posX -= 0.05;
+            this.johnny_rot -= 0.003;
         }
 
-        if (this.t >= 5862) {
-            this.johnny_walk = true;
+        else if (this.t >= 6102 && this.t <= 6621) {
+            //console.log("Extra man 2 ", this.johnny_posZ);
         }
 
-        if (this.t >= 6102) {
-            this.johnny_walk = false;
-            //console.log("Extra man 2 " + this.johnny_posZ);
+        else if (this.t >= 6622 && this.t <= 7351) {
+            this.johnny_posZ += this.johnny_walk_speed;
+            this.johnny_rot -= 0.0029;
         }
 
-        if (this.t >= 6622) {
-            this.johnny_walk = true;
-        }
-
-        if (this.t >= 7380) {
-            this.johnny_walk = false;
-            //console.log("B-Man & Sad Man " + this.johnny_posZ);
+        else if (this.t >= 7352 && this.t <= 9307) {
+            //console.log("B-Man & Sad Man ", this.johnny_posZ);
         }
 
         /////////johnny around bench
-        /*if(this.t >= 9308){
+        else if (this.t >= 9308 && this.t <= 9345) {
             this.johnny_posZ -= this.johnny_walk_speed;
         }
 
-        if(this.t >= 9346){
-            this.johnny_posX -+ this.johnny_walk_speed;
+        else if (this.t >= 9346 && this.t <= 9385) {
+            this.johnny_posX -= this.johnny_walk_speed;
         }
 
-        if(this.t >= 9386){
-            this.johnny_walk = true;  
+        else if (this.t >= 9386 && this.t <= 9513) {
+            this.johnny_posZ += this.johnny_walk_speed;
         }
 
-        if(this.t >= 9514){
-            this.johnny_walk = false;  
-        }*/
+        else if (this.t >= 9514) {
+
+        }
 
         //extra man1
 
