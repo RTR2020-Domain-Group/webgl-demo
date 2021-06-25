@@ -135,11 +135,11 @@ var sceneIntro = {
         gl.uniform3f(credits.lSUniform, 1.0, 1.0, 1.0);
         gl.uniform4f(credits.lightPositionUniform, 0.0, 0.0, 4.0, 1.0);
         gl.uniform3f(credits.lightTargetUniform, 0.0, 0.0, -1.0);
-        gl.uniform1f(credits.lightCutoffUniform, 10.0);
-        gl.uniform1f(credits.lightOuterCutoffUniform, 11.0);
+        gl.uniform1f(credits.lightCutoffUniform, 30.0);
+        gl.uniform1f(credits.lightOuterCutoffUniform, 50.0);
         gl.uniform1f(credits.lightConstantUniform, 1.0);
-        gl.uniform1f(credits.lightLinearUniform, 0.09);
-        gl.uniform1f(credits.lightQuadraticUniform, 0.032);
+        gl.uniform1f(credits.lightLinearUniform, 0.03);
+        gl.uniform1f(credits.lightQuadraticUniform, 0.0182);
 
         gl.uniform1f(credits.alphaUniform, this.alphaBlending);
         gl.uniform1f(credits.kShininessUniform, 50.0);
@@ -182,33 +182,33 @@ var sceneIntro = {
     },
 
     update: function () {
-        
-       this.timer += 0.01;
 
-       if (this.timer >= 0.0){
-           this.currentTexture = 1;
-           this.alphaBlending += 0.01;
-           if (this.alphaBlending >= 1.0) {
-               this.alphaBlending = 1.0;
-           }  
-	   }
+        this.timer += 0.01;
 
-	   if (this.timer >= 2.0)
-		   this.currentTexture = 2;
+        if (this.timer >= 0.0) {
+            this.currentTexture = 1;
+            this.alphaBlending += 0.01;
+            if (this.alphaBlending >= 1.0) {
+                this.alphaBlending = 1.0;
+            }
+        }
+
+        if (this.timer >= 2.0)
+            this.currentTexture = 2;
 
 
-       if (this.timer >= 4.0){
-           this.currentTexture = 3;
-            
-	   }
+        if (this.timer >= 4.0) {
+            this.currentTexture = 3;
 
-       if(this.timer >= 5.0){
-           /*this.alphaBlending -= 0.005;
-           if (this.alphaBlending <= 0.0) {
-               this.alphaBlending = 0.0;
-           }*/
-           return true;
-	   }
+        }
+
+        if (this.timer >= 5.0) {
+            /*this.alphaBlending -= 0.005;
+            if (this.alphaBlending <= 0.0) {
+                this.alphaBlending = 0.0;
+            }*/
+            return true;
+        }
 
 
         return false;

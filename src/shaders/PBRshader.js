@@ -19,6 +19,10 @@ const PBRshader = {
             "uniform mat4 u_projectionMatrix; \n" +
             "uniform mat4 u_boneMatrix[100]; \n" +
 
+            "uniform mat4 uShadowMatrix; \n" +
+            "uniform int uShadow; \n" +
+
+            "out vec4 out_ShadowPos; \n" +
             "out vec3 out_WorldPos; \n" +
             "out vec3 out_Normal; \n" +
             "out vec2 out_Texcoord; \n" +
@@ -38,6 +42,7 @@ const PBRshader = {
             "	out_WorldPos = vec3(u_modelMatrix * tPosition); \n " +
             "	out_Normal = normalize(mat3(u_modelMatrix) * tNormal); \n " +
 
+            "	out_ShadowPos = uShadowMatrix * vec4(out_WorldPos, 1.0); \n" +
             "	gl_Position = u_projectionMatrix * u_viewMatrix * vec4(out_WorldPos, 1.0); \n" +
             "} \n";
 
@@ -66,12 +71,15 @@ const PBRshader = {
             "in vec3 out_WorldPos; \n" +
             "in vec3 out_Normal; \n" +
             "in vec2 out_Texcoord; \n" +
+            "in vec4 out_ShadowPos; \n" +
 
             "uniform sampler2D albedoMap; \n" +
             "uniform sampler2D normalMap; \n" +
             "uniform sampler2D metallicMap; \n" +
             "uniform sampler2D roughnessMap; \n" +
             "uniform sampler2D aoMap; \n" +
+            "uniform highp sampler2DShadow uShadowMap; \n" +
+            "uniform int uShadow; \n" +
 
             "uniform vec3 lightPosition[4]; \n" +
             "uniform vec3 lightColor[4]; \n" +
@@ -143,6 +151,11 @@ const PBRshader = {
             "	float roughness = texture(roughnessMap, out_Texcoord).r; \n" +
             "	float ao        = texture(aoMap, out_Texcoord).r; \n" +
 
+            "   float f = 0.0; \n" +
+            "   if(uShadow == 1) { \n" +
+            "       f = textureProj(uShadowMap, out_ShadowPos);" +
+            "   }; \n" +
+
             "	vec3 N = getNormalFromMap(); \n" +
             "	vec3 V = normalize(cameraPos - out_WorldPos); \n" +
 
@@ -157,7 +170,7 @@ const PBRshader = {
             "		vec3 H = normalize(V + L); \n" +
             "		float distance = length(lightPosition[i] - out_WorldPos); \n" +
             "		float attenuation = 0.5 / (distance * distance); \n" +
-            "		vec3 radiance = lightColor[i] * attenuation; \n" +
+            "		vec3 radiance = lightColor[i] ; \n" +
 
             "		float NDF = DistributionGGX(N, H, roughness); \n" +
             "		float G   = GeometrySmith(N, V, L, roughness); \n" +
@@ -178,7 +191,7 @@ const PBRshader = {
 
             "	vec3 ambient = vec3(0.1) * albedo * ao; \n" +
 
-            "	vec3 color = ambient + Lo; \n" +
+            "	vec3 color = f*(ambient + Lo); \n" +
 
             "	color = color / (color + vec3(1.0)); \n" +
             "	color = pow(color, vec3(1.0 / 2.2)); \n" +
@@ -235,6 +248,10 @@ const PBRshader = {
 
         this.uniforms.lightPositionUniform = gl.getUniformLocation(this.program, "lightPosition");
         this.uniforms.lightColorUniform = gl.getUniformLocation(this.program, "lightColor");
+
+        this.uniforms.uShadowMap = gl.getUniformLocation(this.program, "uShadowMap");
+        this.uniforms.uShadowMatrix = gl.getUniformLocation(this.program, "uShadowMatrix");
+        this.uniforms.uShadow = gl.getUniformLocation(this.program, "uShadow");
 
         gl.useProgram(this.program);
 
