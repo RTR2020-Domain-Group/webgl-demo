@@ -14,9 +14,15 @@ const TerrainShader = {
             "out vec2 out_Texcoord; \n" +
             "out vec3 out_WorldPos; \n" +
 
+            "out vec3 light_direction;" +
+            "out vec3 viewer_vector;" +
+            "out vec3 tnorm;" +
+
             "uniform mat4 u_modelMatrix; \n" +
             "uniform mat4 u_viewMatrix; \n" +
             "uniform mat4 u_projectionMatrix; \n" +
+
+            "uniform vec4 light_position; \n" +
 
             "uniform sampler2D uGrassBump; \n" +
             "uniform sampler2D uRoadBump; \n" +
@@ -28,10 +34,17 @@ const TerrainShader = {
             "	out_Texcoord = vTexcoord; \n" +
             "	vec4 pos = u_modelMatrix * vPosition; \n" +
             "	float mask = texture(uMask, out_Texcoord).r; \n" +
-            "	float grass = texture(uGrassBump, out_Texcoord*uTiling*0.4).r; \n" +
-            "	pos.y += mix(0.0, grass, mask); \n" +
-            "	out_WorldPos = pos; \n " +
-            "	pos = u_projectionMatrix * u_viewMatrix * pos; \n" +
+            "	float grass = 25.0*texture(uGrassBump, out_Texcoord*uTiling*0.4).r; \n" +
+            "	float road = 5.0*texture(uRoadBump, out_Texcoord*uTiling).r; \n" +
+            "	pos.y += mix(road, grass, mask); \n" +
+            "	out_WorldPos = pos.xyz; \n " +
+
+            "	pos = u_viewMatrix * pos; \n" +
+            "   tnorm = mat3(u_modelMatrix) * vec3(0.0, 1.0, 0.0);" +
+            "   viewer_vector = vec3(-pos.xyz);" +
+            "   light_direction = vec3(light_position - pos);" +
+
+            "	pos = u_projectionMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
             "} \n";
 
@@ -55,6 +68,11 @@ const TerrainShader = {
 
             "in vec3 out_WorldPos; \n" +
             "in vec2 out_Texcoord; \n" +
+
+            "in vec3 light_direction;" +
+            "in vec3 viewer_vector;" +
+            "in vec3 tnorm;" +
+
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uGrass; \n" +
@@ -73,7 +91,7 @@ const TerrainShader = {
             "	vec2 st1 = dFdx(tc); \n" +
             "	vec2 st2 = dFdy(tc); \n" +
 
-            "	vec3 N = normalize(vec3(0.0, 1.0, 0.0)); \n" +
+            "	vec3 N = normalize(tnorm); \n" +
             "	vec3 T = normalize(Q1*st2.t - Q2*st1.t); \n" +
             "	vec3 B = -normalize(cross(N, T)); \n" +
             "	mat3 TBN = mat3(T, B, N); \n" +
@@ -81,12 +99,36 @@ const TerrainShader = {
             "	return normalize(TBN * tangentNormal); \n" +
             "} \n" +
 
+            "vec4 light(vec3 normal) \n" +
+            "{ \n" +
+            "	vec3 nviewer_vector = normalize(viewer_vector); \n" +
+
+            "   vec3 nlight_direction = normalize(light_direction);" +
+            "   vec3 reflection_vector_white = reflect(-nlight_direction, normal);" +
+            "   float tn_dot_ldir_white = max(dot(normal, nlight_direction), 0.0);" +
+            "   vec3 diffuse_white  = vec3(1.0)*tn_dot_ldir_white;" +
+            "   vec3 specular_white = vec3(1.0)*pow(max(dot(reflection_vector_white, nviewer_vector), 0.0), 128.0);" +
+
+            "   vec3 phong_ads_light = diffuse_white;" +
+            "   return vec4(phong_ads_light, 1.0);" +
+            "} \n" +
+
             "void main (void) \n" +
             "{ \n" +
+            "   vec3 norm; \n" +
             "	float mask = texture(uMask, out_Texcoord).r; \n" +
             "	vec4 grass = texture(uGrass, out_Texcoord*uTiling*0.4); \n" +
             "	vec4 road = texture(uRoad, out_Texcoord*uTiling); \n" +
-            "	FragColor = mix(road, grass, mask); \n" +
+
+            "	vec4 grassNorm = texture(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
+            "	vec4 roadNorm = texture(uRoadNorm, out_Texcoord*uTiling); \n" +
+
+            "   if (mask < 0.1) \n" +
+            "       norm = getNormalFromMap(uRoadNorm, out_Texcoord*uTiling); \n" +
+            "   else \n" +
+            "       norm = getNormalFromMap(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
+
+            "	FragColor = mix(road, grass, mask) * light(norm); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -127,10 +169,13 @@ const TerrainShader = {
 
         this.uniforms.uGrassBump = gl.getUniformLocation(this.program, "uGrassBump");
         this.uniforms.uRoadBump = gl.getUniformLocation(this.program, "uRoadBump");
+        this.uniforms.uGrassNorm = gl.getUniformLocation(this.program, "uGrassNorm");
+        this.uniforms.uRoadNorm = gl.getUniformLocation(this.program, "uRoadNorm");
         this.uniforms.uGrass = gl.getUniformLocation(this.program, "uGrass");
         this.uniforms.uRoad = gl.getUniformLocation(this.program, "uRoad");
         this.uniforms.uMask = gl.getUniformLocation(this.program, "uMask");
         this.uniforms.uTiling = gl.getUniformLocation(this.program, "uTiling");
+        this.uniforms.light_position = gl.getUniformLocation(this.program, "light_position");
 
 
         return true;

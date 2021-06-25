@@ -139,16 +139,22 @@ var sceneOne = {
 
         // set light
         gl.uniform3fv(u.lightPositionUniform, [7.0 * Math.cos(3.7), 0.0, 7.0 * Math.sin(3.7)]);
-        gl.uniform3fv(u.lightColorUniform, [150.0, 150.0, 150.0]);
+        gl.uniform3fv(u.lightPositionUniform, [10.0, 100.0, -100]);
+        //gl.uniform3fv(u.lightColorUniform, [150.0, 150.0, 150.0]);
+        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
 
         gl.useProgram(null);
 
         u = PBRStaticShader.use();
 
         // set light
-        gl.uniform3fv(u.lightPositionUniform, [7.0 * Math.cos(3.7), 0.0, 7.0 * Math.sin(3.7)]);
-        gl.uniform3fv(u.lightColorUniform, [150.0, 150.0, 150.0]);
-
+        gl.uniform3fv(u.lightPositionUniform, [10.0, 100.0, -100]);
+        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
+        
+        gl.useProgram(null);
+        
+        u = TerrainShader.use();
+        gl.uniform4fv(u.light_position, [10.0, 100.0, -100, 1.0]);
         gl.useProgram(null);
 
         this.terrain = generateTerrain(1024, 1024, 100);
@@ -188,6 +194,8 @@ var sceneOne = {
         this.texRoad = loadTexture("res/textures/terrain/BricksDiffuse.png");
         this.texGrassBump = loadTexture("res/textures/terrain/gDisp.png");
         this.texRoadBump = loadTexture("res/textures/terrain/BricksBump.png");
+        this.texGrassNorm = loadTexture("res/textures/terrain/gNorm.png");
+        this.texRoadNorm = loadTexture("res/textures/terrain/BricksNormal.png");
 
         this.dx = 0;
 
@@ -470,10 +478,18 @@ var sceneOne = {
 
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, this.texGrassBump);
-        gl.uniform1i(u.uGrass, 3);
+        gl.uniform1i(u.uGrassBump, 3);
         gl.activeTexture(gl.TEXTURE4);
         gl.bindTexture(gl.TEXTURE_2D, this.texRoadBump);
-        gl.uniform1i(u.uRoad, 4);
+        gl.uniform1i(u.uRoadBump, 4);
+
+        gl.activeTexture(gl.TEXTURE5);
+        gl.bindTexture(gl.TEXTURE_2D, this.texGrassNorm);
+        gl.uniform1i(u.uGrassNorm, 5);
+        gl.activeTexture(gl.TEXTURE6);
+        gl.bindTexture(gl.TEXTURE_2D, this.texRoadNorm);
+        gl.uniform1i(u.uRoadNorm, 6);
+
         this.terrain.draw();
 
         /************************************************************************************************************************************/

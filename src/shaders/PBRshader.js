@@ -157,7 +157,7 @@ const PBRshader = {
             "		vec3 H = normalize(V + L); \n" +
             "		float distance = length(lightPosition[i] - out_WorldPos); \n" +
             "		float attenuation = 0.5 / (distance * distance); \n" +
-            "		vec3 radiance = lightColor[i] * attenuation; \n" +
+            "		vec3 radiance = lightColor[i] ; \n" +
 
             "		float NDF = DistributionGGX(N, H, roughness); \n" +
             "		float G   = GeometrySmith(N, V, L, roughness); \n" +
