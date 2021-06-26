@@ -41,6 +41,7 @@ const TerrainShader = {
             "	float road = 5.0*texture(uRoadBump, out_Texcoord*uTiling).r; \n" +
             "	pos.y += max(0.1, mix(road, grass, mask)); \n" +
             "	out_WorldPos = pos.xyz; \n " +
+            "	out_ShadowPos = uShadowMatrix * pos; \n" +
 
             "	pos = u_viewMatrix * pos; \n" +
             "   tnorm = mat3(u_modelMatrix) * vec3(0.0, 1.0, 0.0);" +
@@ -49,7 +50,6 @@ const TerrainShader = {
 
             "	pos = u_projectionMatrix * pos; \n" +
             "	gl_Position = pos; \n" +
-            "	out_ShadowPos = uShadowMatrix * vec4(out_WorldPos, 1.0); \n" +
             "} \n";
 
         var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -113,7 +113,7 @@ const TerrainShader = {
             "   vec3 nlight_direction = normalize(light_direction);" +
             "   vec3 reflection_vector_white = reflect(-nlight_direction, normal);" +
             "   float tn_dot_ldir_white = max(dot(normal, nlight_direction), 0.0);" +
-            "   vec3 ambient_white  = vec3(0.1);" +
+            "   vec3 ambient_white  = vec3(0.2);" +
             "   vec3 diffuse_white  = vec3(1.0)*tn_dot_ldir_white;" +
             "   vec3 specular_white = vec3(1.0)*pow(max(dot(reflection_vector_white, nviewer_vector), 0.0), 128.0);" +
 
@@ -134,7 +134,12 @@ const TerrainShader = {
             "   norm1 = getNormalFromMap(uRoadNorm, out_Texcoord*uTiling); \n" +
             "   norm2 = getNormalFromMap(uGrassNorm, out_Texcoord*uTiling*0.4); \n" +
 
-            "   float shadow = textureProj(uShadowMap, out_ShadowPos);" +
+            "   float shadow = textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(1,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,-1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(-1,0));" +
+            "   shadow *= 0.2;" +
             "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask), shadow); \n" +
             "} \n";
 

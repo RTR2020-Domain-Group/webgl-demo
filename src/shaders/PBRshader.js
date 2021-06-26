@@ -150,10 +150,12 @@ const PBRshader = {
             "	float roughness = texture(roughnessMap, out_Texcoord).r; \n" +
             "	float ao        = texture(aoMap, out_Texcoord).r; \n" +
 
-            "   float f = 0.0; \n" +
-            "   if(uShadow == 1) { \n" +
-            "       f = textureProj(uShadowMap, out_ShadowPos);" +
-            "   }; \n" +
+            "   float shadow = textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(1,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,-1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(-1,0));" +
+            "   shadow *= 0.2;" +
 
             "	vec3 N = getNormalFromMap(); \n" +
             "	vec3 V = normalize(cameraPos - out_WorldPos); \n" +
@@ -190,7 +192,7 @@ const PBRshader = {
 
             "	vec3 ambient = vec3(0.1) * albedo * ao; \n" +
 
-            "	vec3 color = f*(ambient + Lo); \n" +
+            "	vec3 color = ambient + (shadow*Lo); \n" +
 
             "	color = color / (color + vec3(1.0)); \n" +
             "	color = pow(color, vec3(1.0 / 2.2)); \n" +

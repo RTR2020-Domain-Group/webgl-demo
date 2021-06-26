@@ -230,9 +230,9 @@ var sceneOne = {
             0.0, 0.5, 0.0, 0.0,
             0.0, 0.0, 0.5, 0.0,
             0.5, 0.5, 0.5, 1.0);
-        mat4.perspective(this.lightProjectionMatrix, 45.0, 1.0, 0.1, 1000);
-
-
+        mat4.frustum(this.lightProjectionMatrix, -1.0, 1.0, -1.0, 1.0, 1.0, 1000);
+        //mat4.ortho(this.lightProjectionMatrix, -200.0, 200.0, -200.0, 200.0, 0.0, 200.0);
+        this.lightViewMatrix = mat4.create();
     },
 
     uninit: function () {
@@ -260,6 +260,7 @@ var sceneOne = {
     resize: function () {
         // perspective projection
         mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
+        // mat4.perspective(this.lightProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
     },
 
     display: function () {
@@ -267,7 +268,11 @@ var sceneOne = {
         /// 1st pass for shadow map /////////////////////////
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.shadowFB.FBO);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, 1.0, 0.1, 1000);
+        gl.viewport(0, 0, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE);
+
+        gl.enable(gl.CULL_FACE);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
 
         // enable polygon offset to resolve depth-fighting issues
         gl.enable(gl.POLYGON_OFFSET_FILL);
@@ -282,7 +287,7 @@ var sceneOne = {
         // bind FBO for post processing
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
+        gl.viewport(0, 0, canvas.width, canvas.height);
 
         //skybox
         /************************************************************************************************************************************/
@@ -335,14 +340,14 @@ var sceneOne = {
         gl.depthMask(true);
 
 
-        var treeShader = TreeShader.use();
+        // var treeShader = TreeShader.use();
 
-        //set rotation
-        gl.uniform1f(treeShader.t, 10000);
+        // //set rotation
+        // gl.uniform1f(treeShader.t, 10000);
 
-        this.trees.map(i => drawTree(i));
+        // this.trees.map(i => drawTree(i));
 
-        gl.useProgram(null);
+        // gl.useProgram(null);
 
 
         //credits 
@@ -571,14 +576,14 @@ var sceneOne = {
         }
 
         //credits fade in
-        if (this.t >= 11628) {
-            this.currentTexture = 4;
-            this.alphaBlending += 0.04;
-            if (this.alphaBlending >= 1.0) {
-                this.alphaBlending = 1.0;
-                return true;
-            }
-        }
+        // if (this.t >= 11628) {
+        //     this.currentTexture = 4;
+        //     this.alphaBlending += 0.04;
+        //     if (this.alphaBlending >= 1.0) {
+        //         this.alphaBlending = 1.0;
+        //         return true;
+        //     }
+        // }
 
 
         // camera.moveDir(FORWARD, 0.5);
@@ -594,19 +599,20 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
-        if (shadow) {
-            mat4.lookAt(viewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
-        } else {
-            viewMatrix = camera.getViewMatrix();
-        }
+        //this.lightPos = [camera.Position[0]+100.0, camera.Position[1]+100.0, camera.Position[2]+100.0];
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.Position, [0.0, 1.0, 0.0]);
+        mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+        viewMatrix = camera.getViewMatrix();
 
         var u;
         if (shadow) {
             u = PBRshaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+            viewMatrix = this.lightViewMatrix;
         } else {
             u = PBRshader.use();
             var m = mat4.create();
-            mat4.multiply(m, this.lightProjectionMatrix, viewMatrix);
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
             mat4.multiply(m, this.lightBiasMatrix, m);
 
             gl.uniform1i(u.uShadow, 1);
@@ -615,12 +621,13 @@ var sceneOne = {
             gl.activeTexture(gl.TEXTURE5);
             gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
             gl.uniform1i(u.uShadowMap, 5);
+
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         }
 
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, 0.0, this.johnny_posZ]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
         this.johnny.draw();
 
@@ -702,9 +709,26 @@ var sceneOne = {
         //static models
         /************************************************************************************************************************************/
 
-        u = PBRStaticShader.use();
+        if (shadow) {
+            u = PBRStaticShaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+            viewMatrix = this.lightViewMatrix;
+        } else {
+            u = PBRStaticShader.use();
+            var m = mat4.create();
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
+            mat4.multiply(m, this.lightBiasMatrix, m);
+
+            gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
+
+            gl.activeTexture(gl.TEXTURE5);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+            gl.uniform1i(u.uShadowMap, 5);
+
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+        }
+
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
 
         modelMatrix = mat4.create();
         bMat = mat4.create();
@@ -726,7 +750,6 @@ var sceneOne = {
         this.bench1.draw();
 
 
-
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
@@ -745,20 +768,30 @@ var sceneOne = {
         //terrain
         /************************************************************************************************************************************/
 
-        u = TerrainShader.use();
+        if (shadow) {
+            u = TerrainShaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+        } else {
+            u = TerrainShader.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+
+            m = mat4.create();
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
+            mat4.multiply(m, this.lightBiasMatrix, m);
+            gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
+
+            gl.activeTexture(gl.TEXTURE7);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+            gl.uniform1i(u.uShadowMap, 7);
+        }
+
         bMat = mat4.create();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniform1f(u.uTiling, 200.0);
-
-        m = mat4.create();
-        mat4.multiply(m, this.lightProjectionMatrix, viewMatrix);
-        mat4.multiply(m, this.lightBiasMatrix, m);
-        gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
 
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texMask);
@@ -783,10 +816,6 @@ var sceneOne = {
         gl.activeTexture(gl.TEXTURE6);
         gl.bindTexture(gl.TEXTURE_2D, this.texRoadNorm);
         gl.uniform1i(u.uRoadNorm, 6);
-
-        gl.activeTexture(gl.TEXTURE7);
-        gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
-        gl.uniform1i(u.uRoadNorm, 7);
 
         this.terrain.draw();
     }
