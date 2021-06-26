@@ -30,6 +30,7 @@ var sceneOne = {
     currentTexture: 3,
     timer: 0.0,
 
+    trees: [],
     //animation/update variables
 
     //johnny
@@ -156,6 +157,28 @@ var sceneOne = {
 
         u = TerrainShader.use();
         gl.uniform4fv(u.light_position, [10.0, 100.0, -100, 1.0]);
+        gl.useProgram(null);
+
+        /**
+         * TREE 
+         */
+        var treeShader = TreeShader.use();
+        var n = new Tree(null, null, gl)
+
+        this.trees.push(n);
+        let s = 0;
+        let pos = 0;
+        for (var i = 2; i < 11; i++) {
+            s = 0.4 + 0.6 * Math.pow(Math.random(), 4);
+            pos = MOV((i * 0.05) * Math.sin(i), 0, (i * 0.05) * Math.cos(i))
+            this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        }
+
+
+
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
+
         gl.useProgram(null);
 
         this.terrain = generateTerrain(256, 256, 100);
@@ -310,6 +333,16 @@ var sceneOne = {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);
+
+
+        var treeShader = TreeShader.use();
+
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
+
+        this.trees.map(i => drawTree(i));
+
+        gl.useProgram(null);
 
 
         //credits 
