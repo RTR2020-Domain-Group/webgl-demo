@@ -18,8 +18,7 @@ const TreeShader = {
             "{\n"+    
             "   vpos = pos;\n"+
             "   vuv = uv;\n"+
-            "   vec3 p = pos - vec3(0, 0.60, 0);\n"+    
-            "   float t1 = t / 10000.0;\n"+            
+            "   vec3 p = pos - vec3(0, 0.60, 0);\n"+               
             "   p.z = 0.5 * p.z;\n"+
             "   gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vec4(p.x, p.y, p.z, 1.0);\n"+
             "}\n";
@@ -45,9 +44,9 @@ const TreeShader = {
             "out vec4 FragColor;\n" +
             "void main() {\n" +
             "   float v = vuv.x / 10.0;\n" +
-            "   float h = vuv.y / 2.0 + 0.5;\n" +
+            "   float h = vuv.y / 2.0 + 0.1;\n" +
             "   float b = 1.0 - v * 0.7;\n" +
-            "   FragColor = vec4(vec3(h * v, h * b, b * 0.6), 1);\n" +
+            "   FragColor = vec4(vec3(h * v, h * b, b * 0.6), 1);\n"+
             "}\n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
