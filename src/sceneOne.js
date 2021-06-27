@@ -137,7 +137,8 @@ var sceneOne = {
 
         /************************************************************************************************************************************/
 
-        this.lightPos = [10.0, 100.0, -100];
+        this.lightPos = [-89.70, 187.96, 157.38];
+        var lightPosv4 = [-89.70, 187.96, 157.38, 1.0];
 
         var u = PBRshader.use();
 
@@ -156,7 +157,7 @@ var sceneOne = {
         gl.useProgram(null);
 
         u = TerrainShader.use();
-        gl.uniform4fv(u.light_position, [10.0, 100.0, -100, 1.0]);
+        gl.uniform4fv(u.light_position, lightPosv4);
         gl.useProgram(null);
 
         /**
@@ -230,8 +231,7 @@ var sceneOne = {
             0.0, 0.5, 0.0, 0.0,
             0.0, 0.0, 0.5, 0.0,
             0.5, 0.5, 0.5, 1.0);
-        mat4.frustum(this.lightProjectionMatrix, -1.0, 1.0, -1.0, 1.0, 1.0, 1000);
-        //mat4.ortho(this.lightProjectionMatrix, -200.0, 200.0, -200.0, 200.0, 0.0, 200.0);
+        mat4.ortho(this.lightProjectionMatrix, -400.0, 400.0, -400.0, 400.0, 0.0, 600.0);
         this.lightViewMatrix = mat4.create();
     },
 
@@ -599,10 +599,15 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
-        //this.lightPos = [camera.Position[0]+100.0, camera.Position[1]+100.0, camera.Position[2]+100.0];
+        // this.lightPos = [camera.Position[0] - 100.0, camera.Position[1] + 100.0, camera.Position[2] + 100.0];
         // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.Position, [0.0, 1.0, 0.0]);
-        mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.getCameraLookPoint(), [0.0, 1.0, 0.0]);
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+        var cLookAtPoint = camera.getCameraLookPoint();
+        var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+        mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
         viewMatrix = camera.getViewMatrix();
+        // viewMatrix = this.lightViewMatrix;
 
         var u;
         if (shadow) {
