@@ -160,18 +160,54 @@ var sceneOne = {
          * TREE 
          */
         var treeShader = TreeShader.use();
-        var n = new Tree(null, null, gl)
-
-        this.trees.push(n);
+        
         let s = 0;
-        let pos = 0;
-        for (var i = 2; i < 11; i++) {
+        let pos = 0;       
+        var n = new Tree(null, null, gl);
+
+        //this.trees.push(n);
+
+        //First Tree
+        n = new Tree(12, null, gl)
+        this.trees.push(n);
+
+        //2nd Position
+        pos = MOV(0.50, 0, 7.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(2.5, 0, 7.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        //3rd Position
+        pos = MOV(1.0, 0, 11.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(2.5, 0, 11.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+
+        pos = MOV(0.55, 0, 15.5);
+        s = 1.2 + 1.1 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.0, 0, 20.0);
+        s = 1.6 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.5, 0, 25.0);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+
+        /*for (var i = 2; i < 11; i++) {
             s = 0.4 + 0.6 * Math.pow(Math.random(), 4);
             pos = MOV((i * 0.05) * Math.sin(i), 0, (i * 0.05) * Math.cos(i))
             this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
-        }
-
-
+        }*/
 
         //set rotation
         gl.uniform1f(treeShader.t, 10000);
@@ -266,7 +302,7 @@ var sceneOne = {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE);
 
-        gl.enable(gl.CULL_FACE);
+        //gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
@@ -334,28 +370,7 @@ var sceneOne = {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);
-
-      /*
-      TREE 
-      */
-       var treeShader = TreeShader.use();
-        
-        var modelMatrix = mat4.create();
-        var viewMatrix = mat4.create();
-
-        mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
-        mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
-        viewMatrix = camera.getViewMatrix();
-        //set rotation
-        gl.uniform1f(treeShader.t, 10000);
-        gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
-
-
-        // this.trees.map(i => drawTree(i));
-
-        // gl.useProgram(null);
+     
 
 
         //credits 
@@ -525,13 +540,42 @@ var sceneOne = {
     },
 
     drawModels: function (shadow) {
+        
+        //TREES
+        /*********************************************** */
+       
+       var treeShader = TreeShader.use();
+        
+       var modelMatrix = mat4.create();
+       var viewMatrix = mat4.create();
+
+       mat4.translate(modelMatrix, modelMatrix, [-25.0, 10.0, 0.0]);
+       mat4.scale(modelMatrix, modelMatrix, [30.4, 30.4, 30.4]);
+       viewMatrix = camera.getViewMatrix();
+       //set rotation
+       gl.uniform1f(treeShader.t, 10000);
+       gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
+       gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
+       gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
+
+
+        this.trees.map(i => drawTree(i));
+
+        gl.useProgram(null);
+
+        
         //animated models
         /************************************************************************************************************************************/
 
-        var modelMatrix = mat4.create();
-        var viewMatrix = mat4.create();
+        modelMatrix = mat4.create();
+         viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+
+
+        
+
+
 
         // this.lightPos = [camera.Position[0] - 100.0, camera.Position[1] + 100.0, camera.Position[2] + 100.0];
         // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.Position, [0.0, 1.0, 0.0]);

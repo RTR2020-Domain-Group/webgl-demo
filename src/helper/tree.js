@@ -1,12 +1,13 @@
 function Tree(n, m, gl) {
-    var vertices = [], indices = [], q = Math.random();
-
+    var vertices = [], indices = [], q = 1.2 * Math.random();
+    var flag = 0;
     function _tree(n, m) {
         if (n === 0) return;
 
         // draw the current level branch geometry
         // branch width decreases, branch height is slightly randomized
         var w = 0.01 * n + 0.02, h = 0.2 + Math.random() * 0.2;
+
         _box(m, h, w, vertices, indices, n, q);
 
         // recurse two smaller branches split at a random direction
