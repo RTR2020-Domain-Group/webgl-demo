@@ -545,18 +545,10 @@ var sceneOne = {
         // camera animation
         // spin around johnny
         if (this.t >= 990 && this.t < 1132) {
-            console.log('case 990');
-            //camera.moveDir(FORWARD, 0.2);
-            // this.angle += 180 * (1.0 / (1132 - 990));
-            // var c = camera.getCameraLookPoint();
-            // camera.Position[0] = c + (10.0*Math.cos(this.angle));
-            // camera.Position[2] = c + (10.0*Math.sin(this.angle));
-
+            camera.Position[0] += 0.08;
             camera.Position[2] += 0.2;
             camera.Yaw -= 180 * (1.0 / (1132 - 990));
 
-
-            // vec3.sub(camera.Front, c, camera.Position);
             camera.updateCameraVectors();
         }
         // follow jonny from front
@@ -565,8 +557,18 @@ var sceneOne = {
         }
         // spin around again
         else if (this.t >= 1860 && this.t < 2011) {
+            camera.Position[0] -= 0.08;
             camera.Position[2] -= 0.2;
-            camera.Yaw += 180 * (1.0 / (2011 - 1860));
+            camera.Yaw -= 180 * (1.0 / (2011 - 1860));
+
+            camera.updateCameraVectors();
+        }
+        // move to first man
+        else if (this.t >= 2011 && this.t < 2100) {
+            camera.moveDir(FORWARD, 0.2);
+        }
+        // move to the boy and father
+        else if (this.t >= 2720 && this.t <= 3207) {
         }
 
         // Position 
@@ -676,7 +678,7 @@ var sceneOne = {
         if (this.t >= 1800 && this.t <= 3300) {
             this.extraMan1.draw();
         }
-        
+
 
 
         //var bMat = mat4.create();
@@ -690,7 +692,7 @@ var sceneOne = {
         if (this.t >= 680 && this.t <= 5625) {
             this.boy.draw();
         }
-       
+
 
 
         //bMat = mat4.create();
@@ -706,7 +708,7 @@ var sceneOne = {
         if (this.t >= 680 && this.t <= 5625) {
             this.father.draw();
         }
-        
+
 
 
         modelMatrix = mat4.create();
@@ -724,7 +726,7 @@ var sceneOne = {
             this.extraMan24.draw();
             this.extraMan25.draw();
         }
-       
+
 
 
         modelMatrix = mat4.create();
@@ -804,7 +806,7 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -45.0, this.johnny_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
 
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
