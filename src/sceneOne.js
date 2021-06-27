@@ -416,7 +416,8 @@ var sceneOne = {
         }
 
         //main scene
-        this.t += 1;
+        // this.t += 1;
+        this.t = frameCount;
 
         //johnny
         if (this.t >= 1132 && this.t <= 2011) {
@@ -460,7 +461,7 @@ var sceneOne = {
         }
 
         //extra man1
-        else if (this.t >= 1888 && this.t <= 2057) {
+        if (this.t >= 1888 && this.t <= 2057) {
             this.man1_posZ -= this.man1_walk_speed;
         }
 
@@ -471,18 +472,18 @@ var sceneOne = {
         }
 
         //boy
-        else if (this.t >= 4638 && this.t <= 5623) {
+        if (this.t >= 4638 && this.t <= 5623) {
             this.boy_posZ += this.boy_walk_speed;
         }
 
         //father
-        else if (this.t >= 4620 && this.t <= 5621) {
+        if (this.t >= 4620 && this.t <= 5621) {
             this.father_posZ += this.father_walk_speed;
             this.father_posX -= 0.005;
         }
 
         //man2
-        else if (this.t >= 5854 && this.t <= 6221) {
+        if (this.t >= 5854 && this.t <= 6221) {
             this.man2_posZ -= this.man2_walk_speed;
         }
 
@@ -492,21 +493,20 @@ var sceneOne = {
         }
 
         //bman
-        else if (this.t >= 11192 && this.t <= 11741) {
+        if (this.t >= 11192 && this.t <= 11741) {
             this.bman_posZ -= this.bman_walk_speed;
             this.bman_posX += 0.001;
         }
 
         //credits fade in
-        // if (this.t >= 11628) {
-        //     this.currentTexture = 4;
-        //     this.alphaBlending += 0.04;
-        //     if (this.alphaBlending >= 1.0) {
-        //         this.alphaBlending = 1.0;
-        //         return true;
-        //     }
-        // }
-
+        if (this.t >= 11628) {
+            this.currentTexture = 4;
+            this.alphaBlending += 0.04;
+            if (this.alphaBlending >= 1.0) {
+                this.alphaBlending = 1.0;
+                return true;
+            }
+        }
 
         // camera.moveDir(FORWARD, 0.5);
         return false;
@@ -661,14 +661,14 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
 
         modelMatrix = mat4.create();
-        bMat = mat4.create();
+        var bMat = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         //mat4.translate(bMat, modelMatrix, [35.0, 0.0, 0.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
-        //this.lightPole.draw();
+        this.lightPole.draw();
 
         bMat = mat4.create();
         modelMatrix = mat4.create();
@@ -676,8 +676,8 @@ var sceneOne = {
         mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
-        //this.bench.draw();
-        //this.bench1.draw();
+        this.bench.draw();
+        this.bench1.draw();
 
 
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
@@ -685,11 +685,11 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, 0.0, this.johnny_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -45.0, this.johnny_posZ]);
 
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        //this.bottles.draw();
+        this.bottles.draw();
 
         gl.useProgram(null);
 
