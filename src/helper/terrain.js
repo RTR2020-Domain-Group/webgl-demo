@@ -20,14 +20,14 @@ function generateTerrain(width, height) {
 
     var index = [];
     for (j = 0; j < height - 1; j++) {
-        for (i = 0; i < width-1; i++) {
+        for (i = 0; i < width - 1; i++) {
             index.push(j * width + i);
             index.push((1 + j) * width + i);
-            index.push(j * width + (i+1));
-            
-            index.push(j * width + (i+1));
+            index.push(j * width + (i + 1));
+
+            index.push(j * width + (i + 1));
             index.push((1 + j) * width + i);
-            index.push((1 + j) * width + (i+1));
+            index.push((1 + j) * width + (i + 1));
 
         }
         // index.push((1 + j) * width + (i - 1));
