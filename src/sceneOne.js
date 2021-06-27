@@ -218,6 +218,7 @@ var sceneOne = {
 
         this.johnny = loadModel(jwModel, "res/models/johnny");
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
+        this.bottles0 = loadModel(bottlesModel0, "res/models/bottles");
         this.boy = loadModel(boyModel, "res/models/boy");
         this.father = loadModel(fatherModel, "res/models/father");
         this.lightPole = loadModel(lightPoleModel, "res/models/lightPole");
@@ -302,7 +303,7 @@ var sceneOne = {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE);
 
-        //gl.enable(gl.CULL_FACE);
+        gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
@@ -563,8 +564,9 @@ var sceneOne = {
             gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
         }
-
+        gl.disable(gl.CULL_FACE);
         this.trees.map(i => drawTree(i));
+        gl.enable(gl.CULL_FACE);
 
         gl.useProgram(null);
 
@@ -751,6 +753,7 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         this.bottles.draw();
+        this.bottles0.draw();
 
         gl.useProgram(null);
 
