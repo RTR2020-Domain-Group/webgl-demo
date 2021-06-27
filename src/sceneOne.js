@@ -49,7 +49,6 @@ var sceneOne = {
 
     //boy
     boy_posX: 63.0,
-    boy_posY: -7.8,
     boy_posZ: 257.0,
     boy_walk_speed: 0.2,
 
@@ -67,6 +66,8 @@ var sceneOne = {
     //businessman
     bman_posX: 46.5,
     bman_posZ: 608.2,
+    //bman_posX: 46.3,
+    //bman_posZ: 608.1,
     bman_walk_speed: 0.2,
 
     // camera
@@ -659,7 +660,7 @@ var sceneOne = {
         }
 
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -45.0, this.johnny_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
@@ -668,55 +669,67 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.man1_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.man1_posX, -14.0, this.man1_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.man1_posX, -3.5, this.man1_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan1Anim0[Math.min(this.t, extraMan1Anim0.length - 1)]);
-        this.extraMan1.draw();
+        if (this.t >= 1800 && this.t <= 3300) {
+            this.extraMan1.draw();
+        }
+        
 
 
         //var bMat = mat4.create();
         modelMatrix = mat4.create();
         //mat4.translate(bMat, modelMatrix, [-10.0, 0.0, 0.0]);
-        mat4.translate(modelMatrix, modelMatrix, [this.boy_posX, this.boy_posY, this.boy_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.boy_posX, -4.0, this.boy_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(this.t, boyAnim.length - 1)]);
-        this.boy.draw();
+        if (this.t >= 680 && this.t <= 5625) {
+            this.boy.draw();
+        }
+       
 
 
         //bMat = mat4.create();
         modelMatrix = mat4.create();
         //mat4.multiply(modelMatrix, modelMatrix, fatherModel.invTransform);
         //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.translate(modelMatrix, modelMatrix, [this.father_posX, -9.0, this.father_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.father_posX, -4.8, this.father_posZ]);
         mat4.translate(modelMatrix, modelMatrix, [25.0, 0.0, 0.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
-        this.father.draw();
+        if (this.t >= 680 && this.t <= 5625) {
+            this.father.draw();
+        }
+        
 
 
         modelMatrix = mat4.create();
         //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.man2_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.man2_posX, -2.0, this.man2_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.man2_posX, -3.5, this.man2_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, extraMan2Anim0[Math.min(this.t, extraMan2Anim0.length - 1)]);
-        this.extraMan20.draw();
-        this.extraMan21.draw();
-        this.extraMan22.draw();
-        this.extraMan23.draw();
-        this.extraMan24.draw();
-        this.extraMan25.draw();
+        if (this.t >= 5800 && this.t <= 7600) {
+            this.extraMan20.draw();
+            this.extraMan21.draw();
+            this.extraMan22.draw();
+            this.extraMan23.draw();
+            this.extraMan24.draw();
+            this.extraMan25.draw();
+        }
+       
 
 
         modelMatrix = mat4.create();
         //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.translate(modelMatrix, modelMatrix, [80.0, -9.0, 620.0]);
+        mat4.translate(modelMatrix, modelMatrix, [80.0, -4.0, 620.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(this.t, sadManAnim0.length - 1)]);
@@ -729,7 +742,7 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX, -9.2, this.bman_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX, -5.5, this.bman_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
@@ -826,7 +839,6 @@ var sceneOne = {
         bMat = mat4.create();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
-        //mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
