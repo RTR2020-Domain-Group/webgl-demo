@@ -1,5 +1,6 @@
 const { vec2, vec3, mat3, mat4, quat } = glMatrix;
 const PI_180 = Math.PI / 180.0;
+const DEPTH_MAP_SIZE = 2048;
 
 function toRadians(angle) {
     return angle * PI_180;
@@ -73,7 +74,7 @@ function createShadowFramebuffer() {
 
     fb.texDepth = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, fb.texDepth);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, 2048, 2048, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -104,9 +105,9 @@ function createNoiseTexture() {
     for (var i = 0; i < w; i++) {
         for (var j = 0; j < w; j++) {
             var c = Math.random() * 255;
-            noiseTex[((i * w) + j) * 4 + 0] = Math.max(180, c);
-            noiseTex[((i * w) + j) * 4 + 1] = Math.max(180, c);
-            noiseTex[((i * w) + j) * 4 + 2] = Math.max(180, c);
+            noiseTex[((i * w) + j) * 4 + 0] = Math.max(200, c);
+            noiseTex[((i * w) + j) * 4 + 1] = Math.max(200, c);
+            noiseTex[((i * w) + j) * 4 + 2] = Math.max(200, c);
             noiseTex[((i * w) + j) * 4 + 3] = 255;
         }
     }
