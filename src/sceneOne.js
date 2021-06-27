@@ -336,9 +336,18 @@ var sceneOne = {
 
 
         var treeShader = TreeShader.use();
+        
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
 
+        mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
+        mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
+        viewMatrix = camera.getViewMatrix();
         //set rotation
         gl.uniform1f(treeShader.t, 10000);
+        gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
 
         this.trees.map(i => drawTree(i));
 
@@ -365,8 +374,8 @@ var sceneOne = {
         gl.uniform1f(credits.kShininessUniform, 50.0);
 
 
-        var modelMatrix = mat4.create();
-        var viewMatrix = mat4.create();
+        modelMatrix = mat4.create();
+        viewMatrix = mat4.create();
 
         mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
         mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);

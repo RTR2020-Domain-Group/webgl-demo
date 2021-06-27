@@ -114,7 +114,7 @@ function init() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // enable depth
-    gl.enable(gl.CULL_FACE);
+    //gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.enable(gl.BLEND);
