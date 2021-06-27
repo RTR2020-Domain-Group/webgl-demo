@@ -30,20 +30,21 @@ var sceneOne = {
     currentTexture: 3,
     timer: 0.0,
 
+    trees: [],
     //animation/update variables
 
     //johnny
     johnny_posX: -35.0,
     johnny_posZ: 0.0,
-    johnny_rot: 10.0,       
+    johnny_rot: 10.0,
     johnny_walk_speed: 2.0,
-    
+
     //extra man 1
     man1_posX: 35.0,
     man1_posZ: 205.0,
-    man1_rot: 0.0,    
+    man1_rot: 0.0,
     man1_walk_speed: 0.2,
-    
+
     //boy
     boy_posX: 63.0,
     boy_posY: -7.8,
@@ -54,13 +55,13 @@ var sceneOne = {
     father_posX: 35.0,
     father_posZ: 265.0,
     father_walk_speed: 0.19,
-   
+
     //extra man 2
     man2_posX: 65.0,
     man2_posZ: 530.0,
-    man2_rot: 0.0,    
+    man2_rot: 0.0,
     man2_walk_speed: 0.2,
-   
+
     //businessman
     bman_posX: 46.5,
     bman_posZ: 608.2,
@@ -132,7 +133,8 @@ var sceneOne = {
 
         /************************************************************************************************************************************/
 
-        this.lightPos = [10.0, 100.0, -100];
+        this.lightPos = [-89.70, 187.96, 157.38];
+        var lightPosv4 = [-89.70, 187.96, 157.38, 1.0];
 
         var u = PBRshader.use();
 
@@ -151,7 +153,29 @@ var sceneOne = {
         gl.useProgram(null);
 
         u = TerrainShader.use();
-        gl.uniform4fv(u.light_position, [10.0, 100.0, -100, 1.0]);
+        gl.uniform4fv(u.light_position, lightPosv4);
+        gl.useProgram(null);
+
+        /**
+         * TREE 
+         */
+        var treeShader = TreeShader.use();
+        var n = new Tree(null, null, gl)
+
+        this.trees.push(n);
+        let s = 0;
+        let pos = 0;
+        for (var i = 2; i < 11; i++) {
+            s = 0.4 + 0.6 * Math.pow(Math.random(), 4);
+            pos = MOV((i * 0.05) * Math.sin(i), 0, (i * 0.05) * Math.cos(i))
+            this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        }
+
+
+
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
+
         gl.useProgram(null);
 
         this.terrain = generateTerrain(256, 256, 100);
@@ -188,7 +212,7 @@ var sceneOne = {
 
         this.shadowFB = createShadowFramebuffer();
 
-        this.texMask = loadTexture("res/textures/terrain/mask2.png");
+        this.texMask = loadTexture("res/textures/terrain/mask.png");
         this.texGrass = loadTexture("res/textures/terrain/gDiff.png");
         this.texRoad = loadTexture("res/textures/terrain/BricksDiffuse.png");
         this.texGrassBump = loadTexture("res/textures/terrain/gDisp.png");
@@ -203,9 +227,8 @@ var sceneOne = {
             0.0, 0.5, 0.0, 0.0,
             0.0, 0.0, 0.5, 0.0,
             0.5, 0.5, 0.5, 1.0);
-        mat4.perspective(this.lightProjectionMatrix, 45.0, 1.0, 0.1, 1000);
-
-
+        mat4.ortho(this.lightProjectionMatrix, -400.0, 400.0, -400.0, 400.0, 0.0, 600.0);
+        this.lightViewMatrix = mat4.create();
     },
 
     uninit: function () {
@@ -233,6 +256,7 @@ var sceneOne = {
     resize: function () {
         // perspective projection
         mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
+        // mat4.perspective(this.lightProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
     },
 
     display: function () {
@@ -240,7 +264,11 @@ var sceneOne = {
         /// 1st pass for shadow map /////////////////////////
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.shadowFB.FBO);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, 1.0, 0.1, 1000);
+        gl.viewport(0, 0, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE);
+
+        gl.enable(gl.CULL_FACE);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
 
         // enable polygon offset to resolve depth-fighting issues
         gl.enable(gl.POLYGON_OFFSET_FILL);
@@ -255,7 +283,7 @@ var sceneOne = {
         // bind FBO for post processing
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        mat4.perspective(this.perspectiveProjectionMatrix, 45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000);
+        gl.viewport(0, 0, canvas.width, canvas.height);
 
         //skybox
         /************************************************************************************************************************************/
@@ -306,6 +334,16 @@ var sceneOne = {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);
+
+
+        // var treeShader = TreeShader.use();
+
+        // //set rotation
+        // gl.uniform1f(treeShader.t, 10000);
+
+        // this.trees.map(i => drawTree(i));
+
+        // gl.useProgram(null);
 
 
         //credits 
@@ -378,96 +416,96 @@ var sceneOne = {
         }
 
         //main scene
-        this.t += 1; 
+        this.t += 1;
 
         //johnny
-        if(this.t >= 1132 && this.t <= 2011){
-            this.johnny_posZ += this.johnny_walk_speed;      
-		}
-                        
-        else if(this.t >= 2720 && this.t <= 3207){
-            this.johnny_posZ += this.johnny_walk_speed; 
+        if (this.t >= 1132 && this.t <= 2011) {
+            this.johnny_posZ += this.johnny_walk_speed;
+        }
+
+        else if (this.t >= 2720 && this.t <= 3207) {
+            this.johnny_posZ += this.johnny_walk_speed;
             this.johnny_posX += 0.2;
             this.johnny_rot += 0.001;
-		}
-      
-        else if(this.t >= 4784 && this.t <= 5475){
+        }
+
+        else if (this.t >= 4784 && this.t <= 5475) {
             this.johnny_posZ += this.johnny_walk_speed;
             //this.johnny_posX -= 0.005;
             this.johnny_rot -= 0.005;
-		}
+        }
 
-        else if(this.t >= 5862 && this.t <= 6101){
+        else if (this.t >= 5862 && this.t <= 6101) {
             this.johnny_posZ += this.johnny_walk_speed;
             this.johnny_posX -= 0.05;
             this.johnny_rot -= 0.003;
-		}
+        }
 
-        else if(this.t >= 6622 && this.t <= 7351){
+        else if (this.t >= 6622 && this.t <= 7351) {
             this.johnny_posZ += this.johnny_walk_speed;
             this.johnny_rot -= 0.0029;
-		}
+        }
 
         /////////johnny around bench
-        else if(this.t >= 9308 && this.t <= 9345){
+        else if (this.t >= 9308 && this.t <= 9345) {
             this.johnny_posZ -= this.johnny_walk_speed;
-		}
+        }
 
-        else if(this.t >= 9346 && this.t <= 9385){
+        else if (this.t >= 9346 && this.t <= 9385) {
             this.johnny_posX -= this.johnny_walk_speed;
-		}
+        }
 
-        else if(this.t >= 9386 && this.t <= 9513){
-            this.johnny_posZ += this.johnny_walk_speed;           
-		}
+        else if (this.t >= 9386 && this.t <= 9513) {
+            this.johnny_posZ += this.johnny_walk_speed;
+        }
 
         //extra man1
-        else if(this.t >= 1888 && this.t <= 2057){
+        else if (this.t >= 1888 && this.t <= 2057) {
             this.man1_posZ -= this.man1_walk_speed;
-		}
-             
-        else if(this.t >= 2310 && this.t <= 3287){
+        }
+
+        else if (this.t >= 2310 && this.t <= 3287) {
             this.man1_posZ -= this.man1_walk_speed;
             this.man1_posX -= 0.035;
             this.man1_rot -= 0.005;
-		}
-     
+        }
+
         //boy
-        else if(this.t >= 4638 && this.t <= 5623){
+        else if (this.t >= 4638 && this.t <= 5623) {
             this.boy_posZ += this.boy_walk_speed;
-		}
-    
+        }
+
         //father
-        else if(this.t >= 4620 && this.t <= 5621){
+        else if (this.t >= 4620 && this.t <= 5621) {
             this.father_posZ += this.father_walk_speed;
             this.father_posX -= 0.005;
-		}
-      
+        }
+
         //man2
-        else if(this.t >= 5854 && this.t <= 6221){
+        else if (this.t >= 5854 && this.t <= 6221) {
             this.man2_posZ -= this.man2_walk_speed;
-		}
-       
-        else if(this.t >= 6562 && this.t <=7565){
+        }
+
+        else if (this.t >= 6562 && this.t <= 7565) {
             this.man2_posZ -= this.man2_walk_speed;
             this.man2_rot -= 0.005;
-		}
-      
+        }
+
         //bman
-        else if(this.t >= 11192 && this.t <= 11741){
+        else if (this.t >= 11192 && this.t <= 11741) {
             this.bman_posZ -= this.bman_walk_speed;
             this.bman_posX += 0.001;
-		}
-       
-        //credits fade in
-        if (this.t >= 11628) {
-            this.currentTexture = 4;
-            this.alphaBlending += 0.04;
-            if (this.alphaBlending >= 1.0) {
-                this.alphaBlending = 1.0;
-                return true;
-            }
         }
+
+        //credits fade in
+        // if (this.t >= 11628) {
+        //     this.currentTexture = 4;
+        //     this.alphaBlending += 0.04;
+        //     if (this.alphaBlending >= 1.0) {
+        //         this.alphaBlending = 1.0;
+        //         return true;
+        //     }
+        // }
 
 
         // camera.moveDir(FORWARD, 0.5);
@@ -483,19 +521,25 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
-        if (shadow) {
-            mat4.lookAt(viewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
-        } else {
-            viewMatrix = camera.getViewMatrix();
-        }
+        // this.lightPos = [camera.Position[0] - 100.0, camera.Position[1] + 100.0, camera.Position[2] + 100.0];
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.Position, [0.0, 1.0, 0.0]);
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.getCameraLookPoint(), [0.0, 1.0, 0.0]);
+        // mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+        var cLookAtPoint = camera.getCameraLookPoint();
+        var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+        mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
+        viewMatrix = camera.getViewMatrix();
+        // viewMatrix = this.lightViewMatrix;
 
         var u;
         if (shadow) {
             u = PBRshaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+            viewMatrix = this.lightViewMatrix;
         } else {
             u = PBRshader.use();
             var m = mat4.create();
-            mat4.multiply(m, this.lightProjectionMatrix, viewMatrix);
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
             mat4.multiply(m, this.lightBiasMatrix, m);
 
             gl.uniform1i(u.uShadow, 1);
@@ -504,13 +548,14 @@ var sceneOne = {
             gl.activeTexture(gl.TEXTURE5);
             gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
             gl.uniform1i(u.uShadowMap, 5);
+
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         }
 
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -45.0, this.johnny_posZ]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
         this.johnny.draw();
 
@@ -594,9 +639,26 @@ var sceneOne = {
         //static models
         /************************************************************************************************************************************/
 
-        u = PBRStaticShader.use();
+        if (shadow) {
+            u = PBRStaticShaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+            viewMatrix = this.lightViewMatrix;
+        } else {
+            u = PBRStaticShader.use();
+            var m = mat4.create();
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
+            mat4.multiply(m, this.lightBiasMatrix, m);
+
+            gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
+
+            gl.activeTexture(gl.TEXTURE5);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+            gl.uniform1i(u.uShadowMap, 5);
+
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+        }
+
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
 
         modelMatrix = mat4.create();
         bMat = mat4.create();
@@ -618,7 +680,6 @@ var sceneOne = {
         //this.bench1.draw();
 
 
-
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
@@ -638,7 +699,23 @@ var sceneOne = {
         //terrain
         /************************************************************************************************************************************/
 
-        u = TerrainShader.use();
+        if (shadow) {
+            u = TerrainShaderWhite.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+        } else {
+            u = TerrainShader.use();
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+
+            m = mat4.create();
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
+            mat4.multiply(m, this.lightBiasMatrix, m);
+            gl.uniformMatrix4fv(u.uShadowMatrix, false, m);
+
+            gl.activeTexture(gl.TEXTURE7);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+            gl.uniform1i(u.uShadowMap, 7);
+        }
+
         bMat = mat4.create();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
@@ -646,8 +723,8 @@ var sceneOne = {
         mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         gl.uniform1f(u.uTiling, 200.0);
+
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texMask);
         gl.uniform1i(u.uMask, 0);
@@ -675,8 +752,3 @@ var sceneOne = {
         this.terrain.draw();
     }
 }
-
-var x = 0.0, y = 40.0, z = 1.0;
-var rX = 0, rY = 0, rZ = 0;
-
-

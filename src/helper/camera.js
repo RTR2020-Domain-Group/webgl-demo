@@ -67,6 +67,14 @@ const camera = {
         return vMat;
     },
 
+    getCameraLookPoint: function () {
+        this.updateCameraVectors();
+
+        let v = vec3.create();
+        vec3.add(v, this.Position, this.Front)
+        return v;
+    },
+
     processKeyboard: function (dir) {
         this.moveDir(dir, 1.0);
     },
@@ -107,11 +115,11 @@ const camera = {
     },
 
     print: function () {
-        console.log('Position',camera.Position);
-        console.log('Front',camera.Front);
-        console.log('Right',camera.Right);
-        console.log('Yaw',camera.Yaw);
-        console.log('Pitch',camera.Pitch);
+        console.log('Position', camera.Position);
+        console.log('Front', camera.Front);
+        console.log('Right', camera.Right);
+        console.log('Yaw', camera.Yaw);
+        console.log('Pitch', camera.Pitch);
     }
 };
 
