@@ -1,3 +1,5 @@
+'use strict';
+
 var sceneOne = {
     terrain: 0,
     johnny: 0,
@@ -66,6 +68,9 @@ var sceneOne = {
     bman_posX: 46.5,
     bman_posZ: 608.2,
     bman_walk_speed: 0.2,
+
+    // camera
+    angle: 0.0,
 
     init: function () {
 
@@ -394,8 +399,8 @@ var sceneOne = {
         gl.uniform1f(credits.kShininessUniform, 50.0);
 
 
-        modelMatrix = mat4.create();
-        viewMatrix = mat4.create();
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
 
         mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
         mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
@@ -536,7 +541,45 @@ var sceneOne = {
             }
         }
 
-        // camera.moveDir(FORWARD, 0.5);
+        // camera animation
+        // spin around johnny
+        if (this.t >= 990 && this.t < 1132) {
+            console.log('case 990');
+            //camera.moveDir(FORWARD, 0.2);
+            // this.angle += 180 * (1.0 / (1132 - 990));
+            // var c = camera.getCameraLookPoint();
+            // camera.Position[0] = c + (10.0*Math.cos(this.angle));
+            // camera.Position[2] = c + (10.0*Math.sin(this.angle));
+
+            camera.Position[2] += 0.2;
+            camera.Yaw -= 180 * (1.0 / (1132 - 990));
+
+
+            // vec3.sub(camera.Front, c, camera.Position);
+            camera.updateCameraVectors();
+        }
+        // follow jonny from front
+        else if (this.t >= 1132 && this.t < 1860) {
+            camera.moveDir(BACKWARD, 0.2);
+        }
+        // spin around again
+        else if (this.t >= 1860 && this.t < 2011) {
+            camera.Position[2] -= 0.2;
+            camera.Yaw += 180 * (1.0 / (2011 - 1860));
+        }
+
+        // Position 
+        // Float32Array(3) [ 38.136959075927734, 3.583523988723755, 267.254150390625 ]
+        // camera.js:122:17
+        // Front 
+        // Float32Array(3) [ 0.9455095529556274, 0.004363309126347303, -0.32556506991386414 ]
+        // camera.js:123:17
+        // Right 
+        // Float32Array(3) [ 0.32556816935539246, -0, 0.9455185532569885 ]
+        // camera.js:124:17
+        // Yaw -19.000000000000014 camera.js:125:17
+        // Pitch 0.25
+
         return false;
     },
 

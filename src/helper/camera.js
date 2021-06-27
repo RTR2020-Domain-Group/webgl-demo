@@ -43,11 +43,11 @@ const camera = {
         vec3.normalize(this.Up, v);
     },
 
-    init: function (pos, up, front) {
+    init: function (pos, up, front, yaw, pitch) {
         this.Position = pos;
         this.WorldUp = up;
-        this.Yaw = CAMERA_YAW;
-        this.Pitch = CAMERA_PITCH;
+        this.Yaw = yaw;
+        this.Pitch = pitch;
         this.Front = front;
 
         this.updateCameraVectors();
@@ -97,6 +97,10 @@ const camera = {
                 vec3.multiply(this.Right, this.Right, vec3.fromValues(step, step, step)));
         }
         this.updateCameraVectors();
+    },
+
+    orbit: function (angle) { 
+
     },
 
     processMouse: function (xoff, yoff) {
