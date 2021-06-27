@@ -140,6 +140,7 @@ const TerrainShader = {
             "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,-1));" +
             "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(-1,0));" +
             "   shadow *= 0.2;" +
+            "   shadow = max(0.3, shadow);" +
             "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask), shadow); \n" +
             "} \n";
 

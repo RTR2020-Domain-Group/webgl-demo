@@ -160,9 +160,9 @@ var sceneOne = {
          * TREE 
          */
         var treeShader = TreeShader.use();
-        
+
         let s = 0;
-        let pos = 0;       
+        let pos = 0;
         var n = new Tree(null, null, gl);
 
         //this.trees.push(n);
@@ -370,7 +370,7 @@ var sceneOne = {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         gl.useProgram(null);
         gl.depthMask(true);
-     
+
 
 
         //credits 
@@ -540,40 +540,45 @@ var sceneOne = {
     },
 
     drawModels: function (shadow) {
-        
+
         //TREES
         /*********************************************** */
-       
-       var treeShader = TreeShader.use();
-        
-       var modelMatrix = mat4.create();
-       var viewMatrix = mat4.create();
 
-       mat4.translate(modelMatrix, modelMatrix, [-25.0, 10.0, 0.0]);
-       mat4.scale(modelMatrix, modelMatrix, [30.4, 30.4, 30.4]);
-       viewMatrix = camera.getViewMatrix();
-       //set rotation
-       gl.uniform1f(treeShader.t, 10000);
-       gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
-       gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
-       gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
+        var treeShader = TreeShader.use();
 
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
+
+        mat4.translate(modelMatrix, modelMatrix, [-25.0, 10.0, 0.0]);
+        mat4.scale(modelMatrix, modelMatrix, [30.4, 30.4, 30.4]);
+        viewMatrix = camera.getViewMatrix();
+        //set rotation
+        gl.uniform1f(treeShader.t, 10000);
+        gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
+
+        if (shadow) {
+            gl.uniformMatrix4fv(treeShader.pUniform, false, this.lightProjectionMatrix);
+            gl.uniformMatrix4fv(treeShader.vUniform, false, this.lightViewMatrix);
+        } else {
+            gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
+            gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
+        }
 
         this.trees.map(i => drawTree(i));
 
         gl.useProgram(null);
 
-        
+
         //animated models
         /************************************************************************************************************************************/
 
         modelMatrix = mat4.create();
-         viewMatrix = mat4.create();
+        viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
 
-        
+
 
 
 
