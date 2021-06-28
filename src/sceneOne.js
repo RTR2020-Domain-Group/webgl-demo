@@ -1,3 +1,5 @@
+'use strict';
+
 var sceneOne = {
     terrain: 0,
     johnny: 0,
@@ -67,6 +69,9 @@ var sceneOne = {
     //bman_posX: 46.3,
     //bman_posZ: 608.1,
     bman_walk_speed: 0.2,
+
+    // camera
+    angle: 0.0,
 
     init: function () {
 
@@ -219,6 +224,7 @@ var sceneOne = {
 
         this.johnny = loadModel(jwModel, "res/models/johnny");
         this.bottles = loadModel(bottlesModel, "res/models/bottles");
+        this.bottles0 = loadModel(bottlesModel0, "res/models/bottles");
         this.boy = loadModel(boyModel, "res/models/boy");
         this.father = loadModel(fatherModel, "res/models/father");
         this.lightPole = loadModel(lightPoleModel, "res/models/lightPole");
@@ -303,7 +309,7 @@ var sceneOne = {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, DEPTH_MAP_SIZE, DEPTH_MAP_SIZE);
 
-        //gl.enable(gl.CULL_FACE);
+        gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
@@ -394,8 +400,8 @@ var sceneOne = {
         gl.uniform1f(credits.kShininessUniform, 50.0);
 
 
-        modelMatrix = mat4.create();
-        viewMatrix = mat4.create();
+        var modelMatrix = mat4.create();
+        var viewMatrix = mat4.create();
 
         mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -2.8]);
         mat4.scale(modelMatrix, modelMatrix, [3.4, 3.4, 3.4]);
@@ -536,7 +542,117 @@ var sceneOne = {
             }
         }
 
-        // camera.moveDir(FORWARD, 0.5);
+        ///// camera animation /////////////////////////////////////////////////
+        // spin around johnny
+        if (this.t >= 930 && this.t < 1132) {
+            if (camera.Yaw >= -105.0) {
+                camera.Position[0] += 0.08;
+                camera.Position[2] += 0.2;
+                camera.Yaw -= 2.0;
+            }
+
+            camera.updateCameraVectors();
+        }
+        // follow jonny from front
+        else if (this.t >= 1132 && this.t < 1860) {
+            camera.Position[0] += 0.04;
+            camera.Position[2] += 0.21;
+        }
+        // spin around again
+        else if (this.t >= 1860 && this.t < 2011) {
+            if (camera.Yaw >= -285.0) {
+                camera.Position[0] -= 0.06;
+                camera.Position[2] -= 0.15;
+                camera.Yaw -= 2.0;
+            }
+
+            camera.updateCameraVectors();
+        }
+
+        // move to first man
+        //else if (this.t >= 2011 && this.t < 2100) {
+        // camera.moveDir(FORWARD, 0.15);
+        //}
+
+        // move to the boy and father
+        else if (this.t >= 2720 && this.t < 3050) {
+            camera.moveDir(FORWARD, 0.2);
+        }
+        // close up on boy father and johnny
+        else if (this.t >= 3050 && this.t < 3151) {
+            camera.Position = vec3.fromValues(38.13, 3.58, 267.25);
+            camera.Yaw = -20.0;
+            camera.Pitch = 0.25;
+
+            camera.updateCameraVectors();
+        }
+        // zoom slowly
+        else if (this.t >= 3207 && this.t < 3208) {
+            camera.moveDir(FORWARD, 0.05);
+        }
+        // boy and father walks away, rotate camera towards them
+        else if (this.t >= 4784 && this.t < 5000) {
+            camera.Yaw += 90.0 * (1.0 / (5000 - 4784));
+            camera.Pitch -= 1.0 / (5000 - 4784);
+
+            camera.updateCameraVectors();
+        }
+        // close up johnny
+        else if (this.t >= 5475 && this.t < 5476) {
+            camera.Position = vec3.fromValues(87.47, 12.43, 437.05);
+            camera.Yaw = 210.0;
+            camera.Pitch = -20.0;
+
+            camera.updateCameraVectors();
+
+        }
+        // follow johnny 
+        else if (this.t >= 5862 && this.t < 6101) {
+            camera.Position[2] += 0.1;
+        }
+        // follow johnny
+        else if (this.t >= 6622 && this.t < 7351) {
+            camera.Position[2] += 0.2;
+            camera.Yaw -= 0.06;
+        }
+        // close up sad man
+        else if (this.t >= 7490 && this.t < 7491) {
+            camera.Position = vec3.fromValues(55.43, -0.77, 621.14);
+            camera.Yaw = -364.0;
+            camera.Pitch = 7.75;
+
+            camera.updateCameraVectors();
+        }
+        // close up to business man and johnny
+        else if (this.t >= 7750 && this.t < 7751) {
+            camera.Position = vec3.fromValues(72.92, 4.59, 600.45);
+            camera.Yaw = -180.0;
+            camera.Pitch = -7.5;
+
+            camera.updateCameraVectors();
+        }
+        // close up to businessmap champi
+        else if (this.t >= 9600 && this.t < 9601) {
+            camera.Position = vec3.fromValues(56.69, 5.35, 608.78);
+            camera.Yaw = -180.0;
+            camera.Pitch = 5.5;
+
+            camera.updateCameraVectors();
+        }
+        // businessman stands up
+        else if (this.t >= 10800 && this.t < 10801) {
+            camera.Position = vec3.fromValues(47.82, 9.61, 631.83);
+            camera.Yaw = -100.0;
+            camera.Pitch = -7.75;
+
+            camera.updateCameraVectors();
+        }
+        // businessman walks away
+        else if (this.t >= 11192 && this.t < 11741) {
+            camera.Yaw -= 0.1;
+            camera.updateCameraVectors();
+        }
+
         return false;
     },
 
@@ -564,8 +680,9 @@ var sceneOne = {
             gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
         }
-
+        gl.disable(gl.CULL_FACE);
         this.trees.map(i => drawTree(i));
+        gl.enable(gl.CULL_FACE);
 
         gl.useProgram(null);
 
@@ -619,8 +736,9 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
+        gl.disable(gl.CULL_FACE);
         this.johnny.draw();
-
+        gl.enable(gl.CULL_FACE);
 
         modelMatrix = mat4.create();
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.man1_rot));
@@ -631,7 +749,7 @@ var sceneOne = {
         if (this.t >= 1800 && this.t <= 3300) {
             this.extraMan1.draw();
         }
-        
+
 
 
         //var bMat = mat4.create();
@@ -645,7 +763,7 @@ var sceneOne = {
         if (this.t >= 680 && this.t <= 5625) {
             this.boy.draw();
         }
-       
+
 
 
         //bMat = mat4.create();
@@ -661,7 +779,7 @@ var sceneOne = {
         if (this.t >= 680 && this.t <= 5625) {
             this.father.draw();
         }
-        
+
 
 
         modelMatrix = mat4.create();
@@ -679,7 +797,7 @@ var sceneOne = {
             this.extraMan24.draw();
             this.extraMan25.draw();
         }
-       
+
 
 
         modelMatrix = mat4.create();
@@ -759,11 +877,12 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
-        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -45.0, this.johnny_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
 
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         this.bottles.draw();
+        this.bottles0.draw();
 
         gl.useProgram(null);
 

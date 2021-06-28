@@ -131,18 +131,19 @@ function init() {
     //audioWAV.play();
 
     // add scenes
-    //addScene(sceneIntro);
+    addScene(sceneIntro);
     addScene(sceneOne);
-    //addScene(sceneCredits);
+    addScene(sceneCredits);
 
     // init all scenes
     initScenes();
 
     // init camera
     camera.init(
-        vec3.fromValues(-2.86, 9.03, -25.45),
+        vec3.fromValues(-10.11, 9.02, -23.77),
         vec3.fromValues(0.0, 1.0, 0.0),
-        vec3.fromValues(0.19, -0.06, 0.97));
+        vec3.fromValues(0.34, -0.13, 0.93),
+        75.00, 0.0);
 
     // initialize projection matrix
     perspectiveProjectionMatrix = mat4.create();
