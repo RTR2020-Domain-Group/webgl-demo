@@ -649,7 +649,8 @@ var sceneOne = {
         }
         // businessman walks away
         else if (this.t >= 11192 && this.t < 11741) {
-            camera.Yaw -= 0.1;
+            camera.moveDir(FORWARD, 0.01);
+            camera.Yaw -= 0.01;
             camera.updateCameraVectors();
         }
 
