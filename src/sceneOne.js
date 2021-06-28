@@ -74,6 +74,13 @@ var sceneOne = {
     angle: 0.0,
     bottleMode: UP,
 
+    pitch0: 0.0,
+    pitch1: 0.0,
+    yaw0: 0.0,
+    yaw1: 0.0,
+    pos0: [],
+    pos1: [],
+
     init: function () {
 
         //credits   
@@ -139,6 +146,9 @@ var sceneOne = {
         gl.useProgram(null);
 
         /************************************************************************************************************************************/
+
+        this.pos0 = [-3.28, 8.06, -22.98];
+        this.pos1 = [1.46, 6.06, 0.97];
 
         this.lightPos = [-89.70, 187.96, 157.38];
         var lightPosv4 = [-89.70, 187.96, 157.38, 1.0];
@@ -458,7 +468,6 @@ var sceneOne = {
         if (this.t >= 1132 && this.t <= 2011) {
             this.johnny_posZ += this.johnny_walk_speed;
         }
-
         else if (this.t >= 2720 && this.t <= 3207) {
             this.johnny_posZ += this.johnny_walk_speed;
             this.johnny_posX += 0.2;
@@ -546,12 +555,12 @@ var sceneOne = {
         ///// camera animation /////////////////////////////////////////////////
         // spin around johnny
         if (this.t >= 930 && this.t < 1132) {
+            camera.Position[0] += (this.pos1[0] - this.pos0[0]) / (1132 - 930);
+            camera.Position[1] += (this.pos1[1] - this.pos0[1]) / (1132 - 930);
+            camera.Position[2] += (this.pos1[2] - this.pos0[2]) / (1132 - 930);
             if (camera.Yaw >= -105.0) {
-                camera.Position[0] += 0.08;
-                camera.Position[2] += 0.2;
                 camera.Yaw -= 2.0;
             }
-
             camera.updateCameraVectors();
         }
         // follow jonny from front
@@ -565,28 +574,55 @@ var sceneOne = {
                 camera.Position[0] -= 0.06;
                 camera.Position[2] -= 0.15;
                 camera.Yaw -= 2.0;
+                camera.updateCameraVectors();
             }
-
-            camera.updateCameraVectors();
         }
 
-        // move to first man
-        //else if (this.t >= 2011 && this.t < 2100) {
-        // camera.moveDir(FORWARD, 0.15);
-        //}
+        // // move to first man
+        // //else if (this.t >= 2011 && this.t < 2100) {
+        // // camera.moveDir(FORWARD, 0.15);
+        // //}
 
         // move to the boy and father
         else if (this.t >= 2720 && this.t < 3050) {
             camera.moveDir(FORWARD, 0.2);
+
+            // next position
+            this.pos0 = camera.Position;
+            this.pos1 = vec3.fromValues(40.06, 2.70, 271.72);
+            this.pitch0 = camera.Pitch;
+            this.yaw0 = camera.Yaw;
+            this.pitch1 = 0.25;
+            this.yaw1 = -20.0;
+
+            if (this.t == 3049) {
+                console.log('camera old', camera.Position);
+                console.log('camera old yaw', camera.Yaw);
+                console.log('camera old pitch', camera.Pitch);
+            }
         }
         // close up on boy father and johnny
         else if (this.t >= 3050 && this.t < 3151) {
-            camera.Position = vec3.fromValues(38.13, 3.58, 267.25);
-            camera.Yaw = -20.0;
-            camera.Pitch = 0.25;
+
+            // 44.47, 6.05, 203.46
+            // yaw -287
+            // pitch 0
+
+            // 40.06, 2.70, 271.72
+            // yaw -20.0
+            // pitch 0.25
+
+            // camera.Position = this.pos1;
+            camera.Pitch += 0.0025;
+            camera.Yaw -= 0.93;
+
+            camera.Position[0] -= 0.045;
+            camera.Position[1] -= 0.033;
+            camera.Position[2] += 0.682;
 
             camera.updateCameraVectors();
         }
+
         // zoom slowly
         else if (this.t >= 3207 && this.t < 3208) {
             camera.moveDir(FORWARD, 0.05);
@@ -598,15 +634,67 @@ var sceneOne = {
 
             camera.updateCameraVectors();
         }
-        // close up johnny
-        else if (this.t >= 5475 && this.t < 5476) {
-            camera.Position = vec3.fromValues(87.47, 12.43, 437.05);
-            camera.Yaw = 210.0;
-            camera.Pitch = -20.0;
+        // move camera towards johnny
+        else if (this.t >= 5000 && this.t < 5475) {
+            camera.Position[2] += 0.2;
+
+            if (this.t == 5474) {
+                console.log('camera', camera.Position);
+                console.log('camera Pitch', camera.Pitch);
+                console.log('camera Yaw', camera.Yaw);
+            }
+        }
+        // rotate camera around johnny
+        else if (this.t >= 5475 && this.t < 5862) {
+
+            // position [39.97, 2.72, 367.33]
+            // Yaw - 290.92
+            // Pitch - 0.74
+
+            // rotate around johnny camera:
+            // position [58.83, 4.59, 413.50]
+            // Yaw 264.75
+            // Pitch 3.00
+
+            // top view camera
+            // position = [87.47, 12.43, 437.05];
+            // yaw = 210.0;
+            // pitch = -20.0;
+
+            // 387 frames
+            camera.Yaw += 140.0 / 387.0;
+            camera.Pitch -= (-0.74 + 20.0) / 387.0;
+
+            camera.Position[0] += (87.47 - 39.97) / 387.0;
+            camera.Position[1] += (12.43 - 2.72) / 387.0;
+            camera.Position[2] += (437.05 - 367.33) / 387.0;
 
             camera.updateCameraVectors();
-
         }
+
+        // Position
+        // Float32Array(3)[61.09038543701172, 9.558198928833008, 426.5563049316406]
+        // camera.js: 124: 17
+        // Front
+        // Float32Array(3)[-0.19353078305721283, -0.061004988849163055, -0.9791957139968872]
+        // camera.js: 125: 17
+        // Right
+        // Float32Array(3)[0.9810228943824768, 0, -0.19389191269874573]
+        // camera.js: 126: 17
+        // Yaw - 461.1799999999966 camera.js: 127: 17
+        // Pitch - 3.4975000000000023
+
+
+        // close up johnny
+        // else if (this.t >= 5475 && this.t < 5476) {
+        //     camera.Position = vec3.fromValues(87.47, 12.43, 437.05);
+        //     camera.Yaw = 210.0;
+        //     camera.Pitch = -20.0;
+
+        //     camera.updateCameraVectors();
+
+        // }
+
         // follow johnny 
         else if (this.t >= 5862 && this.t < 6101) {
             camera.Position[2] += 0.1;
@@ -618,9 +706,9 @@ var sceneOne = {
         }
         // close up sad man
         else if (this.t >= 7490 && this.t < 7491) {
-            camera.Position = vec3.fromValues(55.43, -0.77, 621.14);
-            camera.Yaw = -364.0;
-            camera.Pitch = 7.75;
+            camera.Position = vec3.fromValues(61.82, 4.33, 605.46);
+            camera.Yaw = 45.75;
+            camera.Pitch = -14.25;
 
             camera.updateCameraVectors();
         }
@@ -670,7 +758,6 @@ var sceneOne = {
         } else if (this.t >= 9600) {
             this.bottleMode = 0;
         }
-
 
         return false;
     },
