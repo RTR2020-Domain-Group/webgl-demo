@@ -13,7 +13,7 @@ var firstMouse = true;
 var mouseClicked = false;
 var spaceKeyPressed = false;
 var audioWAV;
-var frameCount = 1;
+var frameCount = 690;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -131,7 +131,7 @@ function init() {
     //audioWAV.play();
 
     // add scenes
-    addScene(sceneIntro);
+    // addScene(sceneIntro);
     addScene(sceneOne);
     addScene(sceneCredits);
 
@@ -140,9 +140,9 @@ function init() {
 
     // init camera
     camera.init(
-        vec3.fromValues(-10.11, 9.02, -23.77),
+        vec3.fromValues(-3.28, 8.06, -22.98),
         vec3.fromValues(0.0, 1.0, 0.0),
-        vec3.fromValues(0.34, -0.13, 0.93),
+        vec3.fromValues(0.25, -0.11, 0.96),
         75.00, 0.0);
 
     // initialize projection matrix

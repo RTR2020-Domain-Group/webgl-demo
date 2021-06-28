@@ -1,3 +1,5 @@
+'use strict';
+
 // directions
 const FORWARD = 0;
 const BACKWARD = 1;
@@ -99,7 +101,7 @@ const camera = {
         this.updateCameraVectors();
     },
 
-    orbit: function (angle) { 
+    orbit: function (angle) {
 
     },
 
