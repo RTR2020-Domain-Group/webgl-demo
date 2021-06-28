@@ -13,7 +13,7 @@ var firstMouse = true;
 var mouseClicked = false;
 var spaceKeyPressed = false;
 var audioWAV;
-var frameCount = 0;
+var frameCount = 1;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
