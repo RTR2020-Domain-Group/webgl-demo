@@ -82,6 +82,9 @@ var sceneCredits = {
 
         gl.useProgram(null);
 
+        this.fbo = createFramebuffer(1920, 1080);
+        this.noise = createNoiseTexture();
+
     },
 
     uninit: function () {
@@ -132,6 +135,10 @@ var sceneCredits = {
     },
 
     display: function () {
+        // bind FBO for post processing
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo.FBO);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.viewport(0, 0, canvas.width, canvas.height);
 
         var credits = CreditsShader.use();
 
@@ -188,7 +195,20 @@ var sceneCredits = {
 
         //unbind quad vao
         gl.bindVertexArray(null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
+        // post processing
+        gl.depthMask(false);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.noise);
+
+        var u = GrainShader.use();
+        gl.uniform2f(u.delta, Math.random(), Math.random())
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.useProgram(null);
+        gl.depthMask(true);
 
     },
 

@@ -361,25 +361,6 @@ var sceneOne = {
 
 
         this.drawModels(false);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-        /************************************************************************************************************************************/
-
-
-        // post processing
-        gl.depthMask(false);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.noise);
-
-        var u = GrainShader.use();
-        gl.uniform2f(u.delta, Math.random(), Math.random())
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-        gl.useProgram(null);
-        gl.depthMask(true);
-
-
 
         //credits 
         /************************************************************************************************************************************/
@@ -432,6 +413,25 @@ var sceneOne = {
         gl.bindVertexArray(null);
 
         gl.useProgram(null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+
+        /************************************************************************************************************************************/
+
+
+        // post processing
+        gl.depthMask(false);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.fbo.texColor);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.noise);
+
+        var u = GrainShader.use();
+        gl.uniform2f(u.delta, Math.random(), Math.random())
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.useProgram(null);
+        gl.depthMask(true);
+
 
         /************************************************************************************************************************************/
 
@@ -634,7 +634,6 @@ var sceneOne = {
         }
         // close up to businessmap champi
         else if (this.t >= 9600 && this.t < 9601) {
-            frameCount += 4;
             camera.Position = vec3.fromValues(56.69, 5.35, 608.78);
             camera.Yaw = -180.0;
             camera.Pitch = 5.5;
