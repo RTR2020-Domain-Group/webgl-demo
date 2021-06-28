@@ -542,46 +542,116 @@ var sceneOne = {
             }
         }
 
-        // camera animation
+        ///// camera animation /////////////////////////////////////////////////
         // spin around johnny
-        if (this.t >= 990 && this.t < 1132) {
-            camera.Position[0] += 0.08;
-            camera.Position[2] += 0.2;
-            camera.Yaw -= 180 * (1.0 / (1132 - 990));
+        if (this.t >= 930 && this.t < 1132) {
+            if (camera.Yaw >= -105.0) {
+                camera.Position[0] += 0.08;
+                camera.Position[2] += 0.2;
+                camera.Yaw -= 2.0;
+            }
 
             camera.updateCameraVectors();
         }
         // follow jonny from front
         else if (this.t >= 1132 && this.t < 1860) {
-            camera.moveDir(BACKWARD, 0.2);
+            camera.Position[0] += 0.04;
+            camera.Position[2] += 0.21;
         }
         // spin around again
         else if (this.t >= 1860 && this.t < 2011) {
-            camera.Position[0] -= 0.08;
-            camera.Position[2] -= 0.2;
-            camera.Yaw -= 180 * (1.0 / (2011 - 1860));
+            if (camera.Yaw >= -285.0) {
+                camera.Position[0] -= 0.06;
+                camera.Position[2] -= 0.15;
+                camera.Yaw -= 2.0;
+            }
 
             camera.updateCameraVectors();
         }
+
         // move to first man
-        else if (this.t >= 2011 && this.t < 2100) {
+        //else if (this.t >= 2011 && this.t < 2100) {
+        // camera.moveDir(FORWARD, 0.15);
+        //}
+
+        // move to the boy and father
+        else if (this.t >= 2720 && this.t < 3050) {
             camera.moveDir(FORWARD, 0.2);
         }
-        // move to the boy and father
-        else if (this.t >= 2720 && this.t <= 3207) {
-        }
+        // close up on boy father and johnny
+        else if (this.t >= 3050 && this.t < 3151) {
+            camera.Position = vec3.fromValues(38.13, 3.58, 267.25);
+            camera.Yaw = -20.0;
+            camera.Pitch = 0.25;
 
-        // Position 
-        // Float32Array(3) [ 38.136959075927734, 3.583523988723755, 267.254150390625 ]
-        // camera.js:122:17
-        // Front 
-        // Float32Array(3) [ 0.9455095529556274, 0.004363309126347303, -0.32556506991386414 ]
-        // camera.js:123:17
-        // Right 
-        // Float32Array(3) [ 0.32556816935539246, -0, 0.9455185532569885 ]
-        // camera.js:124:17
-        // Yaw -19.000000000000014 camera.js:125:17
-        // Pitch 0.25
+            camera.updateCameraVectors();
+        }
+        // zoom slowly
+        else if (this.t >= 3207 && this.t < 3208) {
+            camera.moveDir(FORWARD, 0.05);
+        }
+        // boy and father walks away, rotate camera towards them
+        else if (this.t >= 4784 && this.t < 5000) {
+            camera.Yaw += 90.0 * (1.0 / (5000 - 4784));
+            camera.Pitch -= 1.0 / (5000 - 4784);
+
+            camera.updateCameraVectors();
+        }
+        // close up johnny
+        else if (this.t >= 5475 && this.t < 5476) {
+            camera.Position = vec3.fromValues(87.47, 12.43, 437.05);
+            camera.Yaw = 210.0;
+            camera.Pitch = -20.0;
+
+            camera.updateCameraVectors();
+
+        }
+        // follow johnny 
+        else if (this.t >= 5862 && this.t < 6101) {
+            camera.Position[2] += 0.1;
+        }
+        // follow johnny
+        else if (this.t >= 6622 && this.t < 7351) {
+            camera.Position[2] += 0.2;
+            camera.Yaw -= 0.06;
+        }
+        // close up sad man
+        else if (this.t >= 7490 && this.t < 7491) {
+            camera.Position = vec3.fromValues(55.43, -0.77, 621.14);
+            camera.Yaw = -364.0;
+            camera.Pitch = 7.75;
+
+            camera.updateCameraVectors();
+        }
+        // close up to business man and johnny
+        else if (this.t >= 7750 && this.t < 7751) {
+            camera.Position = vec3.fromValues(72.92, 4.59, 600.45);
+            camera.Yaw = -180.0;
+            camera.Pitch = -7.5;
+
+            camera.updateCameraVectors();
+        }
+        // close up to businessmap champi
+        else if (this.t >= 9600 && this.t < 9601) {
+            camera.Position = vec3.fromValues(56.69, 5.35, 608.78);
+            camera.Yaw = -180.0;
+            camera.Pitch = 5.5;
+
+            camera.updateCameraVectors();
+        }
+        // businessman stands up
+        else if (this.t >= 10800 && this.t < 10801) {
+            camera.Position = vec3.fromValues(47.82, 9.61, 631.83);
+            camera.Yaw = -100.0;
+            camera.Pitch = -7.75;
+
+            camera.updateCameraVectors();
+        }
+        // businessman walks away
+        else if (this.t >= 11192 && this.t < 11741) {
+            camera.Yaw -= 0.1;
+            camera.updateCameraVectors();
+        }
 
         return false;
     },
@@ -666,8 +736,9 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
+        gl.disable(gl.CULL_FACE);
         this.johnny.draw();
-
+        gl.enable(gl.CULL_FACE);
 
         modelMatrix = mat4.create();
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.man1_rot));
