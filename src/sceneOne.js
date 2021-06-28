@@ -534,7 +534,7 @@ var sceneOne = {
         }
 
         //credits fade in
-        if (this.t >= 11628) {
+        if (this.t >= 11620) {
             this.currentTexture = 4;
             this.alphaBlending += 0.04;
             if (this.alphaBlending >= 1.0) {
@@ -634,6 +634,7 @@ var sceneOne = {
         }
         // close up to businessmap champi
         else if (this.t >= 9600 && this.t < 9601) {
+            frameCount += 4;
             camera.Position = vec3.fromValues(56.69, 5.35, 608.78);
             camera.Yaw = -180.0;
             camera.Pitch = 5.5;
@@ -657,12 +658,18 @@ var sceneOne = {
 
         //// johnny model bottle orientation 
         this.bottleMode = UP;
-        if (this.t >= 0 && this.t < 920) {
+        if (this.t >= 0 && this.t < 950) {
             this.bottleMode = DOWN;
         } else if (this.t >= 1710 && this.t < 2630) {
             this.bottleMode = DOWN;
         } else if (this.t >= 4740 && this.t < 5460) {
             this.bottleMode = DOWN;
+        } else if (this.t >= 6120 && this.t < 6570) {
+            this.bottleMode = DOWN;
+        } else if (this.t >= 8228 && this.t < 9100) {
+            this.bottleMode = DOWN;
+        } else if (this.t >= 9600) {
+            this.bottleMode = 0;
         }
 
 
@@ -722,26 +729,7 @@ var sceneOne = {
         mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
         viewMatrix = camera.getViewMatrix();
 
-        var u = PBRshader.use();
 
-        // set light
-        gl.uniform3fv(u.lightPositionUniform, lightPoint);
-        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
-
-        gl.useProgram(null);
-
-        u = PBRStaticShader.use();
-
-        // set light
-        gl.uniform3fv(u.lightPositionUniform, lightPoint);
-        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
-
-        gl.useProgram(null);
-
-        u = TerrainShader.use();
-        lightPoint.push(1.0);
-        gl.uniform4fv(u.light_position, lightPoint);
-        gl.useProgram(null);
         // viewMatrix = this.lightViewMatrix;
 
         if (shadow) {
@@ -1078,7 +1066,11 @@ var sceneOne = {
 
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        if (this.bottleMode == DOWN) {
+            mat4.translate(modelMatrix, modelMatrix, [-0.2, -2.0, -15.0]);
+        } else {
+            mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
+        }
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
