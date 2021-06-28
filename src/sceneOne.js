@@ -72,6 +72,7 @@ var sceneOne = {
 
     // camera
     angle: 0.0,
+    bottleMode: UP,
 
     init: function () {
 
@@ -654,6 +655,17 @@ var sceneOne = {
             camera.updateCameraVectors();
         }
 
+        //// johnny model bottle orientation 
+        this.bottleMode = UP;
+        if (this.t >= 0 && this.t < 920) {
+            this.bottleMode = DOWN;
+        } else if (this.t >= 1710 && this.t < 2630) {
+            this.bottleMode = DOWN;
+        } else if (this.t >= 4740 && this.t < 5460) {
+            this.bottleMode = DOWN;
+        }
+
+
         return false;
     },
 
@@ -709,9 +721,29 @@ var sceneOne = {
         var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
         mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
         viewMatrix = camera.getViewMatrix();
+
+        var u = PBRshader.use();
+
+        // set light
+        gl.uniform3fv(u.lightPositionUniform, lightPoint);
+        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
+
+        gl.useProgram(null);
+
+        u = PBRStaticShader.use();
+
+        // set light
+        gl.uniform3fv(u.lightPositionUniform, lightPoint);
+        gl.uniform3fv(u.lightColorUniform, [1.0, 1.0, 1.0]);
+
+        gl.useProgram(null);
+
+        u = TerrainShader.use();
+        lightPoint.push(1.0);
+        gl.uniform4fv(u.light_position, lightPoint);
+        gl.useProgram(null);
         // viewMatrix = this.lightViewMatrix;
 
-        var u;
         if (shadow) {
             u = PBRshaderWhite.use();
             gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
@@ -914,7 +946,7 @@ var sceneOne = {
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
         mat4.rotateZ(bMat, bMat, toRadians(180.0));
-        gl.uniformMatrix4fv(u.mUniform, false, bMat);       
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         this.lightPole.draw();
 
@@ -966,7 +998,7 @@ var sceneOne = {
 
         //father & son
         bMat = mat4.create();
-        modelMatrix = mat4.create();       
+        modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [61.0, -3.0, 254.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
         mat4.rotateX(modelMatrix, modelMatrix, toRadians(0.0));
@@ -1053,9 +1085,11 @@ var sceneOne = {
 
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        this.bottles.draw();
-        this.bottles0.draw();
-
+        if (this.bottleMode == UP) {
+            this.bottles.draw();
+        } else if (this.bottleMode == DOWN) {
+            this.bottles0.draw();
+        }
         gl.useProgram(null);
 
         /************************************************************************************************************************************/
