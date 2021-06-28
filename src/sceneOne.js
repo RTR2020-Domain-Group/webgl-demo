@@ -642,7 +642,7 @@ var sceneOne = {
         //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(this.t, boyAnim.length - 1)]);
-        if (this.t >= 680 && this.t <= 5625) {
+        if (this.t >= 0 && this.t <= 5625) {
             this.boy.draw();
         }
        
@@ -658,7 +658,7 @@ var sceneOne = {
         //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
-        if (this.t >= 680 && this.t <= 5625) {
+        if (this.t >= 0 && this.t <= 5625) {
             this.father.draw();
         }
         
@@ -684,7 +684,7 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.translate(modelMatrix, modelMatrix, [80.0, -4.0, 620.0]);
+        mat4.translate(modelMatrix, modelMatrix, [83.0, -4.0, 620.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, sadManAnim0[Math.min(this.t, sadManAnim0.length - 1)]);
@@ -734,24 +734,195 @@ var sceneOne = {
 
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
 
+        //light poles
+
+        //right side
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        //mat4.translate(bMat, modelMatrix, [35.0, 0.0, 0.0]);
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [-20.0, -9.0, 0.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
         gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         this.lightPole.draw();
 
-        bMat = mat4.create();
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
-        mat4.scale(modelMatrix, modelMatrix, [0.005, 0.005, 0.005]);
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [12.0, -9.0, 200.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [30.0, -9.0, 400.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [40.0, -9.0, 630.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [36.0, -9.0, 830.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        //left side
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);       
+        mat4.translate(bMat, modelMatrix, [50.0, -9.0, 100.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        mat4.rotateZ(bMat, bMat, toRadians(180.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);       
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [72.0, -9.0, 300.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        mat4.rotateZ(bMat, bMat, toRadians(180.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [90.0, -9.0, 500.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        mat4.rotateZ(bMat, bMat, toRadians(180.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [90.0, -9.0, 730.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        mat4.rotateZ(bMat, bMat, toRadians(180.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        modelMatrix = mat4.create();
+        var bMat = mat4.create();
+        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
+        mat4.translate(bMat, modelMatrix, [86.0, -9.0, 930.0]);
+        mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
+        mat4.rotateX(bMat, bMat, toRadians(-90.0));
+        mat4.rotateZ(bMat, bMat, toRadians(180.0));
+        gl.uniformMatrix4fv(u.mUniform, false, bMat);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.lightPole.draw();
+
+        //benches
+
+        //father & son
+        bMat = mat4.create();
+        modelMatrix = mat4.create();       
+        mat4.translate(modelMatrix, modelMatrix, [61.0, -3.0, 254.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(10.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
         this.bench.draw();
         this.bench1.draw();
+
+        //vacant
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [20.0, -3.0, 254.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(8.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
+
+        //sad man
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [80.0, -2.8, 613.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(2.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(5.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
+
+        //sad man vacant
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [79.0, -2.6, 596.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(2.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(5.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
+
+        //bman
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [44.0, -4.0, 602.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
+
+        //johnny
+        bMat = mat4.create();
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [44.0, -4.0, 585.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.004, 0.004, 0.004]);
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(0.0));
+        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(11.0));
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(u.boneUniform, false, mat4.create());
+        this.bench.draw();
+        this.bench1.draw();
+
 
 
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
