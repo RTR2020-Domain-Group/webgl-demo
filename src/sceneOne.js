@@ -731,7 +731,7 @@ var sceneOne = {
 
 
         // viewMatrix = this.lightViewMatrix;
-
+        var u;
         if (shadow) {
             u = PBRshaderWhite.use();
             gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
