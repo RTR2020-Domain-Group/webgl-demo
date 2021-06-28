@@ -2,6 +2,9 @@ const { vec2, vec3, mat3, mat4, quat } = glMatrix;
 const PI_180 = Math.PI / 180.0;
 const DEPTH_MAP_SIZE = 2048;
 
+const UP = 101;
+const DOWN = 102;
+
 function toRadians(angle) {
     return angle * PI_180;
 }
