@@ -189,20 +189,20 @@ var sceneOne = {
         this.trees.push(n);
 
         //2nd Position
-        pos = MOV(0.50, 0, 7.5);
+        pos = MOV(0.20, 0, 7.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(2.5, 0, 7.5);
+        pos = MOV(2.70, 0, 7.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         //3rd Position
-        pos = MOV(1.0, 0, 11.5);
+        pos = MOV(0.80, 0, 11.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(2.5, 0, 11.5);
+        pos = MOV(2.70, 0, 11.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
@@ -211,7 +211,7 @@ var sceneOne = {
         s = 1.2 + 1.1 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.0, 0, 20.0);
+        pos = MOV(3.5, 0, 20.0);
         s = 1.6 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
