@@ -81,6 +81,19 @@ var sceneOne = {
     pos0: [],
     pos1: [],
 
+    /**
+     * Temporary lTree lights
+     */
+    gLightAmbient  : [0.0, 0.0, 0.0],
+    gLightDiffuse  : [1.0, 1.0, 1.0],
+    gLightSpecular :  [0.40, 0.45, 0.45],
+    gLightPosition :  [1.0, 1.0, 1.0, 1.0],
+    
+    gMaterialAmbient : [0.0, 0.0, 0.0],
+    gMaterialDiffuse : [1.0, 1.0, 1.0],
+    gMaterialSpecular : [0.0, 1.0, 0.0],
+    gMaterialShininess: 1.5,
+
     init: function () {
 
         //credits   
@@ -191,17 +204,17 @@ var sceneOne = {
         this.trees.push(n);
 
         pos = MOV(2.50, 0, 0.50);
-        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        s = 1.8 + 2.0 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(12, SIZE(s, s, s).compose(pos), gl));
        
         pos = MOV(2.20, 0, 2.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        this.trees.push(new Tree(11, SIZE(s, s, s).compose(pos), gl));
 
         //2nd Position
         pos = MOV(0.20, 0, 7.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        this.trees.push(new Tree(12, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(2.70, 0, 7.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
@@ -224,8 +237,8 @@ var sceneOne = {
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(2.70, 0, 11.5);
-        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+        s = 2.4 + 2.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(15, SIZE(s, s, s).compose(pos), gl));
 
         //4th Position 
         pos = MOV(0.55, 0, 15.5);
@@ -264,7 +277,7 @@ var sceneOne = {
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.5, 0, 30.25);
+        pos = MOV(3.90, 0, 30.25);
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
@@ -281,7 +294,7 @@ var sceneOne = {
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(3.5, 0, 37.0);
-        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
+        s = 2.4 + 2.0 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(1.40, 0, 41.5);
@@ -312,7 +325,7 @@ var sceneOne = {
 
 
         pos = MOV(1.25, 0, 55.5);
-        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        s = 2.4 + 1.9 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(4.0, 0, 55.0);
@@ -897,8 +910,23 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [-25.0, 10.0, 0.0]);
         mat4.scale(modelMatrix, modelMatrix, [30.4, 30.4, 30.4]);
         viewMatrix = camera.getViewMatrix();
+
+        gl.uniform1i(treeShader.gLightEnableUniform, 1);
+        gl.uniform3fv(treeShader.gLAUniform, this.gLightAmbient);
+        gl.uniform3fv(treeShader.gLDUniform, this.gLightDiffuse);
+        gl.uniform3fv(treeShader.gLSUniform, this.gLightSpecular);
+        gl.uniform4fv(treeShader.gLightPositionUniform, this.gLightPosition);
+
+        gl.uniform3fv(treeShader.gKAUniform, this.gMaterialAmbient);
+        gl.uniform3fv(treeShader.gKDUniform, this.gMaterialDiffuse);
+        gl.uniform3fv(treeShader.gKSUniform, this.gMaterialSpecular);
+        gl.uniform1f(treeShader.gMaterialShininessUniform, this.gMaterialShininess);        
+
         //set rotation
-        gl.uniform1f(treeShader.t, 10000);
+        gl.uniform1f(treeShader.t, 5000);
+
+
+
         gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
 
         if (shadow) {
