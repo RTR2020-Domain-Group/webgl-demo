@@ -47,6 +47,7 @@ const TreeShader = {
             "   float h = vuv.y / 2.0 + 0.1;\n" +
             "   float b = 1.0 - v * 0.7;\n" +
             "   FragColor = vec4(vec3(h * v, h * b, b * 0.6), 1);\n"+
+            "   FragColor = vec4(vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
             "}\n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

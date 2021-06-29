@@ -962,7 +962,12 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
         gl.disable(gl.CULL_FACE);
+        // draw BnW
+        if (u.uBnW) gl.uniform1i(u.uBnW, 1);
+
         this.johnny.draw();
+
+        if (u.uBnW) gl.uniform1i(u.uBnW, 0);
         gl.enable(gl.CULL_FACE);
 
         modelMatrix = mat4.create();
@@ -1268,11 +1273,23 @@ var sceneOne = {
             gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         }
 
-        modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
-        mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
-        mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
-        mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
+
+
+        // newspaper on bench
+        if (this.t > 9600) {
+            modelMatrix = mat4.create();
+            mat4.translate(modelMatrix, modelMatrix, [46.5, -3.0, 604.2]);
+            mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
+            mat4.rotateY(modelMatrix, modelMatrix, toRadians(115.0));
+        }
+        // newspaper in hand
+        else {
+            modelMatrix = mat4.create();
+            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
+            mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
+            mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
+            mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
+        }
 
 
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);

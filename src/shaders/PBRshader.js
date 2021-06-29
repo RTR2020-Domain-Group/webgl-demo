@@ -78,7 +78,7 @@ const PBRshader = {
             "uniform sampler2D roughnessMap; \n" +
             "uniform sampler2D aoMap; \n" +
             "uniform highp sampler2DShadow uShadowMap; \n" +
-            "uniform int uShadow; \n" +
+            "uniform int uBnW; \n" +
 
             "uniform vec3 lightPosition[4]; \n" +
             "uniform vec3 lightColor[4]; \n" +
@@ -198,6 +198,9 @@ const PBRshader = {
             "	color = pow(color, vec3(1.0 / 2.2)); \n" +
 
             "	FragColor = vec4(color, 1.0); \n" +
+
+            "   if (uBnW == 1) \n" +
+            "       FragColor = vec4(vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -252,9 +255,11 @@ const PBRshader = {
 
         this.uniforms.uShadowMap = gl.getUniformLocation(this.program, "uShadowMap");
         this.uniforms.uShadowMatrix = gl.getUniformLocation(this.program, "uShadowMatrix");
-        this.uniforms.uShadow = gl.getUniformLocation(this.program, "uShadow");
+        this.uniforms.uBnW = gl.getUniformLocation(this.program, "uBnW");
 
         gl.useProgram(this.program);
+
+        gl.uniform1i(this.uniforms.uBnW, 0);
 
         // set material related texture uniforms
         gl.uniform1i(albedoUniform, 0);
