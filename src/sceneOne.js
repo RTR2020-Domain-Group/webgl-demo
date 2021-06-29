@@ -834,7 +834,7 @@ var sceneOne = {
             camera.Yaw -= 0.06;
         }
         // close up sad man
-        else if (this.t >= 7490 && this.t < 7491) {
+        else if (this.t >= 7480 && this.t < 7491) {
             camera.Position = vec3.fromValues(61.82, 4.33, 605.46);
             camera.Yaw = 45.75;
             camera.Pitch = -14.25;
@@ -1269,7 +1269,6 @@ var sceneOne = {
         }
 
         modelMatrix = mat4.create();
-        //mat4.multiply(modelMatrix, modelMatrix, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)])
         mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));

@@ -131,7 +131,7 @@ function init() {
     //audioWAV.play();
 
     // add scenes
-    //addScene(sceneIntro);
+    addScene(sceneIntro);
     addScene(sceneOne);
     addScene(sceneCredits);
 
