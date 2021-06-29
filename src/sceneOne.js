@@ -173,6 +173,10 @@ var sceneOne = {
         gl.uniform4fv(u.light_position, lightPosv4);
         gl.useProgram(null);
 
+        u = TwoSidedTextureShader.use();
+        gl.uniform4fv(u.light_position, lightPosv4);
+        gl.useProgram(null);
+
         /**
          * TREE 
          */
@@ -193,7 +197,7 @@ var sceneOne = {
         pos = MOV(2.50, 0, 0.50);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
-       
+
         pos = MOV(2.20, 0, 2.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
@@ -1257,27 +1261,35 @@ var sceneOne = {
         gl.disable(gl.CULL_FACE);
         u = TwoSidedTextureShader.use();
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
-        
+
         if (shadow) {
             gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
         } else {
             gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
         }
-        
+
         modelMatrix = mat4.create();
         //mat4.multiply(modelMatrix, modelMatrix, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)])
-        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX+6.0, -2.0, this.bman_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
         mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
-        
-        
+
+
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         this.newspaper.draw();
-        
+
+        modelMatrix = mat4.create();
+        mat4.multiply(modelMatrix, modelMatrix, photographAnim0[Math.min(this.t, photographAnim0.length - 1)])
+        mat4.translate(modelMatrix, modelMatrix, [83.0, -4.0, 620.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        this.photograph.draw();
+
         gl.useProgram(null);
         gl.enable(gl.CULL_FACE);
-        
+
         /************************************************************************************************************************************/
 
 

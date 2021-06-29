@@ -15,13 +15,24 @@ const TwoSidedTextureShader = {
             "uniform mat4 u_modelMatrix; \n" +
             "uniform mat4 u_viewMatrix; \n" +
             "uniform mat4 u_projectionMatrix; \n" +
+            "uniform vec4 light_position; \n" +
 
             "out vec2 out_Texcoord; \n" +
+            "out vec3 light_direction;" +
+            "out vec3 viewer_vector;" +
+            "out vec3 tnorm;" +
 
             "void main (void) \n" +
             "{ \n" +
+
+            "	vec4 pos = u_modelMatrix * vPosition; \n" +
+            "	pos = u_viewMatrix * pos; \n" +
+            "   tnorm = mat3(u_modelMatrix) * vNormal;" +
+            "   viewer_vector = vec3(-pos.xyz);" +
+            "   light_direction = vec3(light_position - pos);" +
+
             "	out_Texcoord = vTexcoord; \n" +
-            "	gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vPosition; \n" +
+            "	gl_Position = u_projectionMatrix * pos; \n" +
             "} \n";
 
         var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -43,10 +54,29 @@ const TwoSidedTextureShader = {
             "precision highp int; \n" +
 
             "in vec2 out_Texcoord; \n" +
+            "in vec3 light_direction;" +
+            "in vec3 viewer_vector;" +
+            "in vec3 tnorm;" +
+
             "out vec4 FragColor; \n" +
 
             "uniform sampler2D uFrontTex; \n" +
             "uniform sampler2D uBackTex; \n" +
+
+            "vec4 light(vec3 normal, float shadow) \n" +
+            "{ \n" +
+            "	vec3 nviewer_vector = normalize(viewer_vector); \n" +
+
+            "   vec3 nlight_direction = normalize(light_direction);" +
+            "   vec3 reflection_vector_white = reflect(-nlight_direction, normal);" +
+            "   float tn_dot_ldir_white = max(dot(normal, nlight_direction), 0.0);" +
+            "   vec3 ambient_white  = vec3(0.2);" +
+            "   vec3 diffuse_white  = vec3(1.0)*tn_dot_ldir_white;" +
+            "   vec3 specular_white = vec3(1.0)*pow(max(dot(reflection_vector_white, nviewer_vector), 0.0), 128.0);" +
+
+            "   vec3 phong_ads_light = ambient_white + (shadow*(diffuse_white + specular_white));" +
+            "   return vec4(phong_ads_light, 1.0);" +
+            "} \n" +
 
             "void main (void) \n" +
             "{ \n" +
@@ -54,6 +84,8 @@ const TwoSidedTextureShader = {
             "	    FragColor = texture(uFrontTex, out_Texcoord); \n" +
             "   else \n" +
             "	    FragColor = texture(uBackTex, out_Texcoord); \n" +
+
+            "   FragColor = FragColor * light(tnorm, 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -94,6 +126,8 @@ const TwoSidedTextureShader = {
         this.uniforms.mUniform = gl.getUniformLocation(this.program, "u_modelMatrix");
         this.uniforms.vUniform = gl.getUniformLocation(this.program, "u_viewMatrix");
         this.uniforms.pUniform = gl.getUniformLocation(this.program, "u_projectionMatrix");
+        this.uniforms.light_position = gl.getUniformLocation(this.program, "light_position");
+
 
         gl.useProgram(this.program);
 
