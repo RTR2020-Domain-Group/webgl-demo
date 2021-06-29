@@ -1166,10 +1166,10 @@ var sceneOne = {
         
         modelMatrix = mat4.create();
         //mat4.multiply(modelMatrix, modelMatrix, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)])
-        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX+5.0, 0.5, this.bman_posZ]);
-        mat4.scale(modelMatrix, modelMatrix, [0.01, 0.01, 0.01]);
-        mat4.rotateY(modelMatrix, modelMatrix, toRadians(angleY));
-        mat4.rotateX(modelMatrix, modelMatrix, toRadians(angleX));
+        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX+6.0, -2.0, this.bman_posZ]);
+        mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
+        mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
+        mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
         
         
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
