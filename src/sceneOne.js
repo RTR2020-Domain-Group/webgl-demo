@@ -185,38 +185,138 @@ var sceneOne = {
         //this.trees.push(n);
 
         //First Tree
-        n = new Tree(12, null, gl)
+        pos = MOV(-1, 0, -0.50);
+        s = 2.0 + 1.9 * Math.pow(Math.random(), 4);
+        n = new Tree(12, SIZE(s, s, s).compose(pos), gl)
         this.trees.push(n);
 
-        //2nd Position
-        pos = MOV(0.50, 0, 7.5);
+        pos = MOV(2.50, 0, 0.50);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+       
+        pos = MOV(2.20, 0, 2.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(2.5, 0, 7.5);
+        //2nd Position
+        pos = MOV(0.20, 0, 7.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(2.70, 0, 7.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
 
         //3rd Position
-        pos = MOV(1.0, 0, 11.5);
+        pos = MOV(0.10, 0, 9.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(2.5, 0, 11.5);
+        pos = MOV(2.80, 0, 9.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
 
+        //3rd Position
+        pos = MOV(0.80, 0, 11.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(2.70, 0, 11.5);
+        s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        //4th Position 
         pos = MOV(0.55, 0, 15.5);
         s = 1.2 + 1.1 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.0, 0, 20.0);
+        pos = MOV(3.60, 0, 15.5);
+        s = 2.2 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(0.35, 0, 19.0);
+        s = 1.2 + 1.1 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.60, 0, 19.5);
+        s = 2.2 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.40, 0, 23.5);
         s = 1.6 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.5, 0, 25.0);
+        pos = MOV(3.5, 0, 23.0);
+        s = 1.8 + 1.6 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.30, 0, 27.0);
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.5, 0, 27.50);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.30, 0, 30.0);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.5, 0, 30.25);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.50, 0, 34.0);
+        s = 1.8 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.5, 0, 34.0);
+        s = 1.6 + 1.4 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.50, 0, 37.5);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(3.5, 0, 37.0);
+        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(1.40, 0, 41.5);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(4.75, 0, 41.0);
+        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+
+        pos = MOV(1.30, 0, 46.5);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(4.5, 0, 46.0);
+        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+
+        pos = MOV(1.20, 0, 50.5);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(4.0, 0, 51.0);
+        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+
+        pos = MOV(1.25, 0, 55.5);
+        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
+
+        pos = MOV(4.0, 0, 55.0);
+        s = 2.4 + 1.8 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
 
