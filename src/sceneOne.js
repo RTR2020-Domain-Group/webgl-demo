@@ -645,7 +645,7 @@ var sceneOne = {
             }
         }
         // rotate camera around johnny
-        else if (this.t >= 5475 && this.t < 5862) {
+        else if (this.t >= 5475 && this.t < 5575) {
 
             // position [39.97, 2.72, 367.33]
             // Yaw - 290.92
@@ -661,13 +661,35 @@ var sceneOne = {
             // yaw = 210.0;
             // pitch = -20.0;
 
-            // 387 frames
-            camera.Yaw += 140.0 / 387.0;
-            camera.Pitch -= (-0.74 + 20.0) / 387.0;
+            // 100 frames
+            camera.Yaw += 180.0 / 100.0;
+            camera.Pitch -= (-0.74 - 3.00) / 100.0;
 
-            camera.Position[0] += (87.47 - 39.97) / 387.0;
-            camera.Position[1] += (12.43 - 2.72) / 387.0;
-            camera.Position[2] += (437.05 - 367.33) / 387.0;
+            camera.Position[0] += (58.83 - 39.97) / 100.0;
+            camera.Position[1] += (4.59 - 2.72) / 100.0;
+            camera.Position[2] += (413.50 - 367.33) / 100.0;
+
+            camera.updateCameraVectors();
+        }
+        // move camera up
+        else if (this.t >= 5712 && this.t < 5862) {
+
+            // rotate around johnny camera:
+            // position [58.83, 4.59, 413.50]
+            // Yaw 264.75
+            // Pitch 3.00
+
+            // top view camera
+            // position = [87.47, 12.43, 437.05];
+            // yaw = 210.0;
+            // pitch = -20.0;
+
+            camera.Yaw -= 54.0 / 150.0;
+            camera.Pitch -= (3.00 + 20.0) / 150.0;
+
+            camera.Position[0] += (87.47 - 58.83) / 150.0;
+            camera.Position[1] += (12.43 - 4.59) / 150.0;
+            camera.Position[2] += (437.05 - 413.50) / 150.0;
 
             camera.updateCameraVectors();
         }
@@ -701,7 +723,7 @@ var sceneOne = {
         }
         // follow johnny
         else if (this.t >= 6622 && this.t < 7351) {
-            camera.Position[2] += 0.2;
+            camera.Position[2] += 0.185;
             camera.Yaw -= 0.06;
         }
         // close up sad man
