@@ -1280,9 +1280,9 @@ var sceneOne = {
         this.newspaper.draw();
 
         modelMatrix = mat4.create();
-        mat4.multiply(modelMatrix, modelMatrix, photographAnim0[Math.min(this.t, photographAnim0.length - 1)])
-        mat4.translate(modelMatrix, modelMatrix, [83.0, -4.0, 620.0]);
+        mat4.translate(modelMatrix, modelMatrix, [83.0, -6.9, 620.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+        mat4.multiply(modelMatrix, modelMatrix, photographAnim0[Math.min(this.t, photographAnim0.length - 1)])
 
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         this.photograph.draw();
