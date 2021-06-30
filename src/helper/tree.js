@@ -56,7 +56,8 @@ var texArr = [
 
 function _box(m, h, w, v, I, N, n, q) {
     if (n == 1) {
-        h = w = 0.3;
+        h = 0.1;
+        w = 0.3;
     }
     var o = m.transform([0, 0, 0, 1]);
     var dy = m.transform([0, h, 0, 0]);

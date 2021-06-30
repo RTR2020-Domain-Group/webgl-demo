@@ -281,9 +281,6 @@ var sceneOne = {
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.90, 0, 30.25);
-        s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         pos = MOV(1.50, 0, 34.0);
         s = 1.8 + 1.2 * Math.pow(Math.random(), 4);
@@ -942,9 +939,20 @@ var sceneOne = {
         if (shadow) {
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.lightProjectionMatrix);
             gl.uniformMatrix4fv(treeShader.vUniform, false, this.lightViewMatrix);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, null);
         } else {
             gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
+
+            m = mat4.create();
+            mat4.multiply(m, this.lightProjectionMatrix, this.lightViewMatrix);
+            mat4.multiply(m, this.lightBiasMatrix, m);
+            gl.uniformMatrix4fv(treeShader.uShadowMatrix, false, m);
+
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this.shadowFB.texDepth);
+            gl.uniform1i(treeShader.uShadowMap, 1);
         }
 
         gl.disable(gl.CULL_FACE);

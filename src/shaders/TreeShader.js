@@ -25,13 +25,17 @@ const TreeShader = {
             "out highp vec3 vpos;\n" +
             "out highp vec2 vuv;\n" +
             "out highp vec2 out_Tex;\n" +
+            "out vec4 out_ShadowPos; \n" +
+            "uniform mat4 uShadowMatrix; \n" +
             "void main(void)\n" +
             "{\n" +
             "   vpos = vPosition;\n" +
             "   vuv = uv;\n" +
             "   vec3 p = vPosition - vec3(0, 0.60, 0);\n" +
             "   p.z = 0.7 * p.z;\n" +
-            "	vec4 eye_coordinates = u_view_matrix * u_model_matrix * vec4(p, 1.0); \n" +
+            "	vec4 pos = u_model_matrix * vec4(p, 1.0); \n" +
+            "	vec4 eye_coordinates = u_view_matrix * pos; \n" +
+            "	out_ShadowPos = uShadowMatrix * pos; \n" +
             "	transformed_normal = mat3(u_model_matrix) * vNormal; \n" +
             "	light_direction = vec3(u_light_position - (u_model_matrix * vec4(p, 1.0))); \n" +
             "	view_vector = -eye_coordinates.xyz; \n" +
@@ -61,6 +65,7 @@ const TreeShader = {
             "in vec3 transformed_normal;\n" +
             "in vec3 light_direction;\n" +
             "in vec3 view_vector;\n" +
+            "in vec4 out_ShadowPos; \n" +
             "uniform vec3 u_la;\n" +
             "uniform vec3 u_ld;\n" +
             "uniform vec3 u_ls;\n" +
@@ -69,6 +74,7 @@ const TreeShader = {
             "uniform vec3 u_ks;\n" +
             "uniform float u_material_shininess;\n" +
             "uniform sampler2D uTex;\n" +
+            "uniform highp sampler2DShadow uShadowMap; \n" +
             "out vec4 FragColor;\n" +
             "void main() {\n" +
             "   vec3 fong_ads_light;\n" +
@@ -84,6 +90,16 @@ const TreeShader = {
             "   fong_ads_light = ambient + diffuse;\n" +
             "   FragColor = vec4(fong_ads_light, 1);\n" +
             "   FragColor *= texture(uTex, out_Tex); \n" +
+            
+            "   float shadow = textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(1,0));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(0,-1));" +
+            "   shadow += textureProjOffset(uShadowMap, out_ShadowPos,ivec2(-1,0));" +
+            "   shadow *= 0.2;" +
+            "   shadow = max(0.3, shadow);" +
+            "   FragColor *= shadow; \n" +
+
             "   FragColor = vec4(vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
             "}\n";
 
@@ -136,6 +152,9 @@ const TreeShader = {
         this.uniforms.gKDUniform = gl.getUniformLocation(this.program, "u_kd");
         this.uniforms.gKSUniform = gl.getUniformLocation(this.program, "u_ks");
         this.uniforms.gMaterialShininessUniform = gl.getUniformLocation(this.program, "u_material_shininess");
+
+        this.uniforms.uShadowMap = gl.getUniformLocation(this.program, "uShadowMap");
+        this.uniforms.uShadowMatrix = gl.getUniformLocation(this.program, "uShadowMatrix");
 
         return true;
     },
