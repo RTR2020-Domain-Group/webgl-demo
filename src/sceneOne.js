@@ -240,7 +240,7 @@ var sceneOne = {
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(2.70, 0, 11.5);
+        pos = MOV(3.00, 0, 11.5);
         s = 2.4 + 2.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
@@ -273,7 +273,7 @@ var sceneOne = {
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
-        pos = MOV(3.5, 0, 27.50);
+        pos = MOV(4.5, 0, 27.50);
         s = 1.4 + 1.2 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
@@ -705,20 +705,6 @@ var sceneOne = {
         // move to the boy and father
         else if (this.t >= 2720 && this.t < 3050) {
             camera.moveDir(FORWARD, 0.2);
-
-            // next position
-            this.pos0 = camera.Position;
-            this.pos1 = vec3.fromValues(40.06, 2.70, 271.72);
-            this.pitch0 = camera.Pitch;
-            this.yaw0 = camera.Yaw;
-            this.pitch1 = 0.25;
-            this.yaw1 = -20.0;
-
-            if (this.t == 3049) {
-                console.log('camera old', camera.Position);
-                console.log('camera old yaw', camera.Yaw);
-                console.log('camera old pitch', camera.Pitch);
-            }
         }
         // close up on boy father and johnny
         else if (this.t >= 3050 && this.t < 3151) {
@@ -756,12 +742,6 @@ var sceneOne = {
         // move camera towards johnny
         else if (this.t >= 5000 && this.t < 5475) {
             camera.Position[2] += 0.2;
-
-            if (this.t == 5474) {
-                console.log('camera', camera.Position);
-                console.log('camera Pitch', camera.Pitch);
-                console.log('camera Yaw', camera.Yaw);
-            }
         }
         // rotate camera around johnny
         else if (this.t >= 5475 && this.t < 5575) {
@@ -842,8 +822,10 @@ var sceneOne = {
         }
         // follow johnny
         else if (this.t >= 6622 && this.t < 7351) {
-            camera.Position[2] += 0.185;
+            camera.Position[2] += 0.165;
             camera.Yaw -= 0.08;
+
+            camera.updateCameraVectors();
         }
         // close up sad man
         else if (this.t >= 7480 && this.t < 7481) {
@@ -1303,7 +1285,7 @@ var sceneOne = {
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
         if (this.bottleMode == DOWN) {
-            mat4.translate(modelMatrix, modelMatrix, [-0.2, -2.0, -15.0]);
+            mat4.translate(modelMatrix, modelMatrix, [-0.09, -2.0, -15.0]);
         } else {
             mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         }
