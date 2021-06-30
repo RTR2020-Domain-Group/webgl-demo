@@ -11,7 +11,7 @@ function Tree(n, m, gl) {
         _box(m, h, w, vertices, indices, normals, n, q);
 
         // recurse two smaller branches split at a random direction
-        var size = 0.78, th = 0.48;
+        var size = 0.78, th = 0.48 + (0.2 - (0.1 * Math.random()));
         var _x = Math.random(), _y = Math.random(), _z = Math.random();
         var _r = 1 / Math.sqrt(_x * _x + _y * _y + _z * _z);
         _x *= _r; _y *= _r; _z *= _r;
@@ -56,8 +56,8 @@ var texArr = [
 
 function _box(m, h, w, v, I, N, n, q) {
     if (n == 1) {
-        h = 0.1;
-        w = 0.3;
+        h = 0.15;
+        w = 0.35;
     }
     var o = m.transform([0, 0, 0, 1]);
     var dy = m.transform([0, h, 0, 0]);

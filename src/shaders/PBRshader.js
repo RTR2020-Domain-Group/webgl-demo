@@ -200,7 +200,7 @@ const PBRshader = {
             "	FragColor = vec4(color, 1.0); \n" +
 
             "   if (uBnW == 1) \n" +
-            "       FragColor = vec4(vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
+            "       FragColor = vec4(1.1*vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

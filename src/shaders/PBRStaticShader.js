@@ -182,7 +182,7 @@ const PBRStaticShader = {
             "		Lo += (kD * albedo / PI + specular) * radiance * NdotL; \n" +
             "	} \n" +
 
-            "	vec3 ambient = vec3(0.1) * albedo * ao; \n" +
+            "	vec3 ambient = vec3(0.2) * albedo * ao; \n" +
 
             "	vec3 color = ambient + (shadow*Lo); \n" +
 

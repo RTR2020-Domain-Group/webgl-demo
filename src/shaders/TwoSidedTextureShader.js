@@ -85,7 +85,7 @@ const TwoSidedTextureShader = {
             "   else \n" +
             "	    FragColor = texture(uBackTex, out_Texcoord); \n" +
 
-            "   FragColor = FragColor * light(tnorm, 1.0); \n" +
+            "   FragColor *= light(tnorm, 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

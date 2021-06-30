@@ -1,5 +1,6 @@
 // global variables
 var canvas = null;
+var framesDiv = null;
 var gl = null; // WebGL context
 var bFullscreen = false;
 var canvas_original_height;
@@ -13,7 +14,7 @@ var firstMouse = true;
 var mouseClicked = false;
 var spaceKeyPressed = false;
 var audioWAV;
-var frameCount = 1;
+var frameCount = 3;
 
 // all inside this are const, as this is const
 const WebGLMacros = {
@@ -54,6 +55,8 @@ function main() {
     if (!canvas) console.log("Obtaining canvas failed..");
     else console.log("Obtaining canvas successful..");
 
+    framesDiv = document.getElementById("frames");
+    
     canvas_original_width = canvas.width;
     canvas_original_height = canvas.height;
 
@@ -170,6 +173,7 @@ function resize() {
 
 function draw() {
     // code
+    framesDiv.innerHTML = frameCount;
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     Scene.scenes[Scene.idx].display();

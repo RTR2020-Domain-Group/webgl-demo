@@ -14,7 +14,7 @@ var sceneOne = {
 
     bLight: false,
     bLoadSkybox: false,
-    t: 680,
+    t: 740,
     numElements: 0,
 
     fbo: 0,
@@ -828,7 +828,7 @@ var sceneOne = {
             camera.updateCameraVectors();
         }
         // close up sad man
-        else if (this.t >= 7480 && this.t < 7481) {
+        else if (this.t >= 7400 && this.t < 7401) {
             camera.Position = vec3.fromValues(61.82, 4.33, 605.46);
             camera.Yaw = 45.75;
             camera.Pitch = -14.25;
@@ -836,7 +836,7 @@ var sceneOne = {
             camera.updateCameraVectors();
         }
         // close up to business man and johnny
-        else if (this.t >= 7750 && this.t < 7751) {
+        else if (this.t >= 7630 && this.t < 7751) {
             camera.Position = vec3.fromValues(72.92, 4.59, 600.45);
             camera.Yaw = -180.0;
             camera.Pitch = -7.5;
@@ -871,6 +871,8 @@ var sceneOne = {
         if (this.t >= 0 && this.t < 950) {
             this.bottleMode = DOWN;
         } else if (this.t >= 1710 && this.t < 2630) {
+            this.bottleMode = DOWN;
+        } else if (this.t >= 3400 && this.t < 3640) {
             this.bottleMode = DOWN;
         } else if (this.t >= 4740 && this.t < 5460) {
             this.bottleMode = DOWN;
@@ -1285,7 +1287,15 @@ var sceneOne = {
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
         if (this.bottleMode == DOWN) {
-            mat4.translate(modelMatrix, modelMatrix, [-0.09, -2.0, -15.0]);
+            if (this.t >= 2350 && this.t < 2650) {
+                mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
+            } else if (this.t >= 8260) {
+                mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
+                rightHand = mat4.create();
+            }
+            else {
+                mat4.translate(modelMatrix, modelMatrix, [-0.09, -2.0, -15.0]);
+            }
         } else {
             mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         }
@@ -1325,7 +1335,7 @@ var sceneOne = {
         // newspaper in hand
         else {
             modelMatrix = mat4.create();
-            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
+            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -2.0, this.bman_posZ]);
             mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
             mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
             mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
