@@ -1,6 +1,6 @@
 // global variables
 var canvas = null;
-var framesDiv = null;
+// var framesDiv = null;
 var gl = null; // WebGL context
 var bFullscreen = false;
 var canvas_original_height;
@@ -130,7 +130,7 @@ function init() {
 
     //audio
     audioWAV = document.createElement("audio");
-    audioWAV.src = "res/audio/SarJoTeraChakraye.wav";
+    audioWAV.src = "res/audio/SarJoTeraChakrayeNew.wav";
     //audioWAV.play();
 
     // add scenes
@@ -173,7 +173,7 @@ function resize() {
 
 function draw() {
     // code
-    framesDiv.innerHTML = frameCount;
+    // framesDiv.innerHTML = frameCount;
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     Scene.scenes[Scene.idx].display();

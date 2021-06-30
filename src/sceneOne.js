@@ -948,6 +948,7 @@ var sceneOne = {
             gl.uniformMatrix4fv(treeShader.vUniform, false, this.lightViewMatrix);
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, null);
+            gl.uniform1i(treeShader.uShadowMap, 1);
         } else {
             gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
@@ -1288,21 +1289,25 @@ var sceneOne = {
         if (this.bottleMode == DOWN) {
             if (this.t >= 2350 && this.t < 2650) {
                 mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
-            } else if (this.t >= 8260) {
-                mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
-                mat4.rotateX(modelMatrix, modelMatrix, toRadians(90.0));
-                mat4.translate(modelMatrix, modelMatrix, [tX, tY, tZ]);
-                rightHand = mat4.create();
-            }
-            else {
+            } else {
                 mat4.translate(modelMatrix, modelMatrix, [-0.09, -2.0, -15.0]);
             }
         } else {
             mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         }
+
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
+
+        if (this.t >= 8260) {
+            modelMatrix = mat4.create();
+            mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+            mat4.translate(modelMatrix, modelMatrix, [80.0, 7.17, 597.0]);
+            mat4.translate(modelMatrix, modelMatrix, [400.0, 55.0, 5167.0]);
+            mat4.rotateZ(modelMatrix, modelMatrix, toRadians(90.0));
+            rightHand = mat4.create();
+        }
 
         gl.uniformMatrix4fv(u.boneUniform, false, rightHand);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
@@ -1415,4 +1420,3 @@ var sceneOne = {
     }
 }
 
-var tX = 0.0, tY = 0.0, tZ = 0.0;
