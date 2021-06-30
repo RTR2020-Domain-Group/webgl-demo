@@ -1068,7 +1068,7 @@ var sceneOne = {
         this.sadMan4.draw();
 
         modelMatrix = mat4.create();
-        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX, -5.5, this.bman_posZ]);
+        mat4.translate(modelMatrix, modelMatrix, [this.bman_posX, -5.0, this.bman_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
@@ -1291,6 +1291,8 @@ var sceneOne = {
                 mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
             } else if (this.t >= 8260) {
                 mat4.translate(modelMatrix, modelMatrix, [0.20, -2.0, -15.0]);
+                mat4.rotateX(modelMatrix, modelMatrix, toRadians(90.0));
+                mat4.translate(modelMatrix, modelMatrix, [tX, tY, tZ]);
                 rightHand = mat4.create();
             }
             else {
@@ -1335,7 +1337,7 @@ var sceneOne = {
         // newspaper in hand
         else {
             modelMatrix = mat4.create();
-            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -2.0, this.bman_posZ]);
+            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -1.5, this.bman_posZ]);
             mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
             mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
             mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
@@ -1414,5 +1416,4 @@ var sceneOne = {
     }
 }
 
-var angleY = 90.0;
-var angleX = 45.0;
+var tX = 0.0, tY = 0.0, tZ = 0.0;

@@ -82,7 +82,7 @@ var sceneCredits = {
         this.mamAndSir_t8 = loadTexture("res/textures/credits/7.MamAndSir.png");
         this.end_t9 = loadTexture("res/textures/credits/8.TheEnd.png");
 
-        
+
 
         gl.useProgram(null);
 
@@ -215,6 +215,12 @@ var sceneCredits = {
         var u = GrainShader.use();
         gl.uniform2f(u.delta, Math.random(), Math.random())
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
         gl.useProgram(null);
         gl.depthMask(true);
 
@@ -225,7 +231,7 @@ var sceneCredits = {
         this.timer += 0.01;
 
         //song credits
-        if (this.timer >= 0.0) {
+        if (this.timer >= 0.0 && this.timer < 5.0) {
             this.currentTexture = 4;
             /*this.alphaBlending += 0.005;
             if (this.alphaBlending >= 1.0) {
@@ -233,7 +239,7 @@ var sceneCredits = {
             }*/
         }
 
-        if (this.timer >= 5.0) {
+        if (this.timer >= 5.0 && this.timer < 5.5) {
             this.alphaBlending -= 0.05;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -241,7 +247,7 @@ var sceneCredits = {
         }
 
         //effects
-        if (this.timer >= 5.5) {
+        if (this.timer >= 5.5 && this.timer < 12.0) {
             this.currentTexture = 5;
             this.alphaBlending += 0.06;
             if (this.alphaBlending >= 1.0) {
@@ -249,7 +255,7 @@ var sceneCredits = {
             }
         }
 
-        if (this.timer >= 12.0) {
+        if (this.timer >= 12.0 && this.timer < 12.5) {
             this.alphaBlending -= 0.08;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -257,7 +263,7 @@ var sceneCredits = {
         }
 
         //tech ref
-        if (this.timer >= 12.5) {
+        if (this.timer >= 12.5 && this.timer < 17.0) {
             this.currentTexture = 6;
             this.alphaBlending += 0.07;
             if (this.alphaBlending >= 1.0) {
@@ -265,7 +271,7 @@ var sceneCredits = {
             }
         }
 
-        if (this.timer >= 17.0) {
+        if (this.timer >= 17.0 && this.timer < 17.5) {
             this.alphaBlending -= 0.09;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -273,7 +279,7 @@ var sceneCredits = {
         }
 
         //group members
-        if (this.timer >= 17.5) {
+        if (this.timer >= 17.5 && this.timer < 23.0) {
             this.currentTexture = 7;
             this.alphaBlending += 0.1;
             if (this.alphaBlending >= 1.0) {
@@ -281,7 +287,7 @@ var sceneCredits = {
             }
         }
 
-        if (this.timer >= 23.0) {
+        if (this.timer >= 23.0 && this.timer < 23.5) {
             this.alphaBlending -= 0.12;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -289,7 +295,7 @@ var sceneCredits = {
         }
 
         //madam and sir
-        if (this.timer >= 23.5) {
+        if (this.timer >= 23.5 && this.timer < 28.5) {
             this.currentTexture = 8;
             this.alphaBlending += 0.14;
             if (this.alphaBlending >= 1.0) {
@@ -297,7 +303,7 @@ var sceneCredits = {
             }
         }
 
-        if (this.timer >= 28.5) {
+        if (this.timer >= 28.5 && this.timer < 29.0) {
             this.alphaBlending -= 0.16;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -305,7 +311,7 @@ var sceneCredits = {
         }
 
         //end
-        if (this.timer >= 29.0) {
+        if (this.timer >= 29.0 && this.timer < 32.0) {
             this.currentTexture = 9;
             this.alphaBlending += 0.18;
             if (this.alphaBlending >= 1.0) {
