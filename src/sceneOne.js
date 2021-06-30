@@ -843,10 +843,10 @@ var sceneOne = {
         // follow johnny
         else if (this.t >= 6622 && this.t < 7351) {
             camera.Position[2] += 0.185;
-            camera.Yaw -= 0.06;
+            camera.Yaw -= 0.08;
         }
         // close up sad man
-        else if (this.t >= 7480 && this.t < 7491) {
+        else if (this.t >= 7480 && this.t < 7481) {
             camera.Position = vec3.fromValues(61.82, 4.33, 605.46);
             camera.Yaw = 45.75;
             camera.Pitch = -14.25;
@@ -1387,7 +1387,6 @@ var sceneOne = {
             gl.uniform1i(u.uShadowMap, 7);
         }
 
-        bMat = mat4.create();
         modelMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [10.0, -12.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [10.0, 10.0, 10.0]);

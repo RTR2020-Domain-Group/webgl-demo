@@ -172,12 +172,14 @@ function draw() {
     // code
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    Scene.scenes[Scene.idx].display();
+
+    // animation loop
     if (spaceKeyPressed == true) {
-        Scene.scenes[Scene.idx].display();
-        // animation loop
         update();
         frameCount++;
     }
+
     requestAnimationFrame(draw, canvas);
 }
 
