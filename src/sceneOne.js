@@ -242,7 +242,7 @@ var sceneOne = {
 
         pos = MOV(2.70, 0, 11.5);
         s = 2.4 + 2.2 * Math.pow(Math.random(), 4);
-        this.trees.push(new Tree(15, SIZE(s, s, s).compose(pos), gl));
+        this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
 
         //4th Position 
         pos = MOV(0.55, 0, 15.5);
@@ -393,6 +393,8 @@ var sceneOne = {
         this.texRoadBump = loadTexture("res/textures/terrain/BricksBump.png");
         this.texGrassNorm = loadTexture("res/textures/terrain/gNorm.png");
         this.texRoadNorm = loadTexture("res/textures/terrain/BricksNormal.png");
+
+        this.texTree = loadTexture("res/textures/tree/albedo.png");
 
         this.dx = 0;
         this.lightProjectionMatrix = mat4.create();
@@ -922,7 +924,7 @@ var sceneOne = {
         gl.uniform3fv(treeShader.gLAUniform, this.gLightAmbient);
         gl.uniform3fv(treeShader.gLDUniform, this.gLightDiffuse);
         gl.uniform3fv(treeShader.gLSUniform, this.gLightSpecular);
-        gl.uniform4fv(treeShader.gLightPositionUniform, this.gLightPosition);
+        gl.uniform4fv(treeShader.gLightPositionUniform, [-89.70, 187.96, 157.38, 1.0]);
 
         gl.uniform3fv(treeShader.gKAUniform, this.gMaterialAmbient);
         gl.uniform3fv(treeShader.gKDUniform, this.gMaterialDiffuse);
@@ -931,8 +933,9 @@ var sceneOne = {
 
         //set rotation
         gl.uniform1f(treeShader.t, 5000);
-
-
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texTree);
+        gl.uniform1i(treeShader.uTex, 0);
 
         gl.uniformMatrix4fv(treeShader.mUniform, false, modelMatrix);
 
@@ -943,6 +946,7 @@ var sceneOne = {
             gl.uniformMatrix4fv(treeShader.vUniform, false, viewMatrix);
             gl.uniformMatrix4fv(treeShader.pUniform, false, this.perspectiveProjectionMatrix);
         }
+
         gl.disable(gl.CULL_FACE);
         this.trees.map(i => drawTree(i));
         gl.enable(gl.CULL_FACE);

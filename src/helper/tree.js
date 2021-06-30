@@ -12,18 +12,18 @@ function Tree(n, m, gl) {
 
         // recurse two smaller branches split at a random direction
         var size = 0.78, th = 0.48;
-        var _x = Math.random(), _y = Math.random(), _z = Math.floor(Math.random() * (1.3 - (-1.5) )) + -1.5;
+        var _x = Math.random(), _y = Math.random(), _z = Math.random();
         var _r = 1 / Math.sqrt(_x * _x + _y * _y + _z * _z);
         _x *= _r; _y *= _r; _z *= _r;
-       
+
 
         _tree(n - 1, ROT(th, _x, _y, _z)
             .compose(SIZE(size, size, size))
-            .compose(MOV(0, h, 0))
+            .compose(MOV(0, h * 0.9, 0))
             .compose(m), vertices, indices);
         _tree(n - 1, ROT(-th, _x, _y, _z)
             .compose(SIZE(size, size, size))
-            .compose(MOV(0, h, 0))
+            .compose(MOV(0, h * 0.9, 0))
             .compose(m), vertices, indices);
     }
     _tree(n || 10, m || new Matrix4());
@@ -31,7 +31,28 @@ function Tree(n, m, gl) {
     return new Mesh(vertices, indices, normals, gl);
 }
 
+var norm = [
+    [-0.70, 0, -0.70],
+    [-0.70, 0, -0.70],
+    [-0.70, 0, -0.70],
+    [-0.70, 0, -0.70],
+    [0.70, 0, 0.70],
+    [0.70, 0, 0.70],
+    [0.70, 0, 0.70],
+    [0.70, 0, 0.70],
+];
 
+var texArr = [
+    [1.0, 0.0],
+    [0.0, 0.0],
+    [1.0, 1.0],
+    [0.0, 1.0],
+    [0.0, 0.0],
+    [1.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 1.0],
+
+]
 
 function _box(m, h, w, v, I, N, n, q) {
     if (n == 1) {
@@ -42,31 +63,33 @@ function _box(m, h, w, v, I, N, n, q) {
     var dx = m.transform([w / 2, 0, 0, 0]);
     var dz = m.transform([0, 0, w / 2, 0]);
 
-    var V = v.length / 5, d = 0.8;
+    var V = v.length / 10, d = 0.8;
 
+    var idx = 0;
     for (var i = 0; i < 2; i++)
         for (var j = 0; j < 2; j++)
             for (var k = 0; k < 2; k++) {
                 _i = (1 - 0.2 * j) * i;
                 _k = (1 - 0.2 * j) * k;
-                v.push(
-                    o[0] + _i * dx[0] + j * dy[0] + _k * dz[0],
-                    o[1] + _i * dx[1] + j * dy[1] + _k * dz[1],
-                    o[2] + _i * dx[2] + j * dy[2] + _k * dz[2], n, q);
+                if (i == 0) {
+                    v.push(
+                        o[0] + _i * dx[0] + j * dy[0] + _k * dz[0],
+                        o[1] + _i * dx[1] + j * dy[1] + _k * dz[1],
+                        o[2] + _i * dx[2] + j * dy[2] + _k * dz[2],
+                        n, q,
+                        norm[idx][0], norm[idx][1], norm[idx][2],
+                        texArr[idx][0], texArr[idx][1]);
+                } else {
+                    v.push(
+                        o[0] + _i * dx[0] + j * dy[0] + _k * dz[0],
+                        o[1] + _i * dx[1] + j * dy[1] + _k * dz[1],
+                        o[2] + _i * dx[2] + j * dy[2] + _k * dz[2],
+                        n, q,
+                        norm[idx][0], norm[idx][1], norm[idx][2],
+                        texArr[idx][0], texArr[idx][1]);
+                }
+                idx++;
             }
-    
-    N.push(
-        0.0, 0.0, 1.0, 
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0		
-		
-    );
 
     I.push(
         V, V + 1, V + 2, V + 2, V + 1, V + 3,
@@ -88,11 +111,17 @@ function Mesh(vertices, indices, normals, gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertbuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_VERTEX, 3, gl.FLOAT, false, 20, 0);
+    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_VERTEX, 3, gl.FLOAT, false, 40, 0);
     gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_VERTEX);
 
-    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_COLOR, 2, gl.FLOAT, false, 20, 12);
+    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_COLOR, 2, gl.FLOAT, false, 40, 12);
     gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_COLOR);
+
+    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_NORMAL, 3, gl.FLOAT, false, 40, 20);
+    gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_NORMAL);
+
+    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0, 2, gl.FLOAT, false, 40, 32);
+    gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_TEXCOORD0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
@@ -100,15 +129,6 @@ function Mesh(vertices, indices, normals, gl) {
     this.indexcount = indices.length;
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexbuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-    //Adding normals
-    this.normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIBUTE_NORMAL, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(WebGLMacros.AMC_ATTRIBUTE_NORMAL);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindVertexArray(null);
 }
