@@ -905,17 +905,41 @@ var sceneOne = {
 
     drawModels: function (shadow) {
 
+        if (this.t < 2720) {
+            mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+        }
+        else if (this.t == 2720) {
+            var cLookAtPoint = camera.getCameraLookPoint();
+            var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+            mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
+        }
+        else if (this.t == 5000) {
+            var cLookAtPoint = camera.getCameraLookPoint();
+            var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+            mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
+        }
+        else if (this.t == 5712) {
+            var cLookAtPoint = camera.getCameraLookPoint();
+            var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+            mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
+        }
+        else if (this.t == 6622) {
+            var cLookAtPoint = camera.getCameraLookPoint();
+            var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
+            mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
+        }
+
+        var viewMatrix = camera.getViewMatrix();
+
         //TREES
         /*********************************************** */
 
         var treeShader = TreeShader.use();
 
         var modelMatrix = mat4.create();
-        var viewMatrix = mat4.create();
 
         mat4.translate(modelMatrix, modelMatrix, [-25.0, 10.0, 0.0]);
         mat4.scale(modelMatrix, modelMatrix, [30.4, 30.4, 30.4]);
-        viewMatrix = camera.getViewMatrix();
 
         gl.uniform1i(treeShader.gLightEnableUniform, 1);
         gl.uniform3fv(treeShader.gLAUniform, this.gLightAmbient);
@@ -966,14 +990,8 @@ var sceneOne = {
         /************************************************************************************************************************************/
 
         modelMatrix = mat4.create();
-        viewMatrix = mat4.create();
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
-
-        var cLookAtPoint = camera.getCameraLookPoint();
-        var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
-        mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
-        viewMatrix = camera.getViewMatrix();
 
         var u;
         if (shadow) {
