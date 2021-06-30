@@ -142,6 +142,7 @@ const TerrainShader = {
             "   shadow *= 0.2;" +
             "   shadow = max(0.3, shadow);" +
             "	FragColor = mix(road, grass, mask) * light(mix(norm1, norm2, mask), shadow); \n" +
+            "   FragColor = vec4(vec3(FragColor.r*0.21 + FragColor.g*0.72 + FragColor.b*0.07), 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);

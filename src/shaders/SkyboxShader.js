@@ -66,7 +66,8 @@ const SkyboxShader = {
             "uniform samplerCube skybox;\n" +
             "void main(void)\n" +
             "{\n" +
-            "     FragColor = texture(skybox, out_texCoords);\n" +
+            "   vec4 color = texture(skybox, out_texCoords);\n" +
+            "   FragColor = vec4(vec3(color.r*0.21 + color.g*0.72 + color.b*0.07), 1.0); \n" +
             "}\n";
 
 

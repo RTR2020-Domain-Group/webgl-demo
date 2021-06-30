@@ -189,7 +189,7 @@ const PBRStaticShader = {
             "	color = color / (color + vec3(1.0)); \n" +
             "	color = pow(color, vec3(1.0 / 2.2)); \n" +
 
-            "	FragColor = vec4(color, 1.0); \n" +
+            "	FragColor = vec4(vec3(color.r*0.21 + color.g*0.72 + color.b*0.07), 1.0); \n" +
             "} \n";
 
         var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
