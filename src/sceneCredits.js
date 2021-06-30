@@ -7,10 +7,11 @@ var sceneCredits = {
     perspectiveProjectionMatrix: mat4.create(),
 
     songCredits_t4: 0,
-    techRef_t5: 0,
-    groupMembers_t6: 0,
-    mamAndSir_t7: 0,
-    end_t8: 0,
+    effects_t5: 0,
+    techRef_t6: 0,
+    groupMembers_t7: 0,
+    mamAndSir_t8: 0,
+    end_t9: 0,
 
     alphaBlending: 1.0,
     currentTexture: 4,
@@ -75,10 +76,13 @@ var sceneCredits = {
         //load textures
 
         this.songCredits_t4 = loadTexture("res/textures/credits/4.SongCredits.png");
-        this.techRef_t5 = loadTexture("res/textures/credits/5.TechnicalReferences.png");
-        this.groupMembers_t6 = loadTexture("res/textures/credits/6.GroupMembers.png");
-        this.mamAndSir_t7 = loadTexture("res/textures/credits/7.MamAndSir.png");
-        this.end_t8 = loadTexture("res/textures/credits/8.TheEnd.png");
+        this.effects_t5 = loadTexture("res/textures/credits/4a.Effects.png");
+        this.techRef_t6 = loadTexture("res/textures/credits/5.TechnicalReferences.png");
+        this.groupMembers_t7 = loadTexture("res/textures/credits/6.GroupMembers.png");
+        this.mamAndSir_t8 = loadTexture("res/textures/credits/7.MamAndSir.png");
+        this.end_t9 = loadTexture("res/textures/credits/8.TheEnd.png");
+
+        
 
         gl.useProgram(null);
 
@@ -89,10 +93,11 @@ var sceneCredits = {
 
     uninit: function () {
         gl.deleteTexture(this.songCredits_t4);
-        gl.deleteTexture(this.techRef_t5);
-        gl.deleteTexture(this.groupMembers_t6);
-        gl.deleteTexture(this.mamAndSir_t7);
-        gl.deleteTexture(this.end_t8);
+        gl.deleteTexture(this.songCredits_t5);
+        gl.deleteTexture(this.techRef_t6);
+        gl.deleteTexture(this.groupMembers_t7);
+        gl.deleteTexture(this.mamAndSir_t8);
+        gl.deleteTexture(this.end_t9);
 
         if (this.vaoQuad) {
             gl.deleteVertexArray(this.vaoQuad);
@@ -176,16 +181,19 @@ var sceneCredits = {
             gl.bindTexture(gl.TEXTURE_2D, this.songCredits_t4);
 
         else if (this.currentTexture == 5)
-            gl.bindTexture(gl.TEXTURE_2D, this.techRef_t5);
+            gl.bindTexture(gl.TEXTURE_2D, this.effects_t5);
 
         else if (this.currentTexture == 6)
-            gl.bindTexture(gl.TEXTURE_2D, this.groupMembers_t6);
+            gl.bindTexture(gl.TEXTURE_2D, this.techRef_t6);
 
         else if (this.currentTexture == 7)
-            gl.bindTexture(gl.TEXTURE_2D, this.mamAndSir_t7);
+            gl.bindTexture(gl.TEXTURE_2D, this.groupMembers_t7);
 
         else if (this.currentTexture == 8)
-            gl.bindTexture(gl.TEXTURE_2D, this.end_t8);
+            gl.bindTexture(gl.TEXTURE_2D, this.mamAndSir_t8);
+
+        else if (this.currentTexture == 9)
+            gl.bindTexture(gl.TEXTURE_2D, this.end_t9);
 
 
         //bind quad vao
@@ -225,23 +233,39 @@ var sceneCredits = {
             }*/
         }
 
-        if (this.timer >= 4.0) {
+        if (this.timer >= 5.0) {
             this.alphaBlending -= 0.05;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
             }
         }
 
-        //tech ref
-        if (this.timer >= 4.5) {
+        //effects
+        if (this.timer >= 5.5) {
             this.currentTexture = 5;
+            this.alphaBlending += 0.06;
+            if (this.alphaBlending >= 1.0) {
+                this.alphaBlending = 1.0;
+            }
+        }
+
+        if (this.timer >= 12.0) {
+            this.alphaBlending -= 0.08;
+            if (this.alphaBlending <= 0.0) {
+                this.alphaBlending = 0.0;
+            }
+        }
+
+        //tech ref
+        if (this.timer >= 12.5) {
+            this.currentTexture = 6;
             this.alphaBlending += 0.07;
             if (this.alphaBlending >= 1.0) {
                 this.alphaBlending = 1.0;
             }
         }
 
-        if (this.timer >= 8.5) {
+        if (this.timer >= 17.0) {
             this.alphaBlending -= 0.09;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -249,15 +273,15 @@ var sceneCredits = {
         }
 
         //group members
-        if (this.timer >= 9.0) {
-            this.currentTexture = 6;
+        if (this.timer >= 17.5) {
+            this.currentTexture = 7;
             this.alphaBlending += 0.1;
             if (this.alphaBlending >= 1.0) {
                 this.alphaBlending = 1.0;
             }
         }
 
-        if (this.timer >= 13.0) {
+        if (this.timer >= 23.0) {
             this.alphaBlending -= 0.12;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -265,15 +289,15 @@ var sceneCredits = {
         }
 
         //madam and sir
-        if (this.timer >= 13.5) {
-            this.currentTexture = 7;
+        if (this.timer >= 23.5) {
+            this.currentTexture = 8;
             this.alphaBlending += 0.14;
             if (this.alphaBlending >= 1.0) {
                 this.alphaBlending = 1.0;
             }
         }
 
-        if (this.timer >= 17.5) {
+        if (this.timer >= 28.5) {
             this.alphaBlending -= 0.16;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
@@ -281,15 +305,15 @@ var sceneCredits = {
         }
 
         //end
-        if (this.timer >= 18.0) {
-            this.currentTexture = 8;
+        if (this.timer >= 29.0) {
+            this.currentTexture = 9;
             this.alphaBlending += 0.18;
             if (this.alphaBlending >= 1.0) {
                 this.alphaBlending = 1.0;
             }
         }
 
-        if (this.timer >= 25.0) {
+        if (this.timer >= 32.0) {
             this.alphaBlending -= 0.2;
             if (this.alphaBlending <= 0.0) {
                 this.alphaBlending = 0.0;
