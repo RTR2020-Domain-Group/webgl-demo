@@ -173,6 +173,10 @@ var sceneOne = {
         gl.uniform4fv(u.light_position, lightPosv4);
         gl.useProgram(null);
 
+        u = TwoSidedTextureShader.use();
+        gl.uniform4fv(u.light_position, lightPosv4);
+        gl.useProgram(null);
+
         /**
          * TREE 
          */
@@ -193,7 +197,7 @@ var sceneOne = {
         pos = MOV(2.50, 0, 0.50);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
-       
+
         pos = MOV(2.20, 0, 2.5);
         s = 1.4 + 1.6 * Math.pow(Math.random(), 4);
         this.trees.push(new Tree(10, SIZE(s, s, s).compose(pos), gl));
@@ -360,6 +364,9 @@ var sceneOne = {
         this.sadMan2 = loadModel(sadManModel2, "res/models/sadMan/2");
         this.sadMan3 = loadModel(sadManModel3, "res/models/sadMan/3");
         this.sadMan4 = loadModel(sadManModel4, "res/models/sadMan/4");
+
+        this.photograph = loadModel2(photographModel0, "res/models/photograph");
+        this.newspaper = loadModel2(newspaperModel0, "res/models/newspaper");
 
         this.fbo = createFramebuffer(1920, 1080);
         this.noise = createNoiseTexture();
@@ -827,7 +834,7 @@ var sceneOne = {
             camera.Yaw -= 0.06;
         }
         // close up sad man
-        else if (this.t >= 7490 && this.t < 7491) {
+        else if (this.t >= 7480 && this.t < 7491) {
             camera.Position = vec3.fromValues(61.82, 4.33, 605.46);
             camera.Yaw = 45.75;
             camera.Pitch = -14.25;
@@ -923,17 +930,11 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
 
-        // this.lightPos = [camera.Position[0] - 100.0, camera.Position[1] + 100.0, camera.Position[2] + 100.0];
-        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.Position, [0.0, 1.0, 0.0]);
-        // mat4.lookAt(this.lightViewMatrix, this.lightPos, camera.getCameraLookPoint(), [0.0, 1.0, 0.0]);
-        // mat4.lookAt(this.lightViewMatrix, this.lightPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
         var cLookAtPoint = camera.getCameraLookPoint();
         var lightPoint = [cLookAtPoint[0] + this.lightPos[0], cLookAtPoint[1] + this.lightPos[1], cLookAtPoint[2] + this.lightPos[2]];
         mat4.lookAt(this.lightViewMatrix, lightPoint, cLookAtPoint, [0.0, 1.0, 0.0]);
         viewMatrix = camera.getViewMatrix();
 
-
-        // viewMatrix = this.lightViewMatrix;
         var u;
         if (shadow) {
             u = PBRshaderWhite.use();
@@ -961,7 +962,12 @@ var sceneOne = {
         gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, jwAnim[this.t]);
         gl.disable(gl.CULL_FACE);
+        // draw BnW
+        if (u.uBnW) gl.uniform1i(u.uBnW, 1);
+
         this.johnny.draw();
+
+        if (u.uBnW) gl.uniform1i(u.uBnW, 0);
         gl.enable(gl.CULL_FACE);
 
         modelMatrix = mat4.create();
@@ -974,40 +980,26 @@ var sceneOne = {
             this.extraMan1.draw();
         }
 
-
-
-        //var bMat = mat4.create();
         modelMatrix = mat4.create();
-        //mat4.translate(bMat, modelMatrix, [-10.0, 0.0, 0.0]);
         mat4.translate(modelMatrix, modelMatrix, [this.boy_posX, -4.0, this.boy_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
-        //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, boyAnim[Math.min(this.t, boyAnim.length - 1)]);
         if (this.t >= 0 && this.t <= 5625) {
             this.boy.draw();
         }
 
-
-
-        //bMat = mat4.create();
         modelMatrix = mat4.create();
-        //mat4.multiply(modelMatrix, modelMatrix, fatherModel.invTransform);
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(modelMatrix, modelMatrix, [this.father_posX, -4.8, this.father_posZ]);
         mat4.translate(modelMatrix, modelMatrix, [25.0, 0.0, 0.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
-        //gl.uniformMatrix4fv(u.mUniform, false, bMat);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim0[Math.min(this.t, fatherAnim0.length - 1)]);
         if (this.t >= 0 && this.t <= 5625) {
             this.father.draw();
         }
 
-
-
         modelMatrix = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.man2_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.man2_posX, -3.5, this.man2_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
@@ -1022,10 +1014,7 @@ var sceneOne = {
             this.extraMan25.draw();
         }
 
-
-
         modelMatrix = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(modelMatrix, modelMatrix, [83.0, -4.0, 620.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
@@ -1036,16 +1025,13 @@ var sceneOne = {
         this.sadMan3.draw();
         this.sadMan4.draw();
 
-
         modelMatrix = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, -2.0, -15.0]);
         mat4.translate(modelMatrix, modelMatrix, [this.bman_posX, -5.5, this.bman_posZ]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
         gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, businessmanAnim0[Math.min(this.t, businessmanAnim0.length - 1)]);
         this.bman0.draw();
         this.bman1.draw();
-
 
         gl.useProgram(null);
 
@@ -1081,7 +1067,6 @@ var sceneOne = {
         //right side
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [-20.0, -9.0, 0.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1091,7 +1076,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [12.0, -9.0, 200.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1101,7 +1085,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [30.0, -9.0, 400.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1111,7 +1094,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [40.0, -9.0, 630.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1121,7 +1103,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [36.0, -9.0, 830.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1132,7 +1113,6 @@ var sceneOne = {
         //left side
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);       
         mat4.translate(bMat, modelMatrix, [50.0, -9.0, 100.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1143,7 +1123,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [72.0, -9.0, 300.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1154,7 +1133,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [90.0, -9.0, 500.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1165,7 +1143,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [90.0, -9.0, 730.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1176,7 +1153,6 @@ var sceneOne = {
 
         modelMatrix = mat4.create();
         var bMat = mat4.create();
-        //mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -15.0]);
         mat4.translate(bMat, modelMatrix, [86.0, -9.0, 930.0]);
         mat4.scale(bMat, bMat, [0.075, 0.075, 0.075]);
         mat4.rotateX(bMat, bMat, toRadians(-90.0));
@@ -1266,7 +1242,6 @@ var sceneOne = {
         this.bench1.draw();
 
 
-
         var rightHand = jwAnim[this.t].slice((23 * 16), (24 * 16));
         modelMatrix = mat4.create();
         if (this.bottleMode == DOWN) {
@@ -1286,6 +1261,50 @@ var sceneOne = {
             this.bottles0.draw();
         }
         gl.useProgram(null);
+
+        // photograph and newspaper models
+        gl.disable(gl.CULL_FACE);
+        u = TwoSidedTextureShader.use();
+        gl.uniformMatrix4fv(u.vUniform, false, viewMatrix);
+
+        if (shadow) {
+            gl.uniformMatrix4fv(u.pUniform, false, this.lightProjectionMatrix);
+        } else {
+            gl.uniformMatrix4fv(u.pUniform, false, this.perspectiveProjectionMatrix);
+        }
+
+
+
+        // newspaper on bench
+        if (this.t > 9600) {
+            modelMatrix = mat4.create();
+            mat4.translate(modelMatrix, modelMatrix, [46.5, -3.0, 604.2]);
+            mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
+            mat4.rotateY(modelMatrix, modelMatrix, toRadians(115.0));
+        }
+        // newspaper in hand
+        else {
+            modelMatrix = mat4.create();
+            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -2.0, this.bman_posZ]);
+            mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
+            mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
+            mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
+        }
+
+
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        this.newspaper.draw();
+
+        modelMatrix = mat4.create();
+        mat4.translate(modelMatrix, modelMatrix, [83.0, -6.9, 620.0]);
+        mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
+        mat4.multiply(modelMatrix, modelMatrix, photographAnim0[Math.min(this.t, photographAnim0.length - 1)])
+
+        gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
+        this.photograph.draw();
+
+        gl.useProgram(null);
+        gl.enable(gl.CULL_FACE);
 
         /************************************************************************************************************************************/
 
@@ -1345,3 +1364,6 @@ var sceneOne = {
         this.terrain.draw();
     }
 }
+
+var angleY = 90.0;
+var angleX = 45.0;

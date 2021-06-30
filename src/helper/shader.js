@@ -2,6 +2,7 @@
 function initShaders() {
     if (!SkyboxShader.init()) return false;
     if (!TextureShader.init()) return false;
+    if (!TwoSidedTextureShader.init()) return false;
     if (!GrainShader.init()) return false;
     if (!PBRshader.init()) return false;
     if (!PBRshaderWhite.init()) return false;
@@ -19,6 +20,7 @@ function initShaders() {
 function uninitShaders() {
     SkyboxShader.uninit();
     TextureShader.uninit();
+    TwoSidedTextureShader.uninit();
     GrainShader.uninit();
     PBRshader.uninit();
     PBRshaderWhite.uninit();
