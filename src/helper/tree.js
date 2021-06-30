@@ -71,14 +71,14 @@ function _box(m, h, w, v, I, N, n, q) {
             for (var k = 0; k < 2; k++) {
                 _i = (1 - 0.2 * j) * i;
                 _k = (1 - 0.2 * j) * k;
-                if (i == 0) {
+                if (n == 1) {
                     v.push(
                         o[0] + _i * dx[0] + j * dy[0] + _k * dz[0],
                         o[1] + _i * dx[1] + j * dy[1] + _k * dz[1],
                         o[2] + _i * dx[2] + j * dy[2] + _k * dz[2],
                         n, q,
                         norm[idx][0], norm[idx][1], norm[idx][2],
-                        texArr[idx][0], texArr[idx][1]);
+                        0.0, 0.0);
                 } else {
                     v.push(
                         o[0] + _i * dx[0] + j * dy[0] + _k * dz[0],
