@@ -176,6 +176,7 @@ var sceneCredits = {
 
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(credits.textureSamplerUniform, 0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         if (this.currentTexture == 4)
             gl.bindTexture(gl.TEXTURE_2D, this.songCredits_t4);

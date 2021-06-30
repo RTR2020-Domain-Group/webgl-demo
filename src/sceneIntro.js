@@ -167,6 +167,7 @@ var sceneIntro = {
 
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(credits.textureSamplerUniform, 0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         if (this.currentTexture == 1)
             gl.bindTexture(gl.TEXTURE_2D, this.astromedicomp_t1);
@@ -197,6 +198,12 @@ var sceneIntro = {
         var u = GrainShader.use();
         gl.uniform2f(u.delta, Math.random(), Math.random())
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
         gl.useProgram(null);
         gl.depthMask(true);
 

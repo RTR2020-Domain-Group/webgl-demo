@@ -525,6 +525,7 @@ var sceneOne = {
 
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(credits.textureSamplerUniform, 0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         if (this.currentTexture == 3)
             gl.bindTexture(gl.TEXTURE_2D, this.sarjotera_t3);
@@ -880,8 +881,6 @@ var sceneOne = {
             this.bottleMode = DOWN;
         } else if (this.t >= 8228 && this.t < 9100) {
             this.bottleMode = DOWN;
-        } else if (this.t >= 9600) {
-            this.bottleMode = 0;
         }
 
         return false;
