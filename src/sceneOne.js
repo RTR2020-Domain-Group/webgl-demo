@@ -994,7 +994,7 @@ var sceneOne = {
         mat4.translate(modelMatrix, modelMatrix, [25.0, 0.0, 0.0]);
         mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
         gl.uniformMatrix4fv(u.mUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim[Math.min(this.t, fatherAnim.length - 1)]);
+        gl.uniformMatrix4fv(u.boneMatrixUniform, gl.FALSE, fatherAnim0[Math.min(this.t, fatherAnim0.length - 1)]);
         if (this.t >= 0 && this.t <= 5625) {
             this.father.draw();
         }
