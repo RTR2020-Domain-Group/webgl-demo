@@ -31,7 +31,7 @@
 	6. Physically Based Shading
 	7. Procedural Trees
 	8. Shadow mapping with PCF
-	9. Spot Light
+	9. Lights
 
 
 ### Members Participated :
