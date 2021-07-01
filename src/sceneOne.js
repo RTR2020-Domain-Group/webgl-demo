@@ -1342,7 +1342,13 @@ var sceneOne = {
         // newspaper in hand
         else {
             modelMatrix = mat4.create();
-            mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -1.5, this.bman_posZ]);
+
+            if (this.t >= 6622 && this.t < 7351) {
+                mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -1.5, this.bman_posZ]);
+            } else {
+                mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -1.5, this.bman_posZ]);
+            }
+
             mat4.scale(modelMatrix, modelMatrix, [0.0075, 0.0075, 0.0075]);
             mat4.rotateY(modelMatrix, modelMatrix, toRadians(90.0));
             mat4.rotateX(modelMatrix, modelMatrix, toRadians(135.0));
