@@ -45,7 +45,7 @@
 ### Background Score:
 	Film : Pyaasa
 	Song : Sar Jo Tera Chakraye
-	Singer : Mohammad Rafi
+	Singer : Mohammed Rafi
 	Source : https://www.youtube.com/watch?v=rJiohcg-gKo
 
 
