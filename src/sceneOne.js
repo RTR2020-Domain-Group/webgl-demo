@@ -1343,7 +1343,7 @@ var sceneOne = {
         else {
             modelMatrix = mat4.create();
 
-            if (this.t >= 6622 && this.t < 7351) {
+            if (this.t >= 6622 && this.t < 7400) {
                 mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 6.0, -1.5, this.bman_posZ]);
             } else {
                 mat4.translate(modelMatrix, modelMatrix, [this.bman_posX + 4.0, -1.5, this.bman_posZ]);
