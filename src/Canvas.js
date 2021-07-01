@@ -56,7 +56,7 @@ function main() {
     else console.log("Obtaining canvas successful..");
 
     framesDiv = document.getElementById("frames");
-    
+
     canvas_original_width = canvas.width;
     canvas_original_height = canvas.height;
 

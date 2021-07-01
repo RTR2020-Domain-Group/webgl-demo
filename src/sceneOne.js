@@ -846,6 +846,7 @@ var sceneOne = {
         }
         // close up to businessmap champi
         else if (this.t >= 9600 && this.t < 9601) {
+            frameCount += 35;
             camera.Position = vec3.fromValues(56.69, 5.35, 608.78);
             camera.Yaw = -180.0;
             camera.Pitch = 5.5;
