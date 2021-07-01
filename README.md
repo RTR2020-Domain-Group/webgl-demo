@@ -5,7 +5,8 @@
 ### Description:
 	Theme for this WebGL demo is creative representation of a song from period prior to 1965.
 	Project is developed using WebGL and JavaScript by Domain Group under the guidance of Dr. Vijay Gokhale Sir.
-	We have tried to recreate the scene of song "Sar Jo Tera Chakraye" from movie "Pyaasa (1957)".
+	We have tried to recreate the scene of song "Sar Jo Tera Chakraye" from movie "Pyaasa (1957)".	
+	[ Modern characters but same old problems cha impact ahe.. ]
 
 
 ### Technology Used:
@@ -18,8 +19,9 @@
 ### Other Tools:
 	1. OBS Studio
 	2. Blender
-	3. Maya
-	4. Audacity
+	3. Cinema4D
+	4. 3ds Max
+	5. Audacity
 
 
 ### Effects:
@@ -30,7 +32,7 @@
 	5. Noise
 	6. Physically Based Shading
 	7. Procedural Trees
-	8. Shadow mapping with PCF
+	8. Shadow mapping with PCF (Percentage Closer Filtering)
 	9. Lights
 
 
@@ -53,6 +55,7 @@
 ```
 	#AstroMediComp
 	#RTR2020
+	#RTR3
 	#DomainGroup
 	#WebGL
 	#ComputerGraphics
@@ -61,4 +64,5 @@
 	#3D
 	#Rendering
 	#Vintage
+	#SarJoTeraChakraye
  ```
