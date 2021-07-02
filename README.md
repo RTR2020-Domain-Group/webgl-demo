@@ -6,7 +6,7 @@
 	Theme for this WebGL demo is creative representation of a song from period prior to 1965.
 	Project is developed using WebGL and JavaScript by Domain Group under the guidance of Dr. Vijay Gokhale Sir.
 	We have tried to recreate the scene of song "Sar Jo Tera Chakraye" from movie "Pyaasa (1957)".	
-	[ Modern characters but same old problems cha impact ahe.. ]
+	It shows that the generations change, but problems remain the same.
 
 
 ### Technology Used:
