@@ -880,8 +880,6 @@ var sceneOne = {
             this.bottleMode = DOWN;
         } else if (this.t >= 6120 && this.t < 6570) {
             this.bottleMode = DOWN;
-        } else if (this.t >= 8228 && this.t < 9100) {
-            this.bottleMode = DOWN;
         }
 
         return false;
@@ -1301,7 +1299,7 @@ var sceneOne = {
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
 
-        if (this.t >= 6120) {
+        if (this.t >= 8250) {
             modelMatrix = mat4.create();
             mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
             mat4.translate(modelMatrix, modelMatrix, [80.0, 7.17, 615.0]);
