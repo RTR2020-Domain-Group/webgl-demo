@@ -631,7 +631,7 @@ var sceneOne = {
 
         else if (this.t >= 2310 && this.t <= 3287) {
             this.man1_posZ -= this.man1_walk_speed;
-            this.man1_posX -= 0.035;
+            // this.man1_posX -= 0.035;
             this.man1_rot -= 0.005;
         }
 
@@ -1301,10 +1301,10 @@ var sceneOne = {
         mat4.rotateY(modelMatrix, modelMatrix, toRadians(this.johnny_rot));
         mat4.translate(modelMatrix, modelMatrix, [this.johnny_posX, -7.0, this.johnny_posZ]);
 
-        if (this.t >= 8260) {
+        if (this.t >= 6120) {
             modelMatrix = mat4.create();
             mat4.scale(modelMatrix, modelMatrix, [0.1, 0.1, 0.1]);
-            mat4.translate(modelMatrix, modelMatrix, [80.0, 7.17, 597.0]);
+            mat4.translate(modelMatrix, modelMatrix, [80.0, 7.17, 615.0]);
             mat4.translate(modelMatrix, modelMatrix, [400.0, 55.0, 5167.0]);
             mat4.rotateZ(modelMatrix, modelMatrix, toRadians(90.0));
             rightHand = mat4.create();
